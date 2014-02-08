@@ -1,0 +1,865 @@
+<?php
+
+function jobbag_entity_info() {
+  $entities = array();
+
+  $entities['job_client'] = array(
+    'label' => t('Job Bag Client'),
+    'plural label' => t('Job Bag Clients'),
+    'entity class' => 'JobBagClient',
+    'controller class' => 'JobClientControllerExportable',
+    'base table' => 'jobbag_client',
+    'exportable' => TRUE,
+    'bundles' => array(),
+    'entity keys' => array(
+      'id' => 'cid',
+      'label' => 'label'
+    ),
+    'access callback' => 'jobbag_client_access',
+    'module' => 'jobbag',
+    'admin ui' => array(
+      'path' => 'admin/jobs/clients',
+      'menu wildcard' => '%job_client',
+      'controller class' => 'JobClientUIController',
+      'file' => 'jobbag.admin.php'
+    ),
+    'view modes' => array(
+      'full' => array(
+        'label' => t('Full View'),
+        'custom settings' => FALSE
+      ),
+      'teaser' => array(
+        'label' => t('Teaser'),
+        'custom settings' => FALSE
+      )
+    ),
+    'metadata controller class' => 'EntityDefaultMetadataController',
+  );
+
+  $entities['job'] = array(
+    'label' => t('Job'),
+    'plural labels' => t('Jobs'),
+    'module' => 'jobbag',
+    'entity class' => 'JobBag',
+    'controller class' => 'JobEntityController',
+    'base table' => 'jobbag',
+    'fieldable' => TRUE,
+    'load callback' => 'jobbag_load',
+    'bundle keys' => array(
+      'bundle' => 'type'
+    ),
+    'entity keys' => array(
+      'id' => 'jid',
+      'bundle' => 'type',
+      'label' => 'title'
+    ),
+    'bundles' => array(),
+    'access callback' => 'jobbag_access',
+    'view modes' => array(
+      'full' => array(
+        'label' => t('Full View'),
+        'custom settings' => FALSE
+      ),
+      'teaser' => array(
+        'label' => t('Teaser'),
+        'custom settings' => FALSE
+      )
+    ),
+    'metadata controller class' => 'EntityDefaultMetadataController',
+  );
+
+  if (module_exists('search')) {
+    $entities['job']['view modes']['search_view'] = array(
+      'label' => t('Search'),
+      'custom settings' => FALSE
+    );
+  }
+
+  $types = db_select('jobbag_type', 'jt')->fields('jt')->execute()->fetchAllAssoc('type');
+
+  if (!empty($types)) {
+    foreach ($types as $type => $info) {
+      $entities['job']['bundles'][$info->type] = array(
+        'label' => $info->label,
+        'admin' => array(
+          'path' => 'admin/structure/jobs/manage/%job_type',
+          'real path' => 'admin/structure/jobs/manage/' . str_replace('_', '-', $type),
+          'bundle argument' => 4,
+          'access arguments' => array('administer jobs'),
+          'file' => 'jobbag.admin.php'
+        )
+      );
+    }
+  }
+
+  $entities['job_type'] = array(
+    'label' => t('Job Type'),
+    'plural label' => t('Job Types'),
+    'entity class' => 'JobBagType',
+    'controller class' => 'JobTypeControllerExportable',
+    'base table' => 'jobbag_type',
+    'exportable' => TRUE,
+    'bundle of' => 'job',
+    'entity keys' => array(
+      'id' => 'id',
+      'label' => 'label'
+    ),
+    'access callback' => 'jobbag_type_access',
+    'module' => 'jobbag',
+    'admin ui' => array(
+      'path' => 'admin/structure/jobs',
+      'menu wildcard' => '%job_type',
+      'controller class' => 'EntityDefaultUIController',
+      'file' => 'jobbag.admin.php'
+    ),
+  );
+
+  return $entities;
+}
+
+/* Menu */
+
+function jobbag_admin_paths() {
+  return array(
+    'job/add' => TRUE,
+    'job/add/*' => TRUE,
+    'job/*/edit' => TRUE,
+    'job/*/delete' => TRUE,
+    'admin/jobs' => TRUE
+  );
+}
+
+function jobbag_menu() {
+  $menu['jobs'] = array(
+    'title' => t('Jobs'),
+    'page callback' => 'jobbag_jobs_page',
+    'access callback' => 'jobbag_access',
+    'access arguments' => array('view'),
+    'type' => MENU_CALLBACK
+  );
+
+  $menu['job/add'] = array(
+    'title' => t('Add a Job'),
+    'page callback' => 'jobbag_type_page',
+    'access callback' => 'jobbag_access',
+    'access arguments' => array('create'),
+    'file' => 'jobbag.types.php',
+    'type' => MENU_LOCAL_ACTION,
+    'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
+    'tab_parent' => 'admin/jobs',
+    'tab_root' => 'admin/jobs'
+  );
+
+  foreach (jobbag_get_types() as $type) {
+    $menu['job/add/' . $type->type] = array(
+      'title' => $type->label,
+      'title callback' => 'check_plain',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('jobbag_type_form', 'add', $type->type),
+      'access callback' => 'jobbag_access',
+      'access arguments' => array('create', NULL, NULL, $type->type),
+      'file' => 'jobbag.types.php',
+      'type' => MENU_LOCAL_ACTION,
+      'context' => MENU_CONTEXT_INLINE
+    );
+  }
+
+  $menu['job/%job'] = array(
+    'title' => 'Job',
+    'page callback' => 'job_page_view',
+    'page arguments' => array(1),
+    'access callback' => 'jobbag_access',
+    'access arguments' => array('view', 1)
+  );
+
+  $menu['job/%job/view'] = array(
+    'title' => 'View',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10
+  );
+
+  $menu['job/%job/edit'] = array(
+    'title' => 'Edit',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('jobbag_type_form', 'edit', NULL, 1),
+    'access callback' => 'jobbag_access',
+    'access arguments' => array('edit', 1, NULL, $type->type),
+    'file' => 'jobbag.types.php',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 0
+  );
+
+  $menu['job/%job/delete'] = array(
+    'title' => 'Delete',
+    'title callback' => 'job_page_title',
+    'title arguments' => array(1, 'delete'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('jobbag_delete', 1),
+    'access callback' => 'jobbag_access',
+    'access arguments' => array('delete',  1, NULL, $type->type),
+    'file' => 'jobbag.types.php',
+  );
+
+  // Job Client
+
+  $menu['job/client/%job_client'] = array(
+    'title' => 'Job Client',
+    'title callback' => 'job_client_title',
+    'title arguments' => array(2),
+    'load callback' => 'job_client_load',
+    'load arguments' => array(2),
+    'page callback' => 'job_client_page_view',
+    'page arguments' => array(2),
+    'access callback' => 'jobbag_client_access',
+    'access arguments' => array('view', 2)
+  );
+
+  $menu['job/client/%job_client/view'] = array(
+    'title' => 'View',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10
+  );
+
+  $menu['job/client/%job_client/edit'] = array(
+    'title' => 'Edit',
+    'load callback' => 'job_client_load',
+    'load arguments' => array(2),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('job_client_form', 2),
+    'access callback' => 'jobbag_client_access',
+    'access arguments' => array('edit', 1)
+  );
+
+  // Admin Section
+
+  $menu['admin/jobs'] = array(
+    'title' => 'Jobs',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('jobbag_list'),
+    'access arguments' => array('administer jobs'),
+    'file' => 'jobbag.admin.php',
+    'type' => MENU_NORMAL_ITEM,
+    'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE
+  );
+
+  $menu['admin/jobs/list'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10
+  );
+
+  return $menu;
+}
+
+function job_page_title($job, $op = 'view') {
+
+  if ($op == 'edit') {
+    return t('Edit !title', array('!title' => $job->title));
+  }
+
+  if ($op == 'delete') {
+    return t('Delete !title', array('!title' => $job->title));
+  }
+
+  return t($job->title);
+}
+
+function job_client_title($job_client) {
+  return t($job_client->getLabel());
+}
+
+/* Theme */
+
+function jobbag_theme($existing, $type, $theme, $path) {
+  $themes['jobbag'] = array(
+    'render element' => 'element',
+    'template' => 'job'
+  );
+
+  return $themes;
+}
+
+function template_preprocess_jobbag(&$vars) {
+  $job = $vars['job'] = $vars['element']['#entity'];
+  $job_type = $vars['job_type'] = $vars['element']['#entity_type'];
+  //$vars['description'] = $job->description;
+  $vars['view_mode'] = $vars['element']['#view_mode'];
+  $vars['job_type'] = $job_type;
+  $vars['teaser'] = (strtolower($vars['view_mode']) == 'teaser');
+  if ($job->client) {
+    $vars['client'] = $job->getClient()->getLabel();
+  }
+
+  $info = entity_get_info($job_type);
+
+  $vars['title'] = check_plain(entity_label($job_type, $job));
+  if (isset($vars['element']['#page'])) {
+    // If set by the caller, respect the page property.
+    $vars['page'] = $vars['element']['#page'];
+  }
+  else {
+    // Else, try to automatically detect it.
+    $uri = entity_uri($job_type, $job);
+    $vars['url'] = $uri ? url($uri['path'], $uri['options']) : FALSE;
+    $vars['page'] = $uri && $uri['path'] == $_GET['q'];
+  }
+
+  $vars['content'] = array();
+  foreach (element_children($vars['element']) as $key) {
+    $vars['content'][$key] = $vars['element'][$key];
+  }
+
+  if (!empty($info['fieldable'])) {
+    // Make the field variables available with the appropriate language.
+    field_attach_preprocess($job->type, $job, $vars['content'], $vars);
+    field_attach_prepare_view($job->type, array($job->jid => $job), $vars['view_mode']);
+    $fields = field_attach_view($job->type, $job, $vars['view_mode']);
+    foreach (element_children($fields) as $field_name) {
+      $vars['content'][$field_name] = $fields[$field_name];
+    }
+  }
+  list(, , $bundle) = entity_extract_ids($job->type, $job);
+
+  // Gather css classes.
+  $vars['classes_array'][] = drupal_html_class('job-' . $job_type);
+  $vars['classes_array'][] = drupal_html_class($job_type . '-' . $bundle);
+
+  // Add RDF type and about URI.
+  if (module_exists('rdf')) {
+    $vars['attributes_array']['about'] = empty($uri['path']) ? NULL : url($uri['path']);
+    $vars['attributes_array']['typeof'] = empty($job->rdf_mapping['rdftype']) ? NULL : $job->rdf_mapping['rdftype'];
+  }
+
+  $args = jobbag_get_type_names();
+
+  if ($suggestions = theme_get_suggestions($args, $job_type)) {
+    $vars['theme_hook_suggestions'] = $suggestions;
+  }
+}
+
+/* Permissions and Access */
+
+function jobbag_permission() {
+  $perms = array(
+    'administer jobs' => array(
+      'title' => t('Administer Jobs'),
+      'description' => t('Administer jobs and job types'),
+      'restrict access' => TRUE
+    ),
+    'access jobs' => array(
+      'title' => t('Access Jobs'),
+      'description' => t('View all jobs entered in the system'),
+    ),
+    'view job types' => array(
+      'title' => t('View Job Types'),
+      'description' => t('View the different job types in the system')
+    ),
+    'edit job types' => array(
+      'title' => t('Edit Job Types'),
+      'description' => t('Edit the different job types in the system')
+    ),
+    'delete job types' => array(
+      'title' => t('Delete Job Types'),
+      'description' => t('Delete the different job types in the system')
+    ),
+    'create job clients' => array(
+      'title' => t('Create Job Bag Clients')
+    ),
+    'access any job client' => array(
+      'title' => t('Access Any Job Bag Clients')
+    ),
+    'access own job clients' => array(
+      'title' => t('Access Own Job Bag Clients')
+    ),
+    'edit any job client' => array(
+      'title' => t('Edit Any Job Bag Clients')
+    ),
+    'edit own job clients' => array(
+      'title' => t('Edit Own Job Bag Clients')
+    ),
+    'delete any job client' => array(
+      'title' => t('Delete Any Job Bag Clients')
+    ),
+    'delete own job clients' => array(
+      'title' => t('Delete Own Job Bag Clients')
+    ),
+  );
+
+  $types = jobbag_get_types();
+
+  foreach ($types as $type) {
+    $type_name = check_plain($type->type);
+    $perms += array(
+      "create	$type_name jobs" => array(
+        'title' => t('Create %type Jobs', array('%type' => $type_name))
+      ),
+      "access $type_name jobs" => array(
+        'title' => t('Access %type Jobs', array('%type' => $type_name))
+      ),
+      "edit any $type_name job" => array(
+        'title' => t('Edit Any %type Job', array('%type' => $type_name))
+      ),
+      "edit own $type_name jobs" => array(
+        'title' => t('Edit Own %type Jobs', array('%type' => $type_name))
+      ),
+      "delete any $type_name job" => array(
+        'title' => t('Delete Any %type Job', array('%type' => $type_name))
+      ),
+      "delete own $type_name jobs" => array(
+        'title' => t('Delete Own %type Jobs', array('%type' => $type_name))
+      )
+    );
+  }
+
+  return $perms;
+}
+
+function jobbag_access($op, $entity = NULL, $account = NULL, $job_type = NULL) {
+
+	if (!$account) {
+      $account = $GLOBALS['user'];
+    }
+	
+	if (user_access('administer jobs', $account)) {
+      return TRUE;
+    }
+	
+	$type = is_object($entity) ? $entity->type : $job_type;
+	
+	if ($op == 'view' && (user_access('access jobs', $account) || (user_access('access '.$type.' jobs', $account)
+          && is_object($entity) && ($entity->status == 1 || $entity->uid == $account->uid)))) {
+      return TRUE;
+    }
+	
+	if ($op == 'create' && user_access('create '.$type.' jobs', $account)) {
+      return TRUE;
+    }
+	
+	if (($op == 'edit' || $op == 'update') &&
+      (user_access('edit any '.$type.' job', $account) || (user_access('edit own '.$type.' jobs', $account)
+          && is_object($entity) && $entity->uid == $account->uid))) {
+      return TRUE;
+    }
+	
+	if ($op == 'delete' && (user_access('delete any '.$type.' job', $account) ||
+        (user_access('delete own '.$type.' jobs', $account) && is_object($entity) && $entity->uid == $account->uid))) {
+      return TRUE;
+    }
+		
+	// Allow modules to grant / deny access.
+	$access = module_invoke_all('job_access', $op, $entity, $account);
+	
+	// Only grant access if at least one module granted access and no one denied
+	// access.
+	if (in_array(TRUE, $access, TRUE)) {
+      return TRUE;
+    }
+  
+  return FALSE;
+}
+
+function jobbag_type_access($op, $entity = NULL, $account = NULL, $job_type = NULL) {
+  if (!$account) {
+    $account = $GLOBALS['user'];
+  }
+
+  if (user_access('administer jobs', $account)) {
+    return TRUE;
+  }
+
+  if ($op == 'create' || $op == 'update') {
+    $op = 'edit';
+  }
+
+  if ($op == 'edit' && user_access('edit job types', $account)) {
+    return TRUE;
+  }
+
+  if ($op == 'view' && user_access('view job types', $account)) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+function jobbag_client_access($op, $entity = NULL, $account = NULL, $client_type = NULL) {
+  if (!$account) {
+    $account = $GLOBALS['user'];
+  }
+
+  if (user_access('administer jobs', $account)) {
+    return TRUE;
+  }
+
+  if ($op == 'view' && (user_access('access any job client', $account)
+      || (user_access('access own job clients', $account) && is_object($entity) && $entity->uid == $account->uid))) {
+    return TRUE;
+  }
+
+  if ($op == 'create' && user_access('create job clients', $account)) {
+    return TRUE;
+  }
+
+  if (($op == 'edit' || $op == 'update')
+    && (user_access('edit any job client', $account) || (user_access('edit own job clients', $account)
+        && is_object($entity) && $entity->uid == $account->uid))) {
+    return TRUE;
+  }
+
+  if ($op == 'delete' && (user_access('delete any job client', $account)
+      || (user_access('delete own job clients', $account) && is_object($entity) && $entity->uid == $account->uid))) {
+    return TRUE;
+  }
+
+  // Allow modules to grant / deny access.
+  $access = module_invoke_all('job_client_access', $op, $entity, $account);
+
+  // Only grant access if at least one module granted access and no one denied
+  // access.
+  if (in_array(FALSE, $access, TRUE)) {
+    return FALSE;
+  }
+  elseif (in_array(TRUE, $access, TRUE)) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/* Load Functions */
+
+function jobbag_load($id, $reset = FALSE) {
+  $jobs = jobbag_load_multiple(array($id), array(), $reset);
+  return reset($jobs);
+}
+
+function jobbag_load_multiple($ids = array(), $conditions = array(), $reset = FALSE) {
+  $jobs = entity_load('job', $ids, $conditions, $reset);
+
+  if (is_array($jobs)) {
+    foreach ($jobs as &$job) {
+      _jobbag_load_attach_client($job);
+      module_invoke_all('jobbag_load', $job);
+    }
+    reset($jobs);
+  }
+
+  if (is_object($jobs)) {
+    _jobbag_load_attach_client($jobs);
+    module_invoke_all('jobbag_load', $jobs);
+  }
+
+  return $jobs;
+}
+
+function _jobbag_load_attach_client($job) {
+  if (!empty($job->job_client_id)) {
+    $client = $job->job_client_id;
+    $client_id = array_shift($client);
+    $job->client_id = $client_id[0]['target_id'];
+    $job->setClient($job->client_id);
+  }
+}
+
+function jobbag_get_types($type_name = NULL) {
+  $entities = entity_load('job_type', FALSE);
+
+  $types = array();
+
+  foreach ($entities as $entity) {
+    $types[$entity->type] = $entity;
+  }
+
+  return isset($type_name) ? $types[$type_name] : $types;
+}
+
+function jobbag_get_type_name($job) {
+  $type = job_type_load($job->type);
+  return t($type->label);
+}
+
+function jobbag_get_type_names() {
+  $types = entity_load('job_type', FALSE);
+  $names = array();
+  foreach ($types as $type) {
+    $names[$type->type] = $type->label;
+  }
+  return $names;
+}
+
+function job_load($id) {
+  return jobbag_load($id);
+}
+
+function job_type_load($type) {
+  if (is_numeric($type)) {
+    $types = jobbag_get_types();
+    foreach ($types as $t) {
+      if ($t->id == $type) {
+        return $t;
+      }
+    }
+  }
+
+  if (is_string($type)) {
+    return jobbag_get_types($type);
+  }
+}
+
+function job_client_load($id, $reset = FALSE) {
+  $clients = job_client_load_multiple(array($id), array(), $reset);
+  return array_shift($clients);
+}
+
+function job_client_load_multiple($ids = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('job_client', $ids, $conditions, $reset);
+}
+
+function job_client_get_names() {
+  $clients = job_client_load_multiple(FALSE, array(), TRUE);
+  $names= array();
+  foreach ($clients as $client) {
+    $names[$client->cid] = $client->label;
+  }
+  return $names;
+}
+
+/* View Functions */
+
+function job_view($job, $view_mode = 'full', $page = NULL) {
+  return job_view_multiple(array($job), $view_mode, $page);
+}
+
+function job_view_multiple($jobs, $view_mode = 'full', $page = NULL) {
+  foreach ($jobs as $i => $job) {
+    if (!jobbag_access('view', $job)) {
+      unset($jobs[$i]);
+    }
+  }
+	
+  return entity_view('job', $jobs, $view_mode, NULL, $page);
+}
+
+function job_client_view($job_client, $view_mode = 'full', $page = NULL) {
+  return job_client_view_multiple(array($job_client), $view_mode, $page);
+}
+
+function job_client_view_multiple($job_clients, $view_mode = 'full', $page = NULL) {
+  foreach ($job_clients as $i => $client) {
+    if (!jobbag_client_access('view', $client)) {
+      unset($job_clients[$i]);
+    }
+  }
+
+  return entity_view('job_client', $job_clients, $view_mode, NULL, $page);
+}
+
+function job_page_view($job) {
+  drupal_set_title($job->title);
+  $uri = entity_uri('job', $job);
+  if (!empty($uri)) {
+    drupal_add_html_head_link(array('rel' => 'canonical', 'href' => url($uri['path'], $uri['options'])), TRUE);
+    drupal_add_html_head_link(array('rel' => 'shortlink', 'href' => url($uri['path'],
+      array_merge($uri['options'], array('alias' => TRUE)))), TRUE);
+  }
+  $view = job_view($job, 'full', TRUE);
+  return $view;
+}
+
+function job_client_page_view($job_client) {
+  $uri = entity_uri('job_client', $job_client);
+  if (!empty($uri)) {
+    drupal_add_html_head_link(array('rel' => 'canonical', 'href' => url($uri['path'], $uri['options'])), TRUE);
+    drupal_add_html_head_link(array('rel' => 'shortlink', 'href' => url($uri['path'],
+      array_merge($uri['options'], array('alias' => TRUE)))), TRUE);
+  }
+  $view = job_client_view($job_client, 'full', TRUE);
+  return $view;
+}
+
+function jobbag_jobs_page() {
+  $query = db_select('jobbag', 'j')
+    ->extend('PagerDefault');
+
+  $jids = $query->fields('j', array('jid'))
+    ->limit(10)
+    ->execute()
+    ->fetchCol();
+
+  $jobs = jobbag_load_multiple($jids, array(), TRUE);
+
+  $view = job_view_multiple($jobs, 'teaser');
+  $pager = theme('pager');
+
+  return render($view).$pager;
+}
+
+function job_status($status = NULL) {
+  $options = array(
+    1 => t('Active'),
+    0 => t('Cancelled'),
+    2 => t('Closed Out')
+  );
+
+  if (isset($status)) {
+    return $options[$status];
+  }
+
+  return $options;
+}
+
+/* Search Functions */
+
+function jobbag_search_info() {
+  return array(
+    'title' => 'Jobs',
+    'path' => 'job',
+  );
+}
+
+function jobbag_search_access() {
+  return user_access('access jobs');
+}
+
+function jobbag_update_index() {
+  $limit = (int) variable_get('search_cron_limit', 100);
+
+  $result = db_select('jobbag', 'j')
+    ->fields('j', array('jid'));
+  $result->leftJoin('search_dataset', 'd', "d.type = :job_type AND d.sid = j.jid", array(':job_type' => 'job'));
+  $result->condition(db_or()->isNull('d.sid')->condition('d.reindex', 0, '<>'));
+  $result->orderBy('d.reindex')
+    ->orderBy('j.jid')
+    ->range(0, $limit)
+    ->execute();
+
+  /*$result = db_query_range("SELECT j.jid FROM {jobbag} j LEFT JOIN {search_dataset} d ON d.type = 'job'
+    AND d.sid = j.jid WHERE d.sid IS NULL OR d.reindex <> 0 ORDER BY d.reindex ASC, j.jid ASC", 0, $limit);*/
+
+  foreach ($result as $job) {
+    $job = job_load($job->jid);
+    variable_set('job_cron_last', $job->changed);
+
+    entity_build_content($job->entityType(), $job, 'search_view');
+
+    $text = drupal_render(job_view($job, 'search_view'));
+    $text .= '<h3>'.$job->client->label().'</h3>';
+    // Fetch extra data normally not visible
+    $extra = module_invoke_all('job_update_index', $job);
+    foreach ($extra as $t) {
+      $text .= $t;
+    }
+    search_index($job->identifier(), 'job', $text);
+  }
+}
+
+function jobbag_search_execute($keys = NULL, $conditions = NULL) {
+  $query = db_select('search_index', 'i', array('target' => 'slave'))
+    ->extend('SearchQuery')
+    ->extend('PagerDefault');
+  $query->join('jobbag', 'j', 'j.jid = i.sid');
+  $query->condition('j.status', 1);
+
+  if (!user_access('access jobs')) {
+    $type_access = array();
+    foreach(jobbag_get_types() as $type) {
+      if (entity_access('view', 'jobbag_type', $type)) {
+        $type_access[] = $type;
+      }
+    }
+
+    if (!empty($type_access)) {
+      $query->condition('j.uid','('.implode(',', $type_access).')', 'IN');
+    }
+  }
+
+  $query->searchExpression($keys, 'job');
+
+  // Insert special keywords.
+  $query->setOption('type', 'j.type');
+
+  // Only continue if the first pass query matches.
+  if (!$query->executeFirstPass()) {
+    return array();
+  }
+
+  _job_rankings($query);
+
+  $find = $query
+    ->limit(10)
+    ->execute();
+  $results = array();
+
+  foreach ($find as $item) {
+    // Build the node body.
+    $job = job_load($item->sid);
+    $job->content = $job->buildContent('search_view');
+    $job->body = drupal_render($job->content);
+
+    $extra = module_invoke_all('job_search_result', $job);
+
+    $results[] = array(
+      'link' => url('job/' . $item->sid, array('absolute' => TRUE)),
+      'type' => check_plain(jobbag_get_type_name($job)),
+      'title' => $job->title,
+      'user' => theme('username', array('account' => user_load($job->uid))),
+      'date' => $job->changed,
+      'job' => $job,
+      'extra' => $extra,
+      'score' => $item->calculated_score,
+      'snippet' => search_excerpt($keys, $job->body),
+    );
+  }
+
+  return $results;
+}
+
+function _job_rankings(SelectQueryExtender $query) {
+  if ($ranking = module_invoke_all('ranking')) {
+    $tables = &$query->getTables();
+    foreach ($ranking as $rank => $values) {
+      if ($job_rank = variable_get('job_rank_' . $rank, 0)) {
+        // If the table defined in the ranking isn't already joined, then add it.
+        if (isset($values['join']) && !isset($tables[$values['join']['alias']])) {
+          $query->addJoin($values['join']['type'],
+            $values['join']['table'], $values['join']['alias'], $values['join']['on']);
+        }
+        $arguments = isset($values['arguments']) ? $values['arguments'] : array();
+        $query->addScore($values['score'], $arguments, $job_rank);
+      }
+    }
+  }
+}
+
+function jobbag_search_status() {
+  $query = db_select('jobbag', 'j')->fields('j', array('jid'))->condition('status', 1);
+  $total = $query->execute()->rowCount();
+
+  $query->leftJoin('search_dataset', 'd', 'd.type = :type AND d.sid = j.jid', array(':type' => 'job'));
+  $query->condition(db_and()->condition('j.status', 1)->isNull('d.sid'))
+    ->condition(db_or()->condition('d.reindex', 0, '<>'));
+
+  $remaining = $query->execute()->rowCount();
+  /*$remaining = db_query("SELECT COUNT(*) FROM {jobbag} j LEFT JOIN {search_dataset} d ON d.type = 'job'
+    AND d.sid = j.jid WHERE j.status = 1 AND d.sid IS NULL OR d.reindex <> 0")->fetchField();*/
+  return array('remaining' => $remaining, 'total' => $total);
+}
+
+function jobbag_search_reset() {
+  db_update('search_dataset')
+    ->fields(array('reindex' => REQUEST_TIME))
+    ->condition('type', 'job')
+    ->execute();
+}
+
+function jobbag_mail($key, &$message, $params) {
+  if ($key == 'job_check_due_date' ) {
+    $job = $params['job'];
+    $user = user_load(array('uid' => $job->uid));
+    $subject = token_replace($params['subject'], array('user' => $user, 'job' => $job));
+    $body = token_replace($params['message'], array('user' => $user, 'job' => $job));
+
+    $message['subject'] = $subject;
+    $message['body'][] = $body;
+  }
+}

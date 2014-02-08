@@ -1,0 +1,359 @@
+<?php
+
+function jobbag_schema() {
+	
+  $t = get_t();
+
+  $schema['jobbag'] = array(
+    'description' => $t('Job Bag Entities'),
+    'fields' => array(
+      'jid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'type' => array(
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE
+      ),
+      'uid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'title' => array(
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => TRUE
+      ),
+      'status' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 1
+      ),
+      'created' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'changed' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'closed' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => t('The date the job was closed'),
+        'initial' => 0
+      ),
+      'cancelled' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => t('The date the job was cancelled'),
+        'initial' => 0
+      )
+    ),
+    'foreign keys' => array(
+      'type' => array(
+        'table' => 'jobbag_type',
+        'type' => 'type'
+      ),
+      'client_id' => array(
+        'table' => 'jobbag_client',
+        'client_id' => 'cid'
+      )
+    ),
+    'primary key' => array('jid')
+   );
+
+  $schema['jobbag_type'] = array(
+    'description' => $t('The types of jobs for use with {jobbag}'),
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'type' => array(
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE
+      ),
+      'label' => array(
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        // Set the default to ENTITY_CUSTOM without using the constant as it is
+        // not safe to use it at this point.
+        'default' => 0x01,
+        'size' => 'tiny',
+        'description' => 'The exportable status of the entity.',
+      ),
+      'module' => array(
+        'description' => 'The name of the providing module if the entity has been defined in code.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ),
+      'weight' => array(
+        'type' => 'int',
+        'unsigned' => FALSE,
+        'not null' => TRUE,
+        'default' => 0
+      )
+    ),
+    'unique keys' => array('type' => array('type')),
+    'primary key' => array('id')
+  );
+
+  $schema['jobbag_client'] = array(
+    'description' => $t('An id to build a relationship between the job and the client'),
+    'fields' => array(
+      'cid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'prefix' => array(
+        'type' => 'varchar',
+        'length' => 5,
+        'not null' => TRUE
+      ),
+      'label' => array(
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE
+      ),
+      'sequence' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
+      'created' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'changed' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'status' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0x01,
+        'size' => 'tiny'
+      ),
+      'module' => array(
+        'description' => 'The name of the providing module if the entity has been defined in code.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ),
+    ),
+    'primary key' => array('cid'),
+    'unique keys' => array('prefix' => array('prefix'), 'prefix_sequence' => array('prefix', 'sequence'))
+  );
+
+  return $schema;
+}
+
+function jobbag_install() {
+  $default = array();
+
+  $default['type'] = 'default';
+  $default['label'] = st('Default Job');
+  $default['status'] = ENTITY_IN_CODE;
+  $default['module'] = 'jobbag';
+  $default['weight'] = 0;
+
+  $entity = entity_create('jobbag_type', $default);
+  entity_save('jobbag_type', $entity);
+
+  _jobbag_create_default_fields();
+}
+
+function _jobbag_create_default_fields() {
+	
+  $client_field = array(
+    'field_name' => 'job_client_id',
+    'module' => 'jobbag',
+    'type' => 'entityreference',
+    'cardinality' =>  1,
+    'settings' => array(
+      'target_type' => 'job_client',
+      'handler_settings' => array(
+        'sort' => array(
+          'type' => 'property',
+          'property' => 'label',
+          'direction' => 'ASC'
+        )
+      )
+    )
+  );
+
+  $job_ref_field = array(
+    'field_name' => 'job_reference',
+    'module' => 'jobbag',
+    'type' => 'entityreference',
+    'cardinality' =>  -1,
+    'required' => FALSE,
+    'settings' => array(
+      'target_type' => 'job',
+      'handler_settings' => array(
+        'sort' => array(
+          'type' => 'property',
+          'property' => 'title'
+        )
+      )
+    )
+  );
+
+  $date_field = array(
+    'field_name' => 'job_due_date',
+    'module' => 'jobbag',
+    'type' => 'date',
+    'cardinality' =>  1,
+    'settings' => array(
+      'granularity' => drupal_map_assoc(array('year', 'month', 'day'))
+    )
+  );
+
+  $desc_field = array(
+    'field_name' => 'job_description',
+    'module' => 'jobbag',
+    'type' => 'text_with_summary',
+    'cardinality' =>  1,
+    'settings' => array(),
+  );
+
+  $client_instance = array(
+    'field_name' => 'job_client_id',
+    'entity_type' => 'job',
+    'bundle' => 'default',
+    'label' => t('Client'),
+    'required' => TRUE,
+    'settings' => array(),
+    'widget' => array('type' => 'options_select', 'weight' => -10),
+    'display' => array(
+      'default' => array(
+        'type' => 'entityreference_label',
+        'settings' => array(
+          'link' => 1
+        ),
+        'weight' => 1
+      ),
+      'teaser' => array(
+        'type' => 'entityreference_label',
+        'settings' => array(
+          'link' => 0
+        ),
+        'weight' => 1
+      )
+    )
+  );
+
+  $job_ref_instance = array(
+    'field_name' => 'job_reference',
+    'entity_type' => 'job',
+    'bundle' => 'default',
+    'label' => t('Job Reference'),
+    'settings' => array(),
+    'widget' => array('type' => 'entityreference_autocomplete_tags', 'weight' => -9),
+    'display' => array(
+      'default' => array(
+        'type' => 'entityreference_label',
+        'settings' => array(
+          'link' => 1
+        ),
+        'weight' => 2
+      ),
+      'teaser' => array(
+        'type' => 'hidden',
+        'weight' => 2
+      )
+    ),
+  );
+
+  $date_instance = array(
+    'field_name' => 'job_due_date',
+    'entity_type' => 'job',
+    'bundle' => 'default',
+    'label' => t('Date Due'),
+    'settings' => array(),
+    'widget' => array('type' => module_exists('date_popup') ? 'date_popup' : 'date_text', 'weight' => -8),
+    'display' => array(
+      'default' => array(
+        'weight' => 3
+      ),
+      'teaser' => array(
+        'type' => 'hidden',
+        'weight' => 3
+      )
+    ),
+  );
+
+  $desc_instance = array(
+    'field_name' => 'job_description',
+    'entity_type' => 'job',
+    'bundle' => 'default',
+    'label' => t('Description'),
+    'settings' => array(),
+    'widget' => array('type' => 'text_textarea_with_summary', 'weight' => -7),
+    'display' => array(
+      'default' => array(
+        'type' => 'text_default',
+        'weight' => 4
+      ),
+      'teaser' => array(
+        'type' => 'text_summary_or_trimmed',
+        'settings' => array(
+          'trim_length' => 600
+        ),
+        'weight' => 4
+      )
+    ),
+  );
+
+  field_create_field($client_field);
+  field_create_field($job_ref_field);
+  field_create_field($date_field);
+  field_create_field($desc_field);
+  field_create_instance($client_instance);
+  field_create_instance($job_ref_instance);
+  field_create_instance($date_instance);
+  field_create_instance($desc_instance);
+}
+
+function jobbag_uninstall() {
+  module_load_include('module', 'jobbag');
+  db_delete('search_dataset')->condition('type', 'job')->execute();
+  db_delete('search_index')->condition('type', 'job')->execute();
+
+    if($instance = field_read_instance('job', 'job_client_id', 'default'))
+      field_delete_instance($instance, FALSE);
+    field_delete_field('job_client_id');
+    if($instance = field_read_instance('job', 'job_description', 'default'))
+      field_delete_instance($instance, FALSE);
+    field_delete_field('job_description');
+    if($instance = field_read_instance('job', 'job_reference', 'default'))
+      field_delete_instance($instance, FALSE);
+    field_delete_field('job_reference');
+    if($instance = field_read_instance('job', 'job_due_date', 'default'))
+      field_delete_instance($instance, FALSE);
+    field_delete_field('job_due_date');
+
+  field_purge_batch(100);
+}

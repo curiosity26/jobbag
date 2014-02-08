@@ -1,0 +1,15 @@
+;$id;
+
+name = Job Bag
+description = A system to organize workflow, correspondance, tasks and allow 
+core = 7.x
+package = Job Bag
+dependencies[] = entity
+dependencies[] = entityreference
+dependencies[] = date
+dependencies[] = rules
+files[] = jobbag.controller.php
+files[] = jobbag.entity.php
+files[] = jobbag.types.php
+files[] = jobbag.admin.php
+files[] = jobbag.test

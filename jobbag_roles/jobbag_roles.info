@@ -1,0 +1,13 @@
+;$id;
+
+name = Job Bag Roles
+description = A layer of roles with associated permissions with relation to the Job Bag system 
+core = 7.x
+package = Job Bag
+dependencies[] = entity
+dependencies[] = jobbag
+files[] = jobbag_roles.controller.php
+files[] = jobbag_roles.entity.php
+files[] = jobbag_roles.permissions.php
+files[] = jobbag_roles.roles.php
+files[] = jobbag_roles.admin.php
