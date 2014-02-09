@@ -183,8 +183,8 @@ function jobbag_install() {
   $default['module'] = 'jobbag';
   $default['weight'] = 0;
 
-  $entity = entity_create('jobbag_type', $default);
-  entity_save('jobbag_type', $entity);
+  $entity = entity_create('job_type', $default);
+  entity_save('job_type', $entity);
 
   _jobbag_create_default_fields();
 }

@@ -62,10 +62,6 @@ function jobbag_rules_action_info() {
 }
 
 function jobbag_default_rules_configuration() {
-  // TODO: define default rules
-  // TODO: define notification rule for due date past, recreating itself until removed by the job cancelled/completed/deleted rule
-  // TODO: define rule for removing rules in the sytem when cancelled, completed, or deleted
-
   $rules = array();
 
   $job_notify = rules_reaction_rule();
@@ -98,7 +94,7 @@ function jobbag_default_rules_configuration() {
 
 /* Actions Callbacks */
 
-function rules_action_job_notifications($args, $element) {
+function rules_actions_job_notifications($args, $element) {
   module_load_include('inc', 'jobbag', 'jobbag.defaults');
 
   $job = $args['entity'];
@@ -147,7 +143,7 @@ function rules_action_job_notifications($args, $element) {
   }
 }
 
-function rules_action_job_send_notification($args, $element) {
+function rules_actions_job_send_notification($args, $element) {
   $job = $args['entity'];
   $user = user_load($job->uid);
   $subject = token_replace($args['subject'], array('job' => $job));
