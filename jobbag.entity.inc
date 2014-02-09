@@ -29,6 +29,10 @@ class JobBag extends Entity {
     }
 
     parent::__construct($values, 'job');
+
+    if (!is_array($this->data)) {
+      $this->data = array();
+    }
   }
 
   public function defaultTitle() {
@@ -87,6 +91,31 @@ class JobBag extends Entity {
   public function url() {
     $uri = $this->uri();
     return url($uri['path'], $uri);
+  }
+
+  public function getReminder() {
+    $controller = entity_get_controller($this->entityType());
+    return $controller->getReminder($this);
+  }
+
+  public function getReminderUnit() {
+    $controller = entity_get_controller($this->entityType());
+    return $controller->getReminderUnit($this);
+  }
+
+  public function getReminderMetric() {
+    $controller = entity_get_controller($this->entityType());
+    return $controller->getReminderMetric($this);
+  }
+
+  public function setReminder($metric = NULL, $unit = NULL) {
+    $controller = entity_get_controller($this->entityType());
+    return $controller->setReminder($this, $metric, $unit);
+  }
+
+  public function setReminderTime($time) {
+    $controller = entity_get_controller($this->entityType());
+    return $controller->setReminderTime($this, $time);
   }
 }
 

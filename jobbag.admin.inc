@@ -469,11 +469,11 @@ function job_multiple_delete_confirm_submit($form, &$form_state) {
 function jobbag_mark($jid, $changed) {
   $job = jobbag_load($jid);
 
-  if ($job->created == $job->changed && $job->changed == $changed && (REQUEST_TIME - $changed) < (60*60*24)) {
+  if ($job->created == $job->changed && $job->changed == $changed && (REQUEST_TIME - $changed) < 86400) {
     return MARK_NEW;
   }
 
-  if ($job->changed == $changed && (REQUEST_TIME - $changed) < (60*60*24)) {
+  if ($job->changed == $changed && (REQUEST_TIME - $changed) < 86400) {
     return MARK_UPDATED;
   }
 
@@ -693,4 +693,283 @@ function job_client_form_submit(&$form, &$form_state) {
  */
 function job_client_form_submit_delete(&$form, &$form_state) {
   $form_state['redirect'] = 'admin/jobs/clients/' . $form_state['client']->cid . '/delete';
+}
+
+/**
+ * Job Bag admin form: admin/config/jobbag
+ */
+
+function jobbag_admin_form($form, &$form_state) {
+  module_load_include('inc', 'jobbag', 'jobbag.defaults');
+
+  $form['settings'] = array(
+    '#type' => 'vertical_tabs'
+  );
+
+  $form['reminder_settings'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Reminder Settings'),
+    '#group' => 'settings',
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE
+  );
+
+  $form['reminder_settings']['job_reminder_disable'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Disable job reminders'),
+    '#default_value' => variable_get('job_reminder_disable', 0)
+  );
+
+  $form['reminder_settings']['reminder_date'] = array(
+    '#type' => 'actions',
+    '#element_suffix' => t('before due date')
+  );
+
+  $form['reminder_settings']['reminder_date']['job_reminder_date_metric'] = array(
+    '#type' => 'textfield',
+    '#size' => 3,
+    '#maxlength' => 2,
+    '#default_value' => variable_get('job_reminder_date_metric', 0),
+    '#states' => array(
+      'disabled' => array(
+        ':input[name="job_reminder_disable"]' => array('checked' => TRUE)
+      )
+    )
+  );
+
+  $form['reminder_settings']['reminder_date']['job_reminder_date_unit'] = array(
+    '#type' => 'select',
+    '#options' => array(
+      'i' => t('Minute(s)'),
+      'g' => t('Hour(s)'),
+      'j' => t('Day(s)')
+    ),
+    '#default_value' => variable_get('job_reminder_date_unit', 'j'),
+    '#states' => array(
+      'disabled' => array(
+        ':input[name="job_reminder_disable"]' => array('checked' => TRUE)
+      )
+    )
+  );
+
+  $form['reminder_message'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Reminder Message'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+    '#group' => 'settings'
+  );
+
+  $form['reminder_message']['reminder_about'] = array(
+    '#markup' => t('The following information will be used in the email sent out at the
+      interval set in the \'Reminder Settings\' tab. There is also an option to turn off
+      reminders, if you so choose.')
+  );
+
+  $form['reminder_message']['job_reminder_subject'] = array(
+    '#type' => 'textfield',
+    '#default_value' => variable_get('job_reminder_subject', _jobbag_default_reminder_subject()),
+    '#states' => array(
+      'disabled' => array(
+        ':input[name="job_reminder_disable"]' => array('checked' => TRUE)
+      )
+    )
+  );
+
+  $form['reminder_message']['job_reminder_message'] = array(
+    '#type' => 'textarea',
+    '#default_value' => variable_get('job_reminder_message', _jobbag_default_reminder_message()),
+    '#states' => array(
+      'disabled' => array(
+        ':input[name="job_reminder_disable"]' => array('checked' => TRUE)
+      )
+    )
+  );
+
+  $form['reminder_message']['reminder_tokens'] = array(
+    '#theme' => 'token_tree',
+    '#token_types' => array('job')
+  );
+
+  $form['date_due_message'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Date Due Message'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+    '#group' => 'settings'
+  );
+
+  $form['date_due_message']['date_due_about'] = array(
+    '#markup' => t('The following information will be used in the email sent out when the
+      due date arrives for a job. There is also an option to turn off
+      this notification, if you so choose.')
+  );
+
+  $form['date_due_message']['job_date_due_disable'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Disable date due notifcations'),
+    '#default_value' => variable_get('job_date_due_disable', 0)
+  );
+
+  $form['date_due_message']['job_date_due_subject'] = array(
+    '#type' => 'textfield',
+    '#default_value' => variable_get('job_date_due_subject', _jobbag_default_date_due_subject()),
+    '#states' => array(
+      'disabled' => array(
+        ':input[name="job_date_due_disable"]' => array('checked' => TRUE)
+      )
+    )
+  );
+
+  $form['date_due_message']['job_date_due_message'] = array(
+    '#type' => 'textarea',
+    '#default_value' => variable_get('job_date_due_message', _jobbag_default_date_due_message()),
+    '#states' => array(
+      'disabled' => array(
+        ':input[name="job_date_due_disable"]' => array('checked' => TRUE)
+      )
+    )
+  );
+
+  $form['date_due_message']['date_due_tokens'] = array(
+    '#theme' => 'token_tree',
+    '#token_types' => array('job')
+  );
+
+  $form['past_due_message'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Past Due Message'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+    '#group' => 'settings'
+  );
+
+  $form['past_due_message']['past_due_about'] = array(
+    '#markup' => t('The following information will be used in the email sent out when the
+      due date has passed for a job. There is also an option to turn off
+      this notification, if you so choose.')
+  );
+
+  $form['past_due_message']['job_past_due_disable'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Disable past due notifcations'),
+    '#default_value' => variable_get('job_past_due_disable', 0)
+  );
+
+  $form['past_due_message']['job_past_due_subject'] = array(
+    '#type' => 'textfield',
+    '#default_value' => variable_get('job_past_due_subject', _jobbag_default_past_due_subject()),
+    '#states' => array(
+      'disabled' => array(
+        ':input[name="job_past_due_disable"]' => array('checked' => TRUE)
+      )
+    )
+  );
+
+  $form['past_due_message']['job_past_due_message'] = array(
+    '#type' => 'textarea',
+    '#default_value' => variable_get('job_past_due_message', _jobbag_default_past_due_message()),
+    '#states' => array(
+      'disabled' => array(
+        ':input[name="job_past_due_disable"]' => array('checked' => TRUE)
+      )
+    )
+  );
+
+  $form['past_due_message']['past_due_tokens'] = array(
+    '#theme' => 'token_tree',
+    '#token_types' => array('job')
+  );
+
+  $form['closed_message'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Closed Message'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+    '#group' => 'settings'
+  );
+
+  $form['closed_message']['cancelled_about'] = array(
+    '#markup' => t('The following information will be used in the email sent out when the
+      job has been closed. There is also an option to turn off
+      this notification, if you so choose.')
+  );
+
+  $form['closed_message']['job_closed_disable'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Disable closed notifcations'),
+    '#default_value' => variable_get('job_closed_disable', 0)
+  );
+
+  $form['closed_message']['job_closed_subject'] = array(
+    '#type' => 'textfield',
+    '#default_value' => variable_get('job_closed_subject', _jobbag_default_closed_subject()),
+    '#states' => array(
+      'disabled' => array(
+        ':input[name="job_closed_disable"]' => array('checked' => TRUE)
+      )
+    )
+  );
+
+  $form['closed_message']['job_closed_message'] = array(
+    '#type' => 'textarea',
+    '#default_value' => variable_get('job_closed_message', _jobbag_default_closed_message()),
+    '#states' => array(
+      'disabled' => array(
+        ':input[name="job_closed_disable"]' => array('checked' => TRUE)
+      )
+    )
+  );
+
+  $form['closed_message']['closed_tokens'] = array(
+    '#theme' => 'token_tree',
+    '#token_types' => array('job')
+  );
+
+  $form['cancelled_message'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Cancellation Message'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+    '#group' => 'settings'
+  );
+
+  $form['cancelled_message']['cancelled_about'] = array(
+    '#markup' => t('The following information will be used in the email sent out when the
+      job has been canceled. There is also an option to turn off
+      this notification, if you so choose.')
+  );
+
+  $form['cancelled_message']['job_cancelled_disable'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Disable cancelled notifcations'),
+    '#default_value' => variable_get('job_cancelled_disable', 0)
+  );
+
+  $form['cancelled_message']['job_cancelled_subject'] = array(
+    '#type' => 'textfield',
+    '#default_value' => variable_get('job_cancelled_subject', _jobbag_default_cancelled_subject()),
+    '#states' => array(
+      'disabled' => array(
+        ':input[name="job_cancelled_disable"]' => array('checked' => TRUE)
+      )
+    )
+  );
+
+  $form['cancelled_message']['job_cancelled_message'] = array(
+    '#type' => 'textarea',
+    '#default_value' => variable_get('job_cancelled_message', _jobbag_default_cancelled_message()),
+    '#states' => array(
+      'disabled' => array(
+        ':input[name="job_cancelled_disable"]' => array('checked' => TRUE)
+      )
+    )
+  );
+
+  $form['cancelled_message']['cancelled_tokens'] = array(
+    '#theme' => 'token_tree',
+    '#token_types' => array('job')
+  );
+
+  return system_settings_form($form);
 }

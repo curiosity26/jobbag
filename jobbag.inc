@@ -51,13 +51,46 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     $form['field_job_client']['#disabled'] = TRUE;
   }
 
+  $form_state['settings'] = array(
+    '#type' => 'vertical_tabs'
+  );
+
+  $form['reminder_settings'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Reminder'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+    '#group' => 'settings'
+  );
+
+  $form['reminder_settings']['reminder_date'] = array(
+    '#type' => 'actions',
+    '#tree' => TRUE,
+    '#element_suffix' => t('before due date')
+  );
+
+  $form['reminder_settings']['reminder_date']['metric'] = array(
+    '#type' => 'textfield',
+    '#size' => 3,
+    '#maxlength' => 2,
+    '#default_value' => $job->getReminderMetric()
+  );
+
+  $form['reminder_settings']['reminder_date']['unit'] = array(
+    '#type' => 'select',
+    '#options' => array(
+      'i' => t('Minute(s)'),
+      'g' => t('Hour(s)'),
+      'j' => t('Day(s)')
+    ),
+    '#default_value' => $job->getReminderUnit()
+  );
 
   $form['status_options'] = array(
     '#type' => 'fieldset',
     '#title' => t('Status'),
     '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-    '#weight' => 0
+    '#collapsed' => FALSE,
   );
 
   $form['status_options']['status'] = array(
@@ -68,14 +101,18 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#default_value' => isset($job->status) ? $job->status : 1
   );
 
-  $form['operations']['add'] = array(
+  $form['actions'] = array(
+    '#type' => 'actions'
+  );
+
+  $form['actions']['add'] = array(
     '#type' => 'submit',
     '#value' => $op == 'add' ? t('Create job') : t('Save job'),
     '#weight' => 49
   );
 
   if ($op != 'add' && jobbag_access('delete', $job)) {
-    $form['operations']['delete'] = array(
+    $form['actions']['delete'] = array(
       '#type' => 'submit',
       '#value' => t('Delete'),
       '#submit' => 'jobbag_type_form_delete',
@@ -93,7 +130,7 @@ function jobbag_type_form_validate(&$form, &$form_state) {
 
 function jobbag_type_form_submit($form, &$form_state) {
   $job = $form_state['job'];
-  $controller = entity_get_controller($job->entityType(), $job);
+  $controller = entity_get_controller($job->entityType());
   $values = $form_state['values'];
   $job->status = $values['status'];
 

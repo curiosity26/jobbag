@@ -6,8 +6,90 @@ class JobEntityController extends EntityAPIController {
     return parent::buildContent($entity, $view_mode, $langcode, $content);
   }
 
+  static public function reminderUnitValues() {
+    return array(
+      'j' => 86400,
+      'g' => 3600,
+      'i' => 60
+    );
+  }
+
+  static public function reminderTime($metric = NULL, $unit = NULL) {
+    if (!$metric) {
+      $metric = variable_get('job_reminder_date_metric', 0);
+    }
+    if (!$unit) {
+      $unit = variable_get('job_reminder_date_unit', 'j');
+    }
+    $units = self::reminderUnitValues();
+
+    return $metric * $units[$unit];
+  }
+
+  static public function reminderFromTime($time) {
+    $units = self::reminderUnitValues();
+
+    foreach ($units as $u => $t) {
+      if ($time > $t) {
+        return array(
+          'unit' => $u,
+          'metric' => $time / $t
+        );
+      }
+    }
+
+    return array(
+      'unit' => variable_get('job_reminder_date_unit', 'j'),
+      'metric' => variable_get('job_reminder_date_metric', 0)
+    );
+  }
+
+  public function getReminder(JobBag $job) {
+    $time = $job->data['reminder_date'];
+    return $this->reminderFromTime($time);
+  }
+
+  public function getReminderUnit(JobBag $job) {
+    $reminder = $this->getReminder($job);
+    return $reminder['unit'];
+  }
+
+  public function getReminderMetric(JobBag $job) {
+    $reminder = $this->getReminder($job);
+    return $reminder['metric'];
+  }
+
+  public function setReminder(JobBag $job, $metric = NULL, $unit = NULL) {
+    if (!$metric) {
+      $metric = variable_get('job_reminder_date_metric', 0);
+    }
+    if (!$unit) {
+      $unit = variable_get('job_reminder_date_unit', 'j');
+    }
+    $units = self::reminderUnitValues();
+    $this->setReminderTime($job, $metric * $units[$unit]);
+  }
+
+  public function setReminderTime(JobBag $job, $time) {
+    $job->data['reminder_date'] = $time;
+  }
+
   public function save($entity) {
     $actions = array();
+
+    $schema = drupal_get_schema('jobbag');
+
+    if (!isset($entity->data)) {
+      $entity->data = array();
+    }
+
+    $data = array_diff_key(get_object_vars($entity), $schema['fields']);
+    if (!empty($data)) {
+      foreach ($data as $key => $value) {
+        $entity->data[$key] = $value;
+      }
+    }
+
     if (empty($entity->created) && (!empty($entity->is_new) || !$entity->identifier())) {
       $entity->created = REQUEST_TIME;
       $entity->setClient($entity->client_id);

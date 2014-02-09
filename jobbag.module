@@ -143,7 +143,7 @@ function jobbag_menu() {
     'page callback' => 'jobbag_type_page',
     'access callback' => 'jobbag_access',
     'access arguments' => array('create'),
-    'file' => 'jobbag.types.php',
+    'file' => 'jobbag.inc',
     'type' => MENU_LOCAL_ACTION,
     'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
     'tab_parent' => 'admin/jobs',
@@ -158,7 +158,7 @@ function jobbag_menu() {
       'page arguments' => array('jobbag_type_form', 'add', $type->type),
       'access callback' => 'jobbag_access',
       'access arguments' => array('create', NULL, NULL, $type->type),
-      'file' => 'jobbag.types.php',
+      'file' => 'jobbag.inc',
       'type' => MENU_LOCAL_ACTION,
       'context' => MENU_CONTEXT_INLINE
     );
@@ -184,7 +184,7 @@ function jobbag_menu() {
     'page arguments' => array('jobbag_type_form', 'edit', NULL, 1),
     'access callback' => 'jobbag_access',
     'access arguments' => array('edit', 1, NULL, $type->type),
-    'file' => 'jobbag.types.php',
+    'file' => 'jobbag.inc',
     'type' => MENU_LOCAL_TASK,
     'weight' => 0
   );
@@ -197,7 +197,7 @@ function jobbag_menu() {
     'page arguments' => array('jobbag_delete', 1),
     'access callback' => 'jobbag_access',
     'access arguments' => array('delete',  1, NULL, $type->type),
-    'file' => 'jobbag.types.php',
+    'file' => 'jobbag.inc',
   );
 
   // Job Client
@@ -237,7 +237,7 @@ function jobbag_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('jobbag_list'),
     'access arguments' => array('administer jobs'),
-    'file' => 'jobbag.admin.php',
+    'file' => 'jobbag.admin.inc',
     'type' => MENU_NORMAL_ITEM,
     'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE
   );
@@ -246,6 +246,14 @@ function jobbag_menu() {
     'title' => 'List',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10
+  );
+
+  $menu['admin/config/jobbag'] = array(
+    'title' => 'Job Bag',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('jobbag_admin_form'),
+    'type' => MENU_NORMAL_ITEM,
+    'access arguments' => array('administer jobs')
   );
 
   return $menu;

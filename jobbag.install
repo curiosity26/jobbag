@@ -1,11 +1,9 @@
 <?php
 
 function jobbag_schema() {
-	
-  $t = get_t();
 
   $schema['jobbag'] = array(
-    'description' => $t('Job Bag Entities'),
+    'description' => st('Job Bag Entities'),
     'fields' => array(
       'jid' => array(
         'type' => 'serial',
@@ -47,15 +45,21 @@ function jobbag_schema() {
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-        'description' => t('The date the job was closed'),
+        'description' => st('The date the job was closed'),
         'initial' => 0
       ),
       'cancelled' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-        'description' => t('The date the job was cancelled'),
+        'description' => st('The date the job was cancelled'),
         'initial' => 0
+      ),
+      'data' => array(
+        'type' => 'text',
+        'size' => 'medium',
+        'serialize' => TRUE,
+        'not null' => FALSE
       )
     ),
     'foreign keys' => array(
@@ -72,7 +76,7 @@ function jobbag_schema() {
    );
 
   $schema['jobbag_type'] = array(
-    'description' => $t('The types of jobs for use with {jobbag}'),
+    'description' => st('The types of jobs for use with {jobbag}'),
     'fields' => array(
       'id' => array(
         'type' => 'serial',
@@ -96,10 +100,10 @@ function jobbag_schema() {
         // not safe to use it at this point.
         'default' => 0x01,
         'size' => 'tiny',
-        'description' => 'The exportable status of the entity.',
+        'description' => st('The exportable status of the entity.'),
       ),
       'module' => array(
-        'description' => 'The name of the providing module if the entity has been defined in code.',
+        'description' => st('The name of the providing module if the entity has been defined in code.'),
         'type' => 'varchar',
         'length' => 255,
         'not null' => FALSE,
@@ -116,7 +120,7 @@ function jobbag_schema() {
   );
 
   $schema['jobbag_client'] = array(
-    'description' => $t('An id to build a relationship between the job and the client'),
+    'description' => st('An id to build a relationship between the job and the client'),
     'fields' => array(
       'cid' => array(
         'type' => 'serial',
@@ -157,7 +161,7 @@ function jobbag_schema() {
         'size' => 'tiny'
       ),
       'module' => array(
-        'description' => 'The name of the providing module if the entity has been defined in code.',
+        'description' => st('The name of the providing module if the entity has been defined in code.'),
         'type' => 'varchar',
         'length' => 255,
         'not null' => FALSE,
@@ -174,7 +178,7 @@ function jobbag_install() {
   $default = array();
 
   $default['type'] = 'default';
-  $default['label'] = st('Default Job');
+  $default['label'] = st('Basic Job');
   $default['status'] = ENTITY_IN_CODE;
   $default['module'] = 'jobbag';
   $default['weight'] = 0;

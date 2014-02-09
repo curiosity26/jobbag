@@ -81,7 +81,7 @@ function jobbag_default_rules_configuration() {
 
   $loop_rule->action('job_send_email', array(
       'job' => 'job',
-      'subject' => '[job:job_number] is approaching it\'s due date',
+      'subject' => '[job:job_number] is approaching its due date',
       'message' => 'Job number [job:job_number] is due to be complete as of [job:job_due_date].
           Details about this job can be found at [job:url].
 
