@@ -13,6 +13,7 @@ class JobBag extends Entity {
   public $changed;
   public $closed;
   public $cancelled;
+  public $data = array();
 
   public function __construct($values = array()) {
     if (isset($values['user'])) {

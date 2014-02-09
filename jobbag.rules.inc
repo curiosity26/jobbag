@@ -21,106 +21,143 @@ function jobbag_rules_condition_info() {
 }
 
 function jobbag_rules_action_info() {
-  // TODO: define any custom actions to be handled on the job here
-	$defaults = array(
-      'parameter' => array(
-        'job' => array(
-            'type' => 'entity',
-            'label' => t('Job'),
-            'default mode' => 'selector'
-          ),
-        'subject' => array(
-            'type' => 'text',
-            'label' => t('Subject'),
-            'restriction' => 'input'
-          ),
-        'message' => array(
-            'type' => 'text',
-            'label' => t('Email message'),
-            'restriction' => 'input'
-          )
-        ),
-      'group' => t('Job'),
-      'access callback' => 'rules_user_integration_access'
-    );
 
-	$actions['job_send_email'] = $defaults + array(
-      'label' => t('Send a job alert email'),
-      'base' => 'rules_action_job_send_email'
-    );
+  $actions['job_notifications'] = array(
+    'label' => t('Process job notifications settings'),
+    'base' => 'rules_actions_job_notifications',
+    'named parameter' => TRUE,
+    'parameter' => array(
+      'entity' => array(
+        'type' => 'entity',
+        'label' => t('Job'),
+      )
+    ),
+    'group' => t('Job'),
+    'access callback' => 'rules_user_integration_access'
+  );
 
-	return $actions;
+  $actions['job_send_notification'] = array(
+    'label' => t('Send a tokenized notification email about a job'),
+    'base' => 'rules_actions_job_send_notification',
+    'name parameter' => TRUE,
+    'parameter' => array(
+      'entity' => array(
+        'type' => 'entity',
+        'label' => t('Job')
+      ),
+      'subject' => array(
+        'type' => 'text',
+        'label' => t('Subject')
+      ),
+      'message' => array(
+        'type' => 'text',
+        'label' => t('Message')
+      )
+    ),
+    'group' => t('Job'),
+    'access callback' => 'rules_user_integration_access'
+  );
+
+  return $actions;
 }
 
 function jobbag_default_rules_configuration() {
   // TODO: define default rules
-  // TODO: define rule for scheduling when new job is created
-  // TODO: define notification rule for date due reminder
-  // TODO: define notification rule for due date arrival
   // TODO: define notification rule for due date past, recreating itself until removed by the job cancelled/completed/deleted rule
   // TODO: define rule for removing rules in the sytem when cancelled, completed, or deleted
 
   $rules = array();
 
-  $rule = rules_reaction_rule(array(
-      'jobs' => array('type' => 'list<entity>', 'label' => 'Jobs')
+  $job_notify = rules_reaction_rule();
+  $job_notify->event('job_save');
+  $job_notify->action('job_notifications');
+  $rules['job_notification_setup'] = $job_notify;
+
+  $closed = rules_reaction_rule();
+  $closed->event('job_closed');
+  $closed->action('job_send_notification', array(
+      'entity' => $closed->pluginParameterInfo()['entity'],
+      'subject' => variable_get('job_closed_subject', _jobbag_default_closed_subject()),
+      'message' => variable_get('job_closed_message', _jobbag_default_closed_message())
     )
   );
+  $rules['job_closed_send'] = $closed;
 
-  $rule->label = t('Check active jobs to see if their due date is approaching');
-  $rule->event('job_cron_check_jobs');
-  $rule->active = TRUE;
-
-  $loop_rule = rule();
-  $loop_rule->label = t('Check if jobs are approaching their due date');
-  $loop_rule->condition('job_check_due_date', array(
-      'job' => 'job',
-      'days' => 2
+  $cancelled = rules_reaction_rule();
+  $cancelled->event('job_cancelled');
+  $cancelled->action('job_send_notification', array(
+      'entity' => $closed->pluginParameterInfo()['entity'],
+      'subject' => variable_get('job_cancelled_subject', _jobbag_default_cancelled_subject()),
+      'message' => variable_get('job_cancelled_message', _jobbag_default_cancelled_message())
     )
   );
-
-  $loop_rule->action('job_send_email', array(
-      'job' => 'job',
-      'subject' => '[job:job_number] is approaching its due date',
-      'message' => 'Job number [job:job_number] is due to be complete as of [job:job_due_date].
-          Details about this job can be found at [job:url].
-
-          Thank You'
-    )
-  );
-
-  $loop = rules_loop(array(
-      'list:select' => 'jobs',
-      'item:var' => 'job',
-      'item:label' => t('Job'),
-      'item:type' => 'job'
-    )
-  )->action($loop_rule);
-
-  $rule->action($loop);
-
-  $rules['jobbag_check_due_date'] = $rule;
+  $rules['job_cancelled_send'] = $cancelled;
 
   return $rules;
 }
 
-function rules_condition_job_check_due_date($job, $days = 0) {
-	if (is_numeric($job) || is_string($job))
-		$job = jobbag_load((int) $job);
-	if (!$job->job_due_date && $job->jid)
-		$job = jobbag_load($job->jid);
-	$dateraw = field_get_items('job', $job, 'job_due_date');
-	if (!empty($dateraw)) {
-		$date = field_view_value('job', $job, 'job_due_date', $dateraw, 'full');
-		return strtotime("+$days Days") == strtotime($date['#markup']);
-	}
-	
-	return FALSE;
+/* Actions Callbacks */
+
+function rules_action_job_notifications($args, $element) {
+  module_load_include('inc', 'jobbag', 'jobbag.defaults');
+
+  $job = $args['entity'];
+  $user = user_load($job->uid);
+
+  $notifications = array(
+    'reminder' => $job->getReminder(),
+    'date_due' => strtotime($job->job_due_date),
+    'past_due' => strtotime($job->job_due_date) + 86400,
+  );
+
+  foreach ($notifications as $notify => $time) {
+    $component = rules_config_load('job_'.$job->identifier().'_'.$notify);
+    if ($job->data[$notify.'_enabled'] == TRUE) {
+      $schedule_settings = array(
+        'job_'.$job->identifier().'_'.$notify.'_send',
+        $time,
+        'job_'.$job->identifier().'_'.$notify
+      );
+
+      $reminder_send = rule();
+      $reminder_send->action('entity_fetch', array(
+          'type' => 'job',
+          'id' => $job->identifier()
+        )
+      );
+
+      $reminder_send->action('job_send_notification', array(
+        'entity' => $args['state']['entity'],
+        'subject' => variable_get('job_'.$notify.'_subject', _jobbag_default_reminder_subject()),
+        'message' => variable_get('job_'.$notify.'_message', _jobbag_default_reminder_message()),
+        'langcode' => $user->language
+      ));
+
+      $reminder_send->save('job_'.$job->identifier().'_'.$notify.'_send', 'jobbag');
+
+      $schedule_rule = rule();
+      $schedule_rule->label = t('Set a @notify notification for @job',
+        array('@job' => $job->title, '@notify' => $notify));
+      $schedule_rule->action('schedule', $schedule_settings);
+      $schedule_rule->save('job_'.$job->identifier().'_'.$notify, 'jobbag');
+    }
+    elseif ($component) {
+      rules_config_delete(array('job_'.$job->identifier().'_'.$notify, 'job_'.$job->identifier().'_'.$notify.'_send'));
+    }
+  }
 }
 
+function rules_action_job_send_notification($args, $element) {
+  $job = $args['entity'];
+  $user = user_load($job->uid);
+  $subject = token_replace($args['subject'], array('job' => $job));
+  $message = token_replace($args['message'], array('job' => $job));
 
-function rules_action_job_send_email($job, $subject, $message) {
-	$user = user_load(array('uid' => $job->uid));
-	drupal_mail('jobbag', 'job_check_due_date', $user->mail, $job->language, 
-		array('job' => $job, 'subject' => $subject, 'message' => $message));
+  $action = rules_action('mail', array(
+    'to' => $user->mail,
+    'subject' => $subject,
+    'message' => $message
+  ));
+
+  $action->execute();
 }
