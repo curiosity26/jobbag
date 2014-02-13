@@ -1,9 +1,9 @@
 <?php
 
 function jobbag_schema() {
-
+  $t = get_t();
   $schema['jobbag'] = array(
-    'description' => st('Job Bag Entities'),
+    'description' => $t('Job Bag Entities'),
     'fields' => array(
       'jid' => array(
         'type' => 'serial',
@@ -45,14 +45,14 @@ function jobbag_schema() {
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-        'description' => st('The date the job was closed'),
+        'description' => $t('The date the job was closed'),
         'initial' => 0
       ),
       'cancelled' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-        'description' => st('The date the job was cancelled'),
+        'description' => $t('The date the job was cancelled'),
         'initial' => 0
       ),
       'data' => array(
@@ -76,7 +76,7 @@ function jobbag_schema() {
    );
 
   $schema['jobbag_type'] = array(
-    'description' => st('The types of jobs for use with {jobbag}'),
+    'description' => $t('The types of jobs for use with {jobbag}'),
     'fields' => array(
       'id' => array(
         'type' => 'serial',
@@ -100,10 +100,10 @@ function jobbag_schema() {
         // not safe to use it at this point.
         'default' => 0x01,
         'size' => 'tiny',
-        'description' => st('The exportable status of the entity.'),
+        'description' => $t('The exportable status of the entity.'),
       ),
       'module' => array(
-        'description' => st('The name of the providing module if the entity has been defined in code.'),
+        'description' => $t('The name of the providing module if the entity has been defined in code.'),
         'type' => 'varchar',
         'length' => 255,
         'not null' => FALSE,
@@ -120,7 +120,7 @@ function jobbag_schema() {
   );
 
   $schema['jobbag_client'] = array(
-    'description' => st('An id to build a relationship between the job and the client'),
+    'description' => $t('An id to build a relationship between the job and the client'),
     'fields' => array(
       'cid' => array(
         'type' => 'serial',
@@ -161,7 +161,7 @@ function jobbag_schema() {
         'size' => 'tiny'
       ),
       'module' => array(
-        'description' => st('The name of the providing module if the entity has been defined in code.'),
+        'description' => $t('The name of the providing module if the entity has been defined in code.'),
         'type' => 'varchar',
         'length' => 255,
         'not null' => FALSE,
@@ -191,16 +191,16 @@ function jobbag_install() {
 
 function _jobbag_create_default_type(&$context) {
   $default = array();
-
+  $t = get_t();
   $default['type'] = 'default';
-  $default['label'] = st('Basic Job');
+  $default['label'] = $t('Basic Job');
   $default['status'] = ENTITY_IN_CODE;
   $default['module'] = 'jobbag';
   $default['weight'] = 0;
 
   $entity = entity_create('job_type', $default);
   entity_save('job_type', $entity);
-  $context['results'][] = st('Created job type: %type', array('%type' => $entity->label()));
+  $context['results'][] = $t('Created job type: %type', array('%type' => $entity->label()));
 }
 
 function _jobbag_create_default_fields(&$context) {
@@ -256,10 +256,10 @@ function _jobbag_create_default_fields(&$context) {
     'cardinality' =>  1,
     'settings' => array(),
   );
-
+  $t = get_t();
   foreach($fields as $name => $field) {
     field_create_field($field);
-    $context['results'][] = st('Field %name created...', array('%name' => $name));
+    $context['results'][] = $t('Field %name created...', array('%name' => $name));
   }
 
 }
@@ -355,15 +355,17 @@ function _jobbag_create_default_instances(&$content) {
     ),
   );
 
+  $t = get_t();
   foreach ($instances as $name => $instance) {
     field_create_instance($instance);
-    $context['results'][] = st('Instance %name created...', array('%name' => $name));
+    $context['results'][] = $t('Instance %name created...', array('%name' => $name));
   }
 }
 
 function _jobbag_create_batch_finish($success, $results, $operations) {
+  $t = get_t();
   if ($success) {
-    $message = t('Field and instance installation succeeded...');
+    $message = $t('Field and instance installation succeeded...');
   }
   else {
     $error_operation = reset($operations);
