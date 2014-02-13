@@ -183,7 +183,7 @@ function jobbag_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('jobbag_type_form', 'edit', NULL, 1),
     'access callback' => 'jobbag_access',
-    'access arguments' => array('edit', 1, NULL, $type->type),
+    'access arguments' => array('edit', 1, NULL),
     'file' => 'jobbag.inc',
     'type' => MENU_LOCAL_TASK,
     'weight' => 0
@@ -196,7 +196,7 @@ function jobbag_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('jobbag_delete', 1),
     'access callback' => 'jobbag_access',
-    'access arguments' => array('delete',  1, NULL, $type->type),
+    'access arguments' => array('delete',  1, NULL),
     'file' => 'jobbag.inc',
   );
 
