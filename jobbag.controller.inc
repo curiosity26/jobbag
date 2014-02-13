@@ -152,7 +152,7 @@ class JobTypeControllerExportable extends EntityAPIControllerExportable {
     parent::save($entity);
 
     $client_instance = field_read_instance('job', 'job_client', $entity->type);
-    if (!$client_instance) {
+    if ($client_instance === FALSE) {
       $client_instance = array(
         'field_name' => 'job_client_id',
         'entity_type' => 'job',
@@ -182,7 +182,7 @@ class JobTypeControllerExportable extends EntityAPIControllerExportable {
     }
 
     $job_ref_instance = field_read_instance('job', 'job_reference', $entity->type);
-    if (!$job_ref_instance) {
+    if ($job_ref_instance === FALSE) {
       $job_ref_instance = array(
         'field_name' => 'job_reference',
         'entity_type' => 'job',
@@ -208,7 +208,7 @@ class JobTypeControllerExportable extends EntityAPIControllerExportable {
     }
 
     $date_instance = field_read_instance('job', 'job_due_date', $entity->type);
-    if (!$date_instance) {
+    if ($date_instance === FALSE) {
       $date_instance = array(
         'field_name' => 'job_due_date',
         'entity_type' => 'job',
@@ -230,7 +230,7 @@ class JobTypeControllerExportable extends EntityAPIControllerExportable {
     }
 
     $desc_instance = field_read_instance('job', 'job_description', $entity->type);
-    if (!$desc_instance) {
+    if ($desc_instance === FALSE) {
       $desc_instance = array(
         'field_name' => 'job_description',
         'entity_type' => 'job',
