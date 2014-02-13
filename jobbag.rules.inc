@@ -67,7 +67,7 @@ function jobbag_default_rules_configuration() {
 
   $job_notify = rules_reaction_rule();
   $job_notify->event('job_insert');
-  $job_notify->action('job_notifications');
+  $job_notify->action('job_notifications', array('entity' => 'job'));
   $rules['job_notification_setup'] = $job_notify;
 
   $closed = rules_reaction_rule();
