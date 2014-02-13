@@ -175,6 +175,21 @@ function jobbag_schema() {
 }
 
 function jobbag_install() {
+  $batch = array(
+    'title' => st('Installing Job Fields and Instances'),
+    'init_message' => st('Field installation starting...'),
+    'operations' => array(
+      array('_jobbag_create_default_fields', array()),
+      array('_jobbag_create_default_instances', array()),
+      array('_jobbag_create_default_type', array())
+    ),
+    'finished' => '_jobbag_create_batch_finish',
+    'file' => drupal_get_path('module', 'jobbag') . '/jobbag.install',
+  );
+  batch_set($batch);
+}
+
+function _jobbag_create_default_type(&$context) {
   $default = array();
 
   $default['type'] = 'default';
@@ -185,18 +200,7 @@ function jobbag_install() {
 
   $entity = entity_create('job_type', $default);
   entity_save('job_type', $entity);
-
-  $batch = array(
-    'title' => st('Installing Job Fields and Instances'),
-    'init_message' => st('Field installation starting...'),
-    'operations' => array(
-      array('_jobbag_create_default_fields', array()),
-      array('_jobbag_create_default_instances', array())
-    ),
-    'finished' => '_jobbag_create_batch_finish',
-    'file' => drupal_get_path('module', 'jobbag') . '/jobbag.install',
-  );
-  batch_set($batch);
+  $context['results'][] = st('Created job type: %type', array('%type' => $entity->label()));
 }
 
 function _jobbag_create_default_fields(&$context) {

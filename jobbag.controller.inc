@@ -145,8 +145,6 @@ class JobTypeControllerExportable extends EntityAPIControllerExportable {
       $entity->created = $entity->changed;
     }
 
-    $entity->prefix = strtoupper($entity->prefix);
-
     if (empty($this->module)) {
       $entity->module = 'jobbag';
     }
