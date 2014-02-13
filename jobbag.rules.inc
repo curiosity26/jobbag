@@ -2,7 +2,7 @@
 
 function jobbag_rules_event_info() {
 	$events = array();
-	// TODO: Create any special event definitions
+	// TODO: Create any job_closed and job_cancelled events
 
 	return $events;
 }
@@ -66,14 +66,14 @@ function jobbag_default_rules_configuration() {
   $rules = array();
 
   $job_notify = rules_reaction_rule();
-  $job_notify->event('job_save');
+  $job_notify->event('job_insert');
   $job_notify->action('job_notifications');
   $rules['job_notification_setup'] = $job_notify;
 
   $closed = rules_reaction_rule();
   $closed->event('job_closed');
   $closed->action('job_send_notification', array(
-      'entity' => 'entity',
+      'entity' => 'job',
       'subject' => variable_get('job_closed_subject', _jobbag_default_closed_subject()),
       'message' => variable_get('job_closed_message', _jobbag_default_closed_message())
     )
@@ -83,7 +83,7 @@ function jobbag_default_rules_configuration() {
   $cancelled = rules_reaction_rule();
   $cancelled->event('job_cancelled');
   $cancelled->action('job_send_notification', array(
-      'entity' => 'entity',
+      'entity' => 'job',
       'subject' => variable_get('job_cancelled_subject', _jobbag_default_cancelled_subject()),
       'message' => variable_get('job_cancelled_message', _jobbag_default_cancelled_message())
     )
