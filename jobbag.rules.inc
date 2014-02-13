@@ -62,6 +62,7 @@ function jobbag_rules_action_info() {
 }
 
 function jobbag_default_rules_configuration() {
+  module_load_include('inc', 'jobbag', 'jobbag.defaults');
   $rules = array();
 
   $job_notify = rules_reaction_rule();
