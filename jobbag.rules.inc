@@ -72,7 +72,7 @@ function jobbag_default_rules_configuration() {
   $closed = rules_reaction_rule();
   $closed->event('job_closed');
   $closed->action('job_send_notification', array(
-      'entity' => $closed->pluginParameterInfo()['entity'],
+      'entity' => $closed->availableVariables()['entity'],
       'subject' => variable_get('job_closed_subject', _jobbag_default_closed_subject()),
       'message' => variable_get('job_closed_message', _jobbag_default_closed_message())
     )
@@ -82,7 +82,7 @@ function jobbag_default_rules_configuration() {
   $cancelled = rules_reaction_rule();
   $cancelled->event('job_cancelled');
   $cancelled->action('job_send_notification', array(
-      'entity' => $closed->pluginParameterInfo()['entity'],
+      'entity' => $cancelled->availableVariables()['entity'],
       'subject' => variable_get('job_cancelled_subject', _jobbag_default_cancelled_subject()),
       'message' => variable_get('job_cancelled_message', _jobbag_default_cancelled_message())
     )
