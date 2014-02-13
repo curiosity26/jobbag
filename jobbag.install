@@ -186,12 +186,22 @@ function jobbag_install() {
   $entity = entity_create('job_type', $default);
   entity_save('job_type', $entity);
 
-  _jobbag_create_default_fields();
+  $batch = array(
+    'title' => st('Installing Job Fields and Instances'),
+    'init_message' => st('Field installation starting...'),
+    'operations' => array(
+      array('_jobbag_create_default_fields', array()),
+      array('_jobbag_create_default_instances', array())
+    ),
+    'finished' => '_jobbag_create_batch_finish',
+    'file' => drupal_get_path('module', 'jobbag') . '/jobbag.install',
+  );
+  batch_set($batch);
 }
 
-function _jobbag_create_default_fields() {
-	
-  $client_field = array(
+function _jobbag_create_default_fields(&$context) {
+  $fields = array();
+  $fields['client_field'] = array(
     'field_name' => 'job_client_id',
     'module' => 'jobbag',
     'type' => 'entityreference',
@@ -208,7 +218,7 @@ function _jobbag_create_default_fields() {
     )
   );
 
-  $job_ref_field = array(
+  $fields['job_ref_field'] = array(
     'field_name' => 'job_reference',
     'module' => 'jobbag',
     'type' => 'entityreference',
@@ -225,7 +235,7 @@ function _jobbag_create_default_fields() {
     )
   );
 
-  $date_field = array(
+  $fields['date_field'] = array(
     'field_name' => 'job_due_date',
     'module' => 'jobbag',
     'type' => 'date',
@@ -235,7 +245,7 @@ function _jobbag_create_default_fields() {
     )
   );
 
-  $desc_field = array(
+  $fields['desc_field'] = array(
     'field_name' => 'job_description',
     'module' => 'jobbag',
     'type' => 'text_with_summary',
@@ -243,7 +253,17 @@ function _jobbag_create_default_fields() {
     'settings' => array(),
   );
 
-  $client_instance = array(
+  foreach($fields as $name => $field) {
+    field_create_field($field);
+    $context['results'][] = st('Field %name created...', array('%name' => $name));
+  }
+
+}
+
+function _jobbag_create_default_instances(&$content) {
+  $instances = array();
+
+  $instances['client_instance'] = array(
     'field_name' => 'job_client_id',
     'entity_type' => 'job',
     'bundle' => 'default',
@@ -269,7 +289,7 @@ function _jobbag_create_default_fields() {
     )
   );
 
-  $job_ref_instance = array(
+  $instances['job_ref_instance'] = array(
     'field_name' => 'job_reference',
     'entity_type' => 'job',
     'bundle' => 'default',
@@ -291,7 +311,7 @@ function _jobbag_create_default_fields() {
     ),
   );
 
-  $date_instance = array(
+  $instances['date_instance'] = array(
     'field_name' => 'job_due_date',
     'entity_type' => 'job',
     'bundle' => 'default',
@@ -309,7 +329,7 @@ function _jobbag_create_default_fields() {
     ),
   );
 
-  $desc_instance = array(
+  $instances['desc_instance'] = array(
     'field_name' => 'job_description',
     'entity_type' => 'job',
     'bundle' => 'default',
@@ -331,14 +351,22 @@ function _jobbag_create_default_fields() {
     ),
   );
 
-  field_create_field($client_field);
-  field_create_field($job_ref_field);
-  field_create_field($date_field);
-  field_create_field($desc_field);
-  field_create_instance($client_instance);
-  field_create_instance($job_ref_instance);
-  field_create_instance($date_instance);
-  field_create_instance($desc_instance);
+  foreach ($instances as $name => $instance) {
+    field_create_instance($instance);
+    $context['results'][] = st('Instance %name created...', array('%name' => $name));
+  }
+}
+
+function _jobbag_create_batch_finish($success, $results, $operations) {
+  if ($success) {
+    $message = t('Field and instance installation succeeded...');
+  }
+  else {
+    $error_operation = reset($operations);
+    $message = 'An error occurred while processing ' . $error_operation[0] . ' with arguments :'
+      . print_r($error_operation[0], TRUE);
+  }
+  drupal_set_message($message);
 }
 
 function jobbag_uninstall() {
