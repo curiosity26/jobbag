@@ -93,8 +93,7 @@ function rules_actions_job_notifications($args, $element) {
     'past_due' => strtotime($job->job_due_date) + 86400,
   );
   foreach ($notifications as $notify => $time) {
-    $component = rules_config_load('job_'.$job->identifier().'_'.$notify);
-    dpm($component, 'Component');
+    $component = rules_config_load('job_'.$job->identifier().'_'.$notify.'_set');
     if ((($job->data[$notify.'_override'] == FALSE
           && $job->data[$notify.'_override'] == variable_get('job_'.$notify.'_disabled', FALSE))
         || ($job->data[$notify.'_override'] == TRUE
@@ -131,7 +130,29 @@ function rules_actions_job_notifications($args, $element) {
         $schedule_rule->label = t('Set a @notify notification for @job',
           array('@job' => $job->title, '@notify' => $notify));
         $schedule_rule->save('job_'.$job->identifier().'_'.$notify, 'jobbag');
-        dpm($schedule_rule, 'Schedule Rule');
+        $actions = rules_action_set(array(
+            'component' => array(
+              'type' => 'text',
+              'label' => t('Component')
+            ),
+            'date' => array(
+              'type' => 'date',
+              'label' => t('Scheduled evaluation date'),
+            ),
+            'identifier' => array(
+              'type' => 'text',
+              'label' => t('Identifier')
+            )
+          ),
+          array(
+            'component' => 'job_'.$job->identifier().'_'.$notify.'_send',
+            'date' => $time,
+            'identifier' => 'job_'.$job->identifier().'_'.$notify
+          )
+        );
+        $actions->action($schedule_rule);
+        $actions->save('job_'.$job->identifier().'_'.$notify.'_set', 'jobbag');
+        dpm($actions, 'Schedule Rule');
       }
       else {
         $component->settings = $schedule_settings;
@@ -141,9 +162,10 @@ function rules_actions_job_notifications($args, $element) {
     elseif ((($job->data[$notify.'_override'] == FALSE
           && $job->data[$notify.'_override'] != variable_get('job_'.$notify.'_disabled', FALSE))
         || ($job->data[$notify.'_override'] == TRUE
-            && $job->data[$notify.'_override'] == variable_get('job_'.$notify.'_disabled', FALSE)))
+          && $job->data[$notify.'_override'] == variable_get('job_'.$notify.'_disabled', FALSE)))
       && isset($component)) {
-      rules_config_delete(array('job_'.$job->identifier().'_'.$notify.'_send', 'job_'.$job->identifier().'_'.$notify));
+      rules_config_delete(array('job_'.$job->identifier().'_'.$notify.'_send',
+        'job_'.$job->identifier().'_'.$notify, 'job_'.$job->identifier().'_'.$notify.'_set'));
     }
   }
 }
