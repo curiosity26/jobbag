@@ -71,7 +71,7 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
       variable_get('job_reminder_disabled', FALSE) ? 'Enable' : 'Disable')),
     '#default_value' => isset($job->data['reminder_override'])
         ? $job->data['reminder_override']
-        : !variable_get('job_reminder_disabled', FALSE)
+        : FALSE
   );
 
   $form['reminder_settings']['reminder_date'] = array(
@@ -226,6 +226,8 @@ function jobbag_type_form_submit($form, &$form_state) {
     $job->setReminder($values['reminder_settings']['reminder_date']['metric'],
       $values['reminder_settings']['reminder_date']['unit']);
   }
+
+  dpm($values, 'Values');
 
   $job->data['date_due_override'] = $values['date_due_settings']['date_due_override'];
   $job->data['past_due_override'] = $values['past_due_settings']['past_due_override'];
