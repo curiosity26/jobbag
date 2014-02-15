@@ -87,8 +87,7 @@ function rules_actions_job_notifications($args, $element) {
   module_load_include('inc', 'jobbag', 'jobbag.defaults');
   dpm($args, 'Args');
   dpm($element, 'Element');
-  print_r($element);
-  $job = $args['state']->get('job');
+  /*$job = $args['state']->get('job');
   $notifications = array(
     'reminder' => $job->getReminder(),
     'date_due' => strtotime($job->job_due_date),
@@ -128,7 +127,7 @@ function rules_actions_job_notifications($args, $element) {
     elseif ($job->data[$notify.'_enabled'] == FALSE && $component !== FALSE) {
       entity_delete('rule', $component);
     }
-  }
+  }*/
 }
 
 function rules_actions_job_send_notification($args, $element) {
