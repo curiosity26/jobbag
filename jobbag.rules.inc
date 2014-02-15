@@ -94,7 +94,6 @@ function rules_actions_job_notifications($args, $element) {
   );
   foreach ($notifications as $notify => $time) {
     $component = rules_config_load('job_'.$job->identifier().'_'.$notify);
-    dpm($component);
     if ((($job->data[$notify.'_override'] == FALSE
           && $job->data[$notify.'_override'] == variable_get('job_'.$notify.'_disabled', FALSE))
         || ($job->data[$notify.'_override'] == TRUE
@@ -125,7 +124,7 @@ function rules_actions_job_notifications($args, $element) {
         $reminder_send->save('job_'.$job->identifier().'_'.$notify.'_send', 'jobbag');
       }
 
-      if (!isset($component)) {
+      if ($component == FALSE) {
         $schedule_rule = rule();
         $schedule_rule->label = t('Set a @notify notification for @job',
           array('@job' => $job->title, '@notify' => $notify));
