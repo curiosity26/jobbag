@@ -51,7 +51,7 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     $form['field_job_client']['#disabled'] = TRUE;
   }
 
-  $form_state['settings'] = array(
+  $form['settings'] = array(
     '#type' => 'vertical_tabs'
   );
 
