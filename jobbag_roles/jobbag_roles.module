@@ -6,541 +6,569 @@ define('JOB_ROLE_FILTER_DENY', 0);
 /* Entity Info */
 
 function jobbag_roles_entity_info() {
-    $entity['job_roles'] = array(
-        'label' => t('Job Bag Role'),
-        'entity class' => 'JobRole',
-        'controller class' => 'JobRoleControllerExportable',
-        'base table' => 'jobbag_roles',
-        'exportable' => TRUE,
-        'bundles' => array(),
-        'entity keys' => array(
-            'id' => 'rid',
-            'label' => 'label'
-        ),
-        'access callback' => 'jobbag_roles_access',
-        'admin ui' => array(
-            'path' => 'admin/jobs/roles',
-            'menu wildcard' => '%job_roles',
-            'controller class' => 'JobRoleUIController',
-        ),
-    );
-    
-    return $entity;
+  $entity['job_roles'] = array(
+    'label' => t('Job Bag Role'),
+    'entity class' => 'JobRole',
+    'controller class' => 'JobRoleControllerExportable',
+    'base table' => 'jobbag_roles',
+    'exportable' => TRUE,
+    'bundles' => array(),
+    'entity keys' => array(
+      'id' => 'rid',
+      'label' => 'label'
+    ),
+    'access callback' => 'jobbag_roles_access',
+    'admin ui' => array(
+      'path' => 'admin/jobs/roles',
+      'menu wildcard' => '%job_roles',
+      'controller class' => 'JobRoleUIController',
+    ),
+  );
+
+  return $entity;
 }
 
 /* Hook Theme */
 
 function jobbag_roles_theme($existing, $type, $theme, $path) {
-    $themes = array();
-    
-    $themes['job_role_username'] = array(
-        'arguments' => array('vars' => NULL)
-    );
-    
-    $themes['job_roles_job_form'] = array(
-        'render element' => 'form'
-    );
-    
-    $themes['job_permissions_job_form'] = array(
-        'render element' => 'form'
-    );
-    
-    $themes['job_roles_form'] = array(
-        'render element' => 'form'
-    );
-    
-    return $themes;
+  $themes = array();
+
+  $themes['job_role_username'] = array(
+    'arguments' => array('vars' => NULL)
+  );
+
+  $themes['job_roles_job_form'] = array(
+    'render element' => 'form'
+  );
+
+  $themes['job_permissions_job_form'] = array(
+    'render element' => 'form'
+  );
+
+  $themes['job_roles_form'] = array(
+    'render element' => 'form'
+  );
+
+  return $themes;
 }
 
 /* Hook Menu */
 
 function jobbag_roles_admin_paths() {
-    return array(
-            'job/*/roles' => TRUE,
-            'job/*/permissions' => TRUE,
-	);
+  return array(
+    'job/*/roles' => TRUE,
+    'job/*/permissions' => TRUE,
+  );
 }
 
 function jobbag_roles_menu() {
-    $menu['job/%job/roles'] = array(
-        'title' => t('Roles'),
-        'page callback' => 'drupal_get_form',
-        'page arguments' => array('job_roles_job_form', 1),
-        'access arguments' => array('administer job roles'),
-        'type' => MENU_LOCAL_TASK,
-        'file' => 'jobbag_roles.roles.php',
-        'weight' => 1
-    );
-    
-    $menu['job/%job/permissions'] = array(
-        'title' => t('Permissions'),
-        'page callback' => 'drupal_get_form',
-        'page arguments' => array('job_permissions_job_form', 1),
-        'access arguments' => array('administer job permissions'),
-        'type' => MENU_LOCAL_TASK,
-        'file' => 'jobbag_roles.permissions.php',
-        'weight' => 2
-    );
-    
-    return $menu;
+  $menu['job/%job/roles'] = array(
+    'title' => t('Roles'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('job_roles_job_form', 1),
+    'access arguments' => array('administer job roles'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'jobbag_roles.roles.php',
+    'weight' => 1
+  );
+
+  $menu['job/%job/permissions'] = array(
+    'title' => t('Permissions'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('job_permissions_job_form', 1),
+    'access arguments' => array('administer job permissions'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'jobbag_roles.permissions.php',
+    'weight' => 2
+  );
+
+  return $menu;
 }
 
 /* Permissions */
 
 function jobbag_roles_permission() {
-    $perms = array(
-        'administer job roles' => array(
-            'title' => t('Administer Job Roles'),
-            'description' => t('Administer how users interface with a job through role levels'),
-            'restrict access' => TRUE
-            ),
-        'administer job permissions' => array(
-            'title' => t('Administer Job Permissions'),
-            'description' => t('Administer what permissions users under a particular role recieve on a job to job basis'),
-            'restrict access' => TRUE
-            ),
-        );
-    
-    return $perms;
+  $perms = array(
+    'administer job roles' => array(
+      'title' => t('Administer Job Roles'),
+      'description' => t('Administer how users interface with a job through role levels'),
+      'restrict access' => TRUE
+    ),
+    'administer job permissions' => array(
+      'title' => t('Administer Job Permissions'),
+      'description' => t('Administer what permissions users under a particular role recieve on a job to job basis'),
+      'restrict access' => TRUE
+    ),
+  );
+
+  return $perms;
 }
 
 function jobbag_roles_access($op, $entity = NULL, $account = NULL, $job_type = NULL) {
-    if (!$account)
-        $account = $GLOBALS['user'];
-    
-    if ($account->uid == 1)
-        return TRUE;
-    
-    if (user_access('administer job roles', $account))
-        return TRUE;
-    
-    return FALSE;
+  if (!$account) {
+    $account = $GLOBALS['user'];
+  }
+
+  if ($account->uid == 1) {
+    return TRUE;
+  }
+
+  if (user_access('administer job roles', $account)) {
+    return TRUE;
+  }
+
+  return FALSE;
 }
 
 /* Hook Trigger */
 
 function jobbag_roles_trigger_info() {
-    $triggers = array(
-        'jobbag_roles' => array(
-            'jobbag_roles_add_users' => array(
-                'label' => t('When a user is added to a job role')
-            )
-        )
-    );
-    
-    return $triggers;
+  $triggers = array(
+    'jobbag_roles' => array(
+      'jobbag_roles_add_users' => array(
+        'label' => t('When a user is added to a job role')
+      )
+    )
+  );
+
+  return $triggers;
 }
 
 /* Job Hooks */
 
 function jobbag_roles_jobbag_load($job) {
-    job_load_roles($job);
+  job_load_roles($job);
 }
 
 function jobbag_roles_job_list_operations($job, $query = NULL) {
-    return array(
-        'roles' => array(
-            'title' => t('roles'),
-            'href' => 'job/'.$job->jid.'/roles',
-            'query' => $query
-            ),
-        'permissions' => array(
-            'title' => t('permissions'),
-            'href' => 'job/'.$job->jid.'/permissions',
-            'query' => $query
-            )
-        );
+  return array(
+    'roles' => array(
+      'title' => t('roles'),
+      'href' => 'job/'.$job->jid.'/roles',
+      'query' => $query
+    ),
+    'permissions' => array(
+      'title' => t('permissions'),
+      'href' => 'job/'.$job->jid.'/permissions',
+      'query' => $query
+    )
+  );
 }
 
 /* Utility Functions */
 
 function job_role_perms() {
-    static $perms;
-    
-    if (!$perms) {
-        $perms = &drupal_static(__FUNCTION__);
-    }
-    
-    if (!$perms) {
-        $perms = array(
-            'full access' => array(
-                'title' => t('Full Access (No Restrictions)'),
-                'description' => t('Unrestricted access to all areas of a job')
-            ),
-            'view' => array(
-                'title' => t('View Job'),
-                'description' => t('Allow users of this role to view this job\'s base details')
-            ),
-            'edit' => array(
-                'title' => t('Edit Job'),
-                'description' => t('Allow users of this role to edit the base details of this job')
-            ),
-            'delete' => array(
-                'title' => t('Delete Job'),
-                'description' => t('Allow users of this role to delete this job')
-            )
-        );
-        
-        $perms += module_invoke_all('job_role_perms');
-    }
-    
-    return $perms;
+  $perms = &drupal_static(__FUNCTION__, array());
+
+  if (empty($perms)) {
+    $perms = array(
+      'full access' => array(
+        'title' => t('Full Access (No Restrictions)'),
+        'description' => t('Unrestricted access to all areas of a job')
+      ),
+      'view' => array(
+        'title' => t('View Job'),
+        'description' => t('Allow users of this role to view this job\'s base details')
+      ),
+      'edit' => array(
+        'title' => t('Edit Job'),
+        'description' => t('Allow users of this role to edit the base details of this job')
+      ),
+      'delete' => array(
+        'title' => t('Delete Job'),
+        'description' => t('Allow users of this role to delete this job')
+      )
+    );
+
+    $perms += module_invoke_all('job_role_perms');
+  }
+
+  return $perms;
 }
 
 function job_role_access($op, $role, $account = NULL) {
-    global $user;
-    if (!isset($account))
-        $account = $user;
-        
-    if (!empty($role->users) && !empty($role->permissions) && in_array($account->uid, $role->users))
-        return in_array('full access', $role->permissions) || in_array($op, $role->permissions);
+  global $user;
+  if (!isset($account)) {
+    $account = $user;
+  }
+
+  if (!empty($role->users) && !empty($role->permissions) && in_array($account->uid, $role->users)) {
+    return in_array('full access', $role->permissions) || in_array($op, $role->permissions);
+  }
 }
 
 function jobbag_roles_job_access($op, $job = NULL, $account = NULL) {
-    if ($job && !empty($job->roles)) {
-        foreach ($job->roles as $role) {
-            $access = job_role_access($op, $role, $account);
-            if ($access === TRUE)
-                return $access;
-        }
-        if (is_bool($access))
-            return $access;
+  if ($job && !empty($job->roles)) {
+    foreach ($job->roles as $role) {
+      $access = job_role_access($op, $role, $account);
+      if ($access === TRUE) {
+        return TRUE;
+      }
     }
+    if (is_bool($access)) {
+      return $access;
+    }
+  }
 }
 
 function job_load_roles($job, $reset = FALSE) {
-    static $roles;
-    
-    if (!is_object($job))
-        return FALSE;
-    
-    if (!$roles)
-        $roles = &drupal_static(__FUNCTION__);
-    
-    if (empty($roles[$job->jid]) || $reset) {
-        $result = db_select('jobbag_job_roles', 'r')->fields('r', array('rid', 'jrid', 'users', 'permissions'))->condition('jid', $job->jid)->groupBy('rid')->execute();
-        
-        while($role = $result->fetchObject()) {
-            $entity = job_roles_load($role->rid);
-            $entity->users = array_values(unserialize($role->users));  
-            if (!empty($role->permissions))
-                $entity->permissions = array_values(unserialize($role->permissions));
-            $roles[$job->jid][$entity->rid] = $entity;
-        }
+  $roles = &drupal_static(__FUNCTION__, array(), $reset);
+
+  if (!is_object($job)) {
+    return FALSE;
+  }
+
+  if ($reset || empty($roles) || empty($roles[$job->jid])) {
+    $result = db_select('jobbag_job_roles', 'r')
+      ->fields('r', array('rid', 'jrid', 'users', 'permissions'))
+      ->condition('jid', $job->identifier())
+      ->groupBy('rid')
+      ->execute();
+
+    while($role = $result->fetchObject()) {
+      $entity = job_roles_load($role->rid);
+      $entity->users = array_values(unserialize($role->users));
+      if (!empty($role->permissions)) {
+        $entity->permissions = array_values(unserialize($role->permissions));
+      }
+      $roles[$job->jid][$entity->rid] = $entity;
     }
-    
-    $job->roles = $roles[$job->jid];
+  }
+
+  $job->roles = $roles[$job->jid];
+
+  return $job;
 }
 
 function job_get_by_user($account = NULL) {
-    global $user;
-    static $jobs;
-    
-    if (!$account)
-        $account = $user;
-    
-    if (!$jobs)
-        $jobs = &drupal_static(__FUNCTION__);
-    
-    if (empty($jobs[$account->uid])) {
-        $jids = db_select('jobbag_job_roles', 'r')->distinct()->fields('r', array('jid'))->join('jobbag_job_roles_users', 'u', 'u.jrid = r.jrid')->where('u.uid', array($account->uid))->execute()->fetchAllAssoc('jid');
-        $jobs[$account->uid] = jobbag_load_multiple($jids);
-    }
-    
-    return $jobs;
+  $jobs = &drupal_static(__FUNCTION__, array());
+
+  if (!$account) {
+      $account = $GLOBALS['user'];
+  }
+
+  if (empty($jobs)) {
+      $jobs = &drupal_static(__FUNCTION__);
+  }
+
+  if (empty($jobs[$account->uid])) {
+    $jids = db_select('jobbag_job_roles', 'r')
+      ->distinct()
+      ->fields('r', array('jid'))
+      ->join('jobbag_job_roles_users', 'u', 'u.jrid = r.jrid')
+      ->where('u.uid', array($account->uid))->execute()->fetchAllAssoc('jid');
+
+    $jobs[$account->uid] = jobbag_load_multiple($jids);
+  }
+
+  return $jobs;
 }
 
 function job_roles_eligible_users($role = NULL, $accounts = NULL) {
-    if (!$accounts)
-	$accounts = user_load_multiple(FALSE, array('status' => 1));
-    elseif (!empty($accounts) && !is_object(current($accounts)))
-	$accounts = user_load_multiple($accounts, array('status' => 1));
-    
-    if (isset($role) && !empty($role->filter_users)) {
-        if ($role->filter_by == JOB_ROLE_FILTER_ALLOW) {
-            $deny = array_intersect_key($users, $role->filter_users);
-            $accounts = array_diff_key($accounts, $deny);
-        }
-        else {
-            $accounts = array_intersect_key($accounts, $role->filter_users);
-        }
+  if (!$accounts) {
+    $accounts = user_load_multiple(FALSE, array('status' => 1));
+  }
+  elseif (!empty($accounts) && !is_object(current($accounts))) {
+    $accounts = user_load_multiple($accounts, array('status' => 1));
+  }
+
+  if (isset($role) && !empty($role->filter_users)) {
+    if ($role->filter_by == JOB_ROLE_FILTER_ALLOW) {
+      $deny = array_intersect_key($accounts, $role->filter_users);
+      $accounts = array_diff_key($accounts, $deny);
     }
-    
-    $ret = array(0 => '-- None --');
-    foreach ($accounts as $account) {
-	$ret[$account->uid] = theme('job_role_username', array('account' => $account));
+    else {
+      $accounts = array_intersect_key($accounts, $role->filter_users);
     }
-    
-    return $ret;
+  }
+
+  $ret = array(0 => '-- None --');
+  foreach ($accounts as $account) {
+    $ret[$account->uid] = theme('job_role_username', array('account' => $account));
+  }
+
+  return $ret;
 }
 
 function job_role_has_permission($op, $role) {
-    if (!is_array($role->permissions))
-        return FALSE;
-    return in_array($op, $role->permissions);
+  if (!is_array($role->permissions)) {
+    return FALSE;
+  }
+  return in_array($op, $role->permissions);
 }
 
 /* Entity Functions */
 
 function job_roles_load($id, $reset = FALSE) {
-    $roles = job_roles_load_multiple(array($id), array(), $reset);
-    return !empty($roles) ? array_shift($roles) : new stdClass();
+  $roles = job_roles_load_multiple(array($id), array(), $reset);
+  return !empty($roles) ? array_shift($roles) : new stdClass();
 }
 
 function job_roles_load_multiple($ids = FALSE, $conditions = array(), $reset = FALSE) {
-    return entity_load('job_roles', $ids, $conditions, $reset);
+  return entity_load('job_roles', $ids, $conditions, $reset);
 }
 
 function job_roles_save($role) {
-    return entity_save('job_roles', $role);
+  return entity_save('job_roles', $role);
 }
 
 function job_roles_form($form, &$form_state) {
-    $entity = $form_state['build_info']['args'][0];
-    $op = $form_state['build_info']['args'][1];
-    
-    if (!$entity) {
-        $entity = entity_create('job_roles', array('filter_by' => JOB_ROLE_FILTER_ALLOW));
-        $form_state['build_info']['args'][0] = $entity;
+  $entity = $form_state['build_info']['args'][0];
+  $op = $form_state['build_info']['args'][1];
+
+  if (!$entity) {
+    $entity = entity_create('job_roles', array('filter_by' => JOB_ROLE_FILTER_ALLOW));
+    $form_state['build_info']['args'][0] = $entity;
+  }
+
+  if ($op == 'add' || $op == 'edit') {
+    $perms = job_role_perms();
+
+    $form['perms'] = array('#type' => 'value', '#value' => $perms);
+
+    $form['label'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Label'),
+      '#required' => TRUE,
+      '#default_value' => $entity->label()
+    );
+
+    $form['machine_name'] = array(
+      '#type' => 'machine_name',
+      '#required' => TRUE,
+      '#machine_name' => array(
+        'source' => array('label'),
+        'exists' => '_job_role_mc_exists',
+      ),
+      '#default_value' => $entity->machine_name
+    );
+
+    if ($op == 'edit') {
+      $form['machine_name']['#disabled'] = TRUE;
     }
-    
-    if ($op == 'add' || $op == 'edit') {
-        $perms = job_role_perms();
-        
-        $form['perms'] = array('#type' => 'value', '#value' => $perms);
-        
-        $form['label'] = array(
-            '#type' => 'textfield',
-            '#title' => t('Label'),
-            '#required' => TRUE,
-            '#default_value' => $entity->label
-        );
-        
-        $form['machine_name'] = array(
-            '#type' => 'machine_name',
-            '#required' => TRUE,
-            '#machine_name' => array(
-                'source' => array('label'),
-                'exists' => '_job_role_mc_exists',
-            ),            
-            '#default_value' => $entity->machine_name
-        );
-        
-        if ($op == 'edit')
-            $form['machine_name']['#disabled'] = TRUE;
-        
-        $form['filter'] = array(
-            '#type' => 'fieldset',
-            '#title' => 'Filter',
-            '#collapsed' => FALSE,
-            '#collapsible' => TRUE
-        );
-        
-        $form['filter']['filter_by'] = array(
-            '#type' => 'radios',
-            '#options' => array(
-                'allow' => t('All users are available for this role except...'),
-                'deny' => t('Only these users are available for this role...')
-            ),
-            '#default_value' => $entity->filter_by == 0 ? 'deny' : 'allow'
-        );
-        
-        $form['filter']['filter_users'] = array(
-            '#type' => 'select',
-            '#options' => job_roles_eligible_users(),
-            '#default_value' => $entity->filter_users,
-            '#multiple' => TRUE,
-            '#size' => 10,
-            '#default_value' => array_keys($entity->filter_users)
-        );
-	
-	$form['users'] = array(
-            '#type' => 'fieldset',
-            '#title' => 'Default Users',
-            '#collapsed' => FALSE,
-            '#collapsible' => TRUE
-        );
-	
-	$form['users']['default_users'] = array(
-            '#type' => 'select',
-            '#options' => job_roles_eligible_users(),
-            '#default_value' => $entity->default_users,
-            '#multiple' => TRUE,
-            '#size' => 10,
-            '#default_value' => array_keys($entity->default_users)
-        );
-        
-        $form['permission'] = array(
-            '#prefix' => '<h2>'.t('Permissions').'</h2>',
-        );
-        
-        $form['perm_checkbox']['#tree'] = TRUE;
-        
-        foreach($perms as $name => $perm) {
-            $form['perm_object'][$name] = array(
-                '#type' => 'item',
-                '#markup' => $perm['title'],
-                '#description' => $perm['description']
-            );
-            
-            $form['perm_checkbox'][$name] = array(
-                '#type' => 'checkbox',
-                '#return_value' => $name,
-                '#default_value' => job_role_has_permission($name, $entity) ? $name : FALSE,
-                '#prefix' => '<span style="text-align:center;">',
-                '#suffix' => '</span>'
-            );
-        }
-        
-        $form['save'] = array(
-            '#type' => 'submit',
-            '#value' => t('Save role')
-        );
-        
-        $form['#validate'] = array('job_roles_form_validate');
+
+    $form['filter'] = array(
+      '#type' => 'fieldset',
+      '#title' => 'Filter',
+      '#collapsed' => FALSE,
+      '#collapsible' => TRUE
+    );
+
+    $form['filter']['filter_by'] = array(
+      '#type' => 'radios',
+      '#options' => array(
+        'allow' => t('All users are available for this role except...'),
+        'deny' => t('Only these users are available for this role...')
+      ),
+      '#default_value' => $entity->filter_by == 0 ? 'deny' : 'allow'
+    );
+
+    $form['filter']['filter_users'] = array(
+      '#type' => 'select',
+      '#options' => job_roles_eligible_users(),
+      '#multiple' => TRUE,
+      '#size' => 10,
+      '#default_value' => array_keys($entity->filter_users)
+    );
+
+    $form['users'] = array(
+      '#type' => 'fieldset',
+      '#title' => 'Default Users',
+      '#collapsed' => FALSE,
+      '#collapsible' => TRUE
+    );
+
+    $form['users']['default_users'] = array(
+      '#type' => 'select',
+      '#options' => job_roles_eligible_users(),
+      '#multiple' => TRUE,
+      '#size' => 10,
+      '#default_value' => array_keys($entity->default_users)
+    );
+
+    $form['permission'] = array(
+      '#prefix' => '<h2>'.t('Permissions').'</h2>',
+    );
+
+    $form['perm_checkbox']['#tree'] = TRUE;
+
+    foreach($perms as $name => $perm) {
+      $form['perm_object'][$name] = array(
+        '#type' => 'item',
+        '#markup' => $perm['title'],
+        '#description' => $perm['description']
+      );
+
+      $form['perm_checkbox'][$name] = array(
+        '#type' => 'checkbox',
+        '#return_value' => $name,
+        '#default_value' => job_role_has_permission($name, $entity) ? $name : FALSE,
+        '#prefix' => '<span style="text-align:center;">',
+        '#suffix' => '</span>'
+      );
     }
-    
-    return $form;
+
+    $form['save'] = array(
+      '#type' => 'submit',
+      '#value' => t('Save role')
+    );
+
+    $form['#validate'] = array('job_roles_form_validate');
+  }
+
+  return $form;
 }
 
 function _job_role_mc_exists($value) {
-    if (!$value)
-        return FALSE;
-    
-    $exists = db_select('jobbag_roles', 'r')->fields('r', array('machine_name'))->condition('machine_name', $value)->execute()->fetchField();
-    if ($exists)
-        return TRUE;
+  if (!$value) {
     return FALSE;
+  }
+
+  $exists = db_select('jobbag_roles', 'r')
+    ->fields('r', array('machine_name'))
+    ->condition('machine_name', $value)
+    ->execute()->fetchField();
+
+  if ($exists) {
+    return TRUE;
+  }
+  return FALSE;
 }
 
 function job_roles_form_validate(&$form, &$form_state) {
-    // Validation functions here
+  // Validation functions here
 }
 
 function job_roles_form_submit($form, &$form_state) {
-    $entity = $form_state['build_info']['args'][0];
-    $values = $form_state['values'];
-    unset($values['filter_users'][0]); // Remove -- None --, if there are other users selected, just use those
-    $entity->label = $values['label'];
-    $entity->machine_name = $values['machine_name'];
-    $entity->filter_by = $values['filter_by'] == 'allow';
-    $entity->filter_users = $values['filter_users'];
-    $default_users = job_roles_eligible_users($entity, $values['default_users']);
-    $entity->default_users = array_keys($default_users);
-    $entity->permissions = array_filter($values['perm_checkbox']);
-    
-    $entity->save();
-    
-    $form_state['redirect'] = 'admin/jobs/roles';
+  $entity = $form_state['build_info']['args'][0];
+  $values = $form_state['values'];
+  unset($values['filter_users'][0]); // Remove -- None --, if there are other users selected, just use those
+  $entity->label = $values['label'];
+  $entity->machine_name = $values['machine_name'];
+  $entity->filter_by = $values['filter_by'] == 'allow';
+  $entity->filter_users = $values['filter_users'];
+  $default_users = job_roles_eligible_users($entity, $values['default_users']);
+  $entity->default_users = array_keys($default_users);
+  $entity->permissions = array_filter($values['perm_checkbox']);
+
+  entity_save($entity->entityType(), $entity);
+
+  $form_state['redirect'] = 'admin/jobs/roles';
 }
 
 /* Theme Functions */
 
 function theme_job_role_username($vars) {
-    if (empty($vars['account']))
-        $vars['account'] = $GLOBALS['user'];
-    $output = $vars['account']->name;
-    return $output;
+  if (empty($vars['account'])) {
+    $vars['account'] = $GLOBALS['user'];
+  }
+  $output = $vars['account']->name;
+  return $output;
 }
 
 function theme_job_roles_job_form($vars) {
-    $form = $vars['form'];
-    
-    $roles = $form['roles']['#value'];
-    $rows = array();
-    
-    foreach ($roles as $rid => $role) {
-        $rows[] = array(
-            'label' => array(
-                'data' => drupal_render($form['role_name'][$rid]),
-                'header' => TRUE
-            ),
-            'users' => array(
-                'data' => drupal_render($form['role_users'][$rid]),
-                'class' => 'select-box'
-            )
-        );
-    }
-    
-    
-    $variables = array(
-        'header' => array(),
-        'rows' => $rows,
-        'attributes' => array('id' => 'job_roles_table'),
-        'empty' => t('No roles have been created. !create_role?', array('!create_role' => l('Create a Role', 'admin/jobs/roles')))
+  $form = $vars['form'];
+
+  $roles = $form['roles']['#value'];
+  $rows = array();
+
+  foreach ($roles as $rid => $role) {
+    $rows[] = array(
+      'label' => array(
+        'data' => drupal_render($form['role_name'][$rid]),
+        'header' => TRUE
+      ),
+      'users' => array(
+        'data' => drupal_render($form['role_users'][$rid]),
+        'class' => 'select-box'
+      )
     );
-    
-    $output = theme('table', $variables).drupal_render_children($form);
-    
-    return $output;
+  }
+
+
+  $variables = array(
+    'header' => array(),
+    'rows' => $rows,
+    'attributes' => array('id' => 'job_roles_table'),
+    'empty' => t('No roles have been created. !create_role?',
+      array('!create_role' => l('Create a Role', 'admin/jobs/roles')))
+  );
+
+  return theme('table', $variables).drupal_render_children($form);
 }
 
 function theme_job_permissions_job_form($vars) {
-    $form = &$vars['form'];
-    
-    $perms = $form['perms']['#value'];
-    $roles = $form['roles']['#value'];
-    $header = array(t('Permission'));
-    $rows = array();
-    
-    foreach($roles as $rid => $role) {
-        $header[] = array(
-            'data' => $role->label,
-            'header' => TRUE,
-            );
-    }
-    
-    reset($roles);
-    
-    foreach ($perms as $name => $perm) {
-        $row = array(
-            'perm_name' => array(
-                'data' => drupal_render($form['permission'][$name]),
-                'class' => array('permission')
-            )
-        );
-        
-        foreach ($roles as $rid => $role) {
-            $row[$role->rid] = array(
-                'data' => drupal_render($form['checkboxes'][$name][$role->rid]),
-                'class' => 'checkbox'
-            );
-        }
-        
-        $rows[] = $row;
-    }
-    
-    $variables = array(
-        'header' => $header,
-        'rows' => $rows,
-        'attributes' => array('id' => 'job_permissions_table')
+  $form = &$vars['form'];
+
+  $perms = $form['perms']['#value'];
+  $roles = $form['roles']['#value'];
+  $header = array(t('Permission'));
+  $rows = array();
+
+  foreach($roles as $role) {
+    $header[] = array(
+      'data' => $role->label,
+      'header' => TRUE,
     );
-    
-    $output = theme('table', $variables).drupal_render_children($form);
-    
-    return $output;
+  }
+
+  reset($roles);
+
+  foreach ($perms as $name => $perm) {
+    $row = array(
+      'perm_name' => array(
+        'data' => drupal_render($form['permission'][$name]),
+        'class' => array('permission')
+      )
+    );
+
+    foreach ($roles as $rid => $role) {
+      $row[$role->rid] = array(
+        'data' => drupal_render($form['checkboxes'][$name][$role->rid]),
+        'class' => 'checkbox'
+      );
+    }
+
+    $rows[] = $row;
+  }
+
+  $variables = array(
+    'header' => $header,
+    'rows' => $rows,
+    'attributes' => array('id' => 'job_permissions_table')
+  );
+
+  $output = theme('table', $variables).drupal_render_children($form);
+
+  return $output;
 }
 
 function theme_job_roles_form($vars) {
-    $form = &$vars['form'];
-    $rows = array();
+  $form = &$vars['form'];
+  $rows = array();
     
-    foreach($form['perms']['#value'] as $name => $perm) {
-        $row = array(
-            'perm_name' => array(
-                'data' => drupal_render($form['perm_object'][$name]),
-                'header' => TRUE
-            ),
-            'perm_element' => array(
-                'data' => drupal_render($form['perm_checkbox'][$name]),
-                'class' => 'checkbox'
-            )
-        );
-        
-        $rows[] = $row;
-    }
-    
-    $output = theme('table', array('header' => array(), 'rows' => $rows, 'attributes' => array('id' => 'role_permissions'))).drupal_render($form['save']);
-    
-    return drupal_render_children($form).$output;
+  foreach($form['perms']['#value'] as $name => $perm) {
+    $row = array(
+      'perm_name' => array(
+        'data' => drupal_render($form['perm_object'][$name]),
+        'header' => TRUE
+      ),
+      'perm_element' => array(
+        'data' => drupal_render($form['perm_checkbox'][$name]),
+        'class' => 'checkbox'
+      )
+    );
+
+    $rows[] = $row;
+  }
+
+  $form['role_permissions'] = array(
+    '#theme' => 'table',
+    '#rows' => $rows,
+    '#attributes' => array('id' => 'role_permissions')
+  );
+
+  $form['save']['#weight'] = 100;
+
+  return drupal_render_children($form);
 }

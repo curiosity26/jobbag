@@ -166,7 +166,7 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
   $form['status_options']['status'] = array(
     '#type' => 'radios',
     '#title' => 'Status',
-    '#title_display' => 'invisible',
+    '#title_display' => 'hidden',
     '#options' => job_status(),
     '#default_value' => isset($job->status) ? $job->status : 1
   );
