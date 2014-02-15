@@ -93,7 +93,7 @@ class JobEntityController extends EntityAPIController {
     if (empty($entity->created) && (!empty($entity->is_new) || !$entity->identifier())) {
       $entity->created = REQUEST_TIME;
       $entity->setClient($entity->client_id);
-      $entity->title = $this->getClient()->prefix.'-'.str_pad($entity->getClient()->sequence, 3, '0', STR_PAD_LEFT);
+      $entity->title = $entity->client->prefix.'-'.str_pad($entity->client->sequence, 3, '0', STR_PAD_LEFT);
       $entity->client->increaseSequence();
 
       $actions = trigger_get_assigned_actions('job_created');
