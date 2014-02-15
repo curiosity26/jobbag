@@ -94,41 +94,48 @@ function rules_actions_job_notifications($args, $element) {
   );
   foreach ($notifications as $notify => $time) {
     $component = rules_config_load('job_'.$job->identifier().'_'.$notify);
-    dpm($component, 'Component');
-    dpm($job, 'Job');
+    dpm($component);
     if ((($job->data[$notify.'_override'] == FALSE
           && $job->data[$notify.'_override'] == variable_get('job_'.$notify.'_disabled', FALSE))
         || ($job->data[$notify.'_override'] == TRUE
-          && $job->data[$notify.'_override'] != variable_get('job_'.$notify.'_disabled', FALSE)))
-      && isset($component)) {
+          && $job->data[$notify.'_override'] != variable_get('job_'.$notify.'_disabled', FALSE)))) {
+
       $schedule_settings = array(
         'job_'.$job->identifier().'_'.$notify.'_send',
         $time,
         'job_'.$job->identifier().'_'.$notify
       );
 
-      $reminder_send = rule();
-      $reminder_send->label = t('Send a @notify notification for @job',
-        array('@job' => $job->title, '@notify' => $notify));
-      $reminder_send->action('entity_fetch', array(
-          'type' => 'job',
-          'id' => $job->identifier()
-        )
-      );
+      if(($reminder_send = rule_config_load('job_'.$job->identifier().'_'.$notify.'_send')) === FALSE) {
+        $reminder_send = rule();
+        $reminder_send->label = t('Send a @notify notification for @job',
+          array('@job' => $job->title, '@notify' => $notify));
+        $reminder_send->action('entity_fetch', array(
+            'type' => 'job',
+            'id' => $job->identifier()
+          )
+        );
 
-      $reminder_send->action('job_send_notification', array(
-        'job' => $job,
-        'subject' => variable_get('job_'.$notify.'_subject', _jobbag_default_reminder_subject()),
-        'message' => variable_get('job_'.$notify.'_message', _jobbag_default_reminder_message())
-      ));
+        $reminder_send->action('job_send_notification', array(
+          'job' => $job,
+          'subject' => variable_get('job_'.$notify.'_subject', _jobbag_default_reminder_subject()),
+          'message' => variable_get('job_'.$notify.'_message', _jobbag_default_reminder_message())
+        ));
 
-      $reminder_send->save('job_'.$job->identifier().'_'.$notify.'_send', 'jobbag');
+        $reminder_send->save('job_'.$job->identifier().'_'.$notify.'_send', 'jobbag');
+      }
 
-      $schedule_rule = rule();
-      $schedule_rule->label = t('Set a @notify notification for @job',
-        array('@job' => $job->title, '@notify' => $notify));
-      $schedule_rule->action('schedule', $schedule_settings);
-      $schedule_rule->save('job_'.$job->identifier().'_'.$notify, 'jobbag');
+      if (!isset($component)) {
+        $schedule_rule = rule();
+        $schedule_rule->label = t('Set a @notify notification for @job',
+          array('@job' => $job->title, '@notify' => $notify));
+        $schedule_rule->action('schedule', $schedule_settings);
+        $schedule_rule->save('job_'.$job->identifier().'_'.$notify, 'jobbag');
+      }
+      else {
+        $component->settings = $schedule_settings;
+        $component->save();
+      }
     }
     elseif ((($job->data[$notify.'_override'] == FALSE
           && $job->data[$notify.'_override'] != variable_get('job_'.$notify.'_disabled', FALSE))
@@ -142,9 +149,9 @@ function rules_actions_job_notifications($args, $element) {
 
 function rules_actions_job_send_notification($args, $element) {
   $job = $args['state']->get('job')->value();
+  $subject = $args['state']->get('subject')->value();
+  $message = $args['state']->get('message')->value();
   $user = $job->user();
-  $subject = token_replace($args['subject'], array('job' => $job));
-  $message = token_replace($args['message'], array('job' => $job));
 
   $action = rules_action('mail', array(
     'to' => $user->mail,
