@@ -68,7 +68,7 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
   $form['reminder_settings']['reminder_override'] = array(
     '#type' => 'checkbox',
     '#title' => t('@override reminders for this job', array('@override' =>
-      variable_get('job_reminder_disabled', FALSE) ? 'Disable' : 'Enable')),
+      variable_get('job_reminder_disabled', FALSE) ? 'Enable' : 'Disable')),
     '#default_value' => isset($job->data['reminder_override'])
         ? $job->data['reminder_override']
         : !variable_get('job_reminder_disabled', FALSE)
@@ -109,7 +109,7 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
   $form['date_due_settings']['date_due_override'] = array(
     '#type' => 'checkbox',
     '#title' => t('@override date due notification for this job', array('@override' =>
-      variable_get('job_date_due_disabled', FALSE) ? 'Disable' : 'Enable')),
+      variable_get('job_date_due_disabled', FALSE) ? 'Enable' : 'Disable')),
     '#default_value' => isset($job->data['date_due_enabled'])
         ? $job->data['date_due_enabled']
         : FALSE
@@ -145,7 +145,7 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
   $form['closed_settings']['closed_override'] = array(
     '#type' => 'checkbox',
     '#title' => t('@override closed notification for this job', array('@override' =>
-      variable_get('job_closed_disabled', FALSE) ? 'Enable' : 'Disable')),
+      variable_get('job_closed_disabled', FALSE) ? 'Disable' : 'Enable')),
     '#default_value' => isset($job->data['closed_override'])
         ? $job->data['closed_override']
         : FALSE
@@ -163,7 +163,7 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
   $form['cancelled_settings']['cancelled_override'] = array(
     '#type' => 'checkbox',
     '#title' => t('@override cancelled notification for this job', array('@override' =>
-      variable_get('job_cancelled_disabled', FALSE) ? 'Disable' : 'Enable')),
+      variable_get('job_cancelled_disabled', FALSE) ? 'Enable' : 'Disable')),
     '#default_value' => isset($job->data['cancelled_override'])
         ? $job->data['cancelled_override']
         : FALSE
