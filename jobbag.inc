@@ -219,10 +219,9 @@ function jobbag_type_form_submit($form, &$form_state) {
   $values = $form_state['values'];
   $job->status = $values['status_options']['status'];
   // Process notification settings
-  $job->data['reminder_enabled'] =
-    (variable_get('job_reminder_disable', FALSE) == $values['reminder_settings']['reminder_override']);
+  $job->data['reminder_override'] = $values['reminder_settings']['reminder_override'];
 
-  if ($job->data['reminder_enabled'] == TRUE) {
+  if ($job->data['reminder_override'] == TRUE) {
     $job->setReminder($values['reminder_settings']['reminder_date']['metric'],
       $values['reminder_settings']['reminder_date']['unit']);
   }
