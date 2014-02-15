@@ -92,10 +92,11 @@ function rules_actions_job_notifications($args, $element) {
     'date_due' => strtotime($job->job_due_date),
     'past_due' => strtotime($job->job_due_date) + 86400,
   );
-
+  dpm($notifications, 'Notifications');
   foreach ($notifications as $notify => $time) {
     $component = rules_get_cache('comp_job_'.$job->identifier().'_'.$notify);
-    dpm($component);
+    dpm($component, 'Component');
+    dpm($job, 'Job');
     if ($job->data[$notify.'_enabled'] == TRUE && !isset($component)) {
       $schedule_settings = array(
         'job_'.$job->identifier().'_'.$notify.'_send',
