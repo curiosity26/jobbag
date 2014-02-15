@@ -124,16 +124,16 @@ function rules_actions_job_notifications($args, $element) {
         $reminder_send->save('job_'.$job->identifier().'_'.$notify.'_send', 'jobbag');
       }
 
+
       if ($component == FALSE) {
-        $schedule_rule = rule();
+        $schedule_rule = rules_action('job_'.$job->identifier().'_'.$notify, $schedule_settings);
         $schedule_rule->label = t('Set a @notify notification for @job',
           array('@job' => $job->title, '@notify' => $notify));
-        $schedule_rule->action('schedule', $schedule_settings);
         $schedule_rule->save('job_'.$job->identifier().'_'.$notify, 'jobbag');
       }
       else {
         $component->settings = $schedule_settings;
-        entity_save('rules_config', $component);
+        $component->save();
       }
     }
     elseif ((($job->data[$notify.'_override'] == FALSE

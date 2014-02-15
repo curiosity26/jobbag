@@ -227,8 +227,6 @@ function jobbag_type_form_submit($form, &$form_state) {
       $values['reminder_settings']['reminder_date']['unit']);
   }
 
-  dpm($values, 'Values');
-
   $job->data['date_due_override'] = $values['date_due_settings']['date_due_override'];
   $job->data['past_due_override'] = $values['past_due_settings']['past_due_override'];
   $job->data['closed_override'] = $values['closed_settings']['closed_override'];
