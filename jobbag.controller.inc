@@ -45,8 +45,8 @@ class JobEntityController extends EntityAPIController {
   }
 
   public function getReminder(JobBag $job) {
-    $time = $job->data['reminder_date'];
-    return $this->reminderFromTime($time);
+    $time = isset($job->data['reminder_date']) ? $job->data['reminder_date'] : NULL;
+    return $time ? $this->reminderFromTime($time) : NULL;
   }
 
   public function getReminderUnit(JobBag $job) {
