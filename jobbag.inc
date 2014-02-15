@@ -127,7 +127,7 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
   $form['past_due_settings']['past_due_override'] = array(
     '#type' => 'checkbox',
     '#title' => t('@override past due notification for this job', array('@override' =>
-      variable_get('job_past_due_disabled', FALSE) ? 'Disable' : 'Enable')),
+      variable_get('job_past_due_disabled', FALSE) ? 'Enable' : 'Disable')),
     '#default_value' => isset($job->data['past_due_override'])
         ? $job->data['past_due_override']
         : FALSE
@@ -145,7 +145,7 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
   $form['closed_settings']['closed_override'] = array(
     '#type' => 'checkbox',
     '#title' => t('@override closed notification for this job', array('@override' =>
-      variable_get('job_closed_disabled', FALSE) ? 'Disable' : 'Enable')),
+      variable_get('job_closed_disabled', FALSE) ? 'Enable' : 'Disable')),
     '#default_value' => isset($job->data['closed_override'])
         ? $job->data['closed_override']
         : FALSE
