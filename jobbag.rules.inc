@@ -126,10 +126,15 @@ function rules_actions_job_notifications($args, $element) {
 
 
       if ($component == FALSE) {
-        $schedule_rule = rules_action('job_'.$job->identifier().'_'.$notify, $schedule_settings);
+        $schedule_rule = rules_action('job_'.$job->identifier().'_'.$notify, array(
+          'component' => 'component',
+          'date' => 'date',
+          'identifier' => 'identifier'
+        ));
         $schedule_rule->label = t('Set a @notify notification for @job',
           array('@job' => $job->title, '@notify' => $notify));
         $schedule_rule->save('job_'.$job->identifier().'_'.$notify, 'jobbag');
+
         $actions = rules_action_set(array(
             'component' => array(
               'type' => 'text',
@@ -155,7 +160,7 @@ function rules_actions_job_notifications($args, $element) {
         dpm($actions, 'Schedule Rule');
       }
       else {
-        $component->settings = $schedule_settings;
+        $component->settings['date'] = $time;
         $component->save();
       }
     }
