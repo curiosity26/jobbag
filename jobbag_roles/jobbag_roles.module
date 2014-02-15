@@ -218,7 +218,7 @@ function job_load_roles($job, $reset = FALSE) {
     return FALSE;
   }
 
-  if ($reset || empty($roles) || empty($roles[$job->jid])) {
+  if ($reset || empty($roles) || empty($roles[$job->identifier()])) {
     $result = db_select('jobbag_job_roles', 'r')
       ->fields('r', array('rid', 'jrid', 'users', 'permissions'))
       ->condition('jid', $job->identifier())
@@ -235,7 +235,7 @@ function job_load_roles($job, $reset = FALSE) {
     }
   }
 
-  $job->roles = $roles[$job->jid];
+  $job->roles = $roles[$job->identifier()];
 
   return $job;
 }
