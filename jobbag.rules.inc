@@ -106,7 +106,7 @@ function rules_actions_job_notifications($args, $element) {
         'job_'.$job->identifier().'_'.$notify
       );
 
-      if(($reminder_send = rule_config_load('job_'.$job->identifier().'_'.$notify.'_send')) === FALSE) {
+      if(($reminder_send = rules_config_load('job_'.$job->identifier().'_'.$notify.'_send')) === FALSE) {
         $reminder_send = rule();
         $reminder_send->label = t('Send a @notify notification for @job',
           array('@job' => $job->title, '@notify' => $notify));
