@@ -565,10 +565,9 @@ function theme_job_roles_form($vars) {
   $form['role_permissions'] = array(
     '#theme' => 'table',
     '#rows' => $rows,
-    '#attributes' => array('id' => 'role_permissions')
+    '#attributes' => array('id' => 'role_permissions'),
+    '#suffix' => drupal_render($form['save'])
   );
-
-  $form['save']['#weight'] = 100;
 
   return drupal_render_children($form);
 }
