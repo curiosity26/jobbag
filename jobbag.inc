@@ -110,8 +110,8 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#type' => 'checkbox',
     '#title' => t('@override date due notification for this job', array('@override' =>
       variable_get('job_date_due_disabled', FALSE) ? 'Enable' : 'Disable')),
-    '#default_value' => isset($job->data['date_due_enabled'])
-        ? $job->data['date_due_enabled']
+    '#default_value' => isset($job->data['date_due_override'])
+        ? $job->data['date_due_override']
         : FALSE
   );
 
