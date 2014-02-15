@@ -16,6 +16,20 @@ function jobbag_rules_action_info() {
     'access callback' => 'rules_user_integration_access'
   );
 
+  $actions['job_notifications_cleanup'] = array(
+    'label' => t('Delete job notifications for deleted job'),
+    'base' => 'rules_actions_job_notifications_cleanup',
+    'named parameter' => TRUE,
+    'parameter' => array(
+      'job' => array(
+        'type' => 'entity',
+        'label' => t('Job'),
+      )
+    ),
+    'group' => t('Job'),
+    'access callback' => 'rules_user_integration_access'
+  );
+
   $actions['job_send_notification'] = array(
     'label' => t('Send a tokenized notification email about a job'),
     'base' => 'rules_actions_job_send_notification',
@@ -78,6 +92,12 @@ function jobbag_default_rules_configuration() {
   );
   $rules['job_cancelled_send'] = $cancelled;
 
+  $cleanse = rules_reaction_rule();
+  $cleanse->label = t('Job is deleted');
+  $cleanse->event('job_delete');
+  $cleanse->action('job_notifications_cleanup');
+  $rules['job_deleted'] = $cleanse;
+
   return $rules;
 }
 
@@ -92,18 +112,13 @@ function rules_actions_job_notifications($args, $element) {
     'date_due' => strtotime($job->job_due_date),
     'past_due' => strtotime($job->job_due_date) + 86400,
   );
+
   foreach ($notifications as $notify => $time) {
     $component = rules_config_load('job_'.$job->identifier().'_'.$notify.'_set');
     if ((($job->data[$notify.'_override'] == FALSE
           && $job->data[$notify.'_override'] == variable_get('job_'.$notify.'_disabled', FALSE))
         || ($job->data[$notify.'_override'] == TRUE
           && $job->data[$notify.'_override'] != variable_get('job_'.$notify.'_disabled', FALSE)))) {
-
-      $schedule_settings = array(
-        'job_'.$job->identifier().'_'.$notify.'_send',
-        $time,
-        'job_'.$job->identifier().'_'.$notify
-      );
 
       if(($reminder_send = rules_config_load('job_'.$job->identifier().'_'.$notify.'_send')) === FALSE) {
         $reminder_send = rule();
@@ -157,7 +172,6 @@ function rules_actions_job_notifications($args, $element) {
         );
         $actions->action($schedule_rule);
         $actions->save('job_'.$job->identifier().'_'.$notify.'_set', 'jobbag');
-        dpm($actions, 'Schedule Rule');
       }
       else {
         $component->settings['date'] = $time;
@@ -191,4 +205,19 @@ function rules_actions_job_send_notification($args, $element) {
   drupal_alter('job_send_notifcation', $action, $args, $element);
 
   $action->execute();
+}
+
+function rules_actions_job_notification_cleaup($args, $element) {
+  $job = $args['state']->get('job')->value();
+  $notifications = array(
+    'reminder' => $job->getReminder(),
+    'date_due' => strtotime($job->job_due_date),
+    'past_due' => strtotime($job->job_due_date) + 86400,
+  );
+  foreach ($notifications as $notify => $time) {
+    $comps = array('job_'.$job->identifier().'_'.$notify,
+      'job_'.$job->identifier().'_'.$notify.'_send',
+      'job_'.$job->identifier().'_'.$notify.'_set');
+    rules_config_delete($comps);
+  }
 }
