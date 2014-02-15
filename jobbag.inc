@@ -68,7 +68,8 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#title' => t('@override reminders for this job', array('@override' =>
       variable_get('job_reminder_disabled', FALSE) ? 'Disable' : 'Enable')),
     '#default_settings' => isset($job->data['reminder_enabled'])
-        ? $job->data['reminder_enabled'] == variable_get('job_reminder_disabled', FALSE) : FALSE
+        ? $job->data['reminder_enabled'] == variable_get('job_reminder_disabled', FALSE)
+        : !variable_get('job_reminder_disabled', FALSE)
   );
 
   $form['reminder_settings']['reminder_date'] = array(
@@ -105,7 +106,10 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
   $form['date_due_settings']['date_due_override'] = array(
     '#type' => 'checkbox',
     '#title' => t('@override date due notification for this job', array('@override' =>
-      variable_get('job_date_due_disabled', FALSE) ? 'Disable' : 'Enable'))
+      variable_get('job_date_due_disabled', FALSE) ? 'Disable' : 'Enable')),
+    '#default_value' => isset($job->data['date_due_override'])
+        ? $job->data['date_due_override'] == variable_get('job_date_due_disabled', FALSE)
+        : !variable_get('job_date_due_disabled', FALSE)
   );
 
   $form['past_due_settings'] = array(
@@ -121,7 +125,8 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#title' => t('@override past due notification for this job', array('@override' =>
       variable_get('job_past_due_disabled', FALSE) ? 'Disable' : 'Enable')),
     '#default_settings' => isset($job->data['past_due_enabled'])
-        ? $job->data['past_due_enabled'] == variable_get('job_past_due_disabled', FALSE) : FALSE
+        ? $job->data['past_due_enabled'] == variable_get('job_past_due_disabled', FALSE)
+        : !variable_get('job_past_due_disabled', FALSE)
   );
 
   $form['closed_settings'] = array(
@@ -153,7 +158,8 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#title' => t('@override cancelled notification for this job', array('@override' =>
       variable_get('job_cancelled_disabled', FALSE) ? 'Disable' : 'Enable')),
     '#default_settings' => isset($job->data['cancelled_enabled'])
-        ? $job->data['cancelled_enabled'] == variable_get('job_cancelled_disabled', FALSE) : FALSE
+        ? $job->data['cancelled_enabled'] == variable_get('job_cancelled_disabled', FALSE)
+        : !variable_get('job_cancelled_disabled', FALSE)
   );
 
   $form['status_options'] = array(
