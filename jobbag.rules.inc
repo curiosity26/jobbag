@@ -85,7 +85,7 @@ function jobbag_default_rules_configuration() {
 
 function rules_actions_job_notifications($args, $element) {
   module_load_include('inc', 'jobbag', 'jobbag.defaults');
-  $job = $args['state']->variables['job'];
+  $job = $args['state']->get('job')->value();
   $notifications = array(
     'reminder' => $job->getReminder(),
     'date_due' => strtotime($job->job_due_date),
