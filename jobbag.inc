@@ -152,7 +152,7 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
 
   $form['cancelled_settings'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Closed Notification'),
+    '#title' => t('Cancelled Notification'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
     '#group' => 'settings',
@@ -216,19 +216,24 @@ function jobbag_type_form_submit($form, &$form_state) {
   $job = $form_state['job'];
   $controller = entity_get_controller($job->entityType());
   $values = $form_state['values'];
-  $job->status = $values['status'];
-
+  $job->status = $values['status_options']['status'];
   // Process notification settings
-  $job->data['reminder_enabled'] = (variable_get('job_reminder_disable', FALSE) == $values['reminder_override']);
+  $job->data['reminder_enabled'] =
+    (variable_get('job_reminder_disable', FALSE) == $values['reminder_settings']['reminder_override']);
 
   if ($job->data['reminder_enabled'] == TRUE) {
-    $job->setReminder($values['reminder_date']['metric'], $values['reminder_date']['unit']);
+    $job->setReminder($values['reminder_settings']['reminder_date']['metric'],
+      $values['reminder_settings']['reminder_date']['unit']);
   }
 
-  $job->data['date_due_enabled'] = (variable_get('job_date_due_disable', FALSE) == $values['date_due_override']);
-  $job->data['past_due_enabled'] = (variable_get('job_past_due_disable', FALSE) == $values['past_due_override']);
-  $job->data['closed_enabled'] = (variable_get('job_closed_disable', FALSE) == $values['closed_override']);
-  $job->data['cancelled_enabled'] = (variable_get('job_cancelled_disable', FALSE) == $values['cancelled_override']);
+  $job->data['date_due_enabled'] =
+    (variable_get('job_date_due_disable', FALSE) == $values['date_due_settings']['date_due_override']);
+  $job->data['past_due_enabled'] =
+    (variable_get('job_past_due_disable', FALSE) == $values['past_due_settings']['past_due_override']);
+  $job->data['closed_enabled'] =
+    (variable_get('job_closed_disable', FALSE) == $values['closed_settings']['closed_override']);
+  $job->data['cancelled_enabled'] =
+    (variable_get('job_cancelled_disable', FALSE) == $values['cancelled_settings']['cancelled_override']);
 
   // PreSave Field Data
   field_attach_presave('job', $job);

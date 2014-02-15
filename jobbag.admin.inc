@@ -711,7 +711,8 @@ function jobbag_admin_form($form, &$form_state) {
     '#title' => t('Reminder Settings'),
     '#group' => 'settings',
     '#collapsible' => TRUE,
-    '#collapsed' => FALSE
+    '#collapsed' => FALSE,
+    '#tree' => TRUE
   );
 
   $form['reminder_settings']['job_reminder_disable'] = array(
@@ -757,7 +758,8 @@ function jobbag_admin_form($form, &$form_state) {
     '#title' => t('Reminder Message'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
-    '#group' => 'settings'
+    '#group' => 'settings',
+    '#tree' => TRUE
   );
 
   $form['reminder_message']['reminder_about'] = array(
@@ -796,7 +798,8 @@ function jobbag_admin_form($form, &$form_state) {
     '#title' => t('Date Due Message'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
-    '#group' => 'settings'
+    '#group' => 'settings',
+    '#tree' => TRUE
   );
 
   $form['date_due_message']['date_due_about'] = array(
@@ -841,7 +844,8 @@ function jobbag_admin_form($form, &$form_state) {
     '#title' => t('Past Due Message'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
-    '#group' => 'settings'
+    '#group' => 'settings',
+    '#tree' => TRUE
   );
 
   $form['past_due_message']['past_due_about'] = array(
@@ -886,7 +890,8 @@ function jobbag_admin_form($form, &$form_state) {
     '#title' => t('Closed Message'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
-    '#group' => 'settings'
+    '#group' => 'settings',
+    '#tree' => TRUE
   );
 
   $form['closed_message']['cancelled_about'] = array(
@@ -931,7 +936,8 @@ function jobbag_admin_form($form, &$form_state) {
     '#title' => t('Cancellation Message'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
-    '#group' => 'settings'
+    '#group' => 'settings',
+    '#tree' => TRUE
   );
 
   $form['cancelled_message']['cancelled_about'] = array(
@@ -971,5 +977,18 @@ function jobbag_admin_form($form, &$form_state) {
     '#token_types' => array('job')
   );
 
-  return system_settings_form($form);
+  return $form;
+}
+
+function jobbag_admin_form_submit($form, &$form_state) {
+  $values = $form_state['values'];
+  foreach ($values as $value) {
+    if (is_array($value)) {
+      foreach ($value as $name => $setting) {
+        variable_set($name, $setting);
+      }
+    }
+  }
+
+  drupal_set_message(t('Setting have been saved'));
 }
