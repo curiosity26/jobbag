@@ -30,10 +30,6 @@ class JobBag extends Entity {
     }
 
     parent::__construct($values, 'job');
-
-    if (!is_array($this->data)) {
-      $this->data = array();
-    }
   }
 
   public function defaultTitle() {

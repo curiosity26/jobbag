@@ -120,7 +120,8 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#title' => t('Past Due'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
-    '#group' => 'settings'
+    '#group' => 'settings',
+    '#tree' => TRUE
   );
 
   $form['past_due_settings']['past_due_override'] = array(
