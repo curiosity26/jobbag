@@ -56,15 +56,16 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#default_tab' => 'reminder_settings'
   );
 
-  $form['settings']['reminder_settings'] = array(
+  $form['reminder_settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Reminder'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
-    '#group' => 'settings'
+    '#group' => 'settings',
+    '#tree' => TRUE
   );
 
-  $form['settings']['reminder_settings']['reminder_override'] = array(
+  $form['reminder_settings']['reminder_override'] = array(
     '#type' => 'checkbox',
     '#title' => t('@override reminders for this job', array('@override' =>
       variable_get('job_reminder_disabled', FALSE) ? 'Disable' : 'Enable')),
@@ -73,20 +74,20 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
         : !variable_get('job_reminder_disabled', FALSE)
   );
 
-  $form['settings']['reminder_settings']['reminder_date'] = array(
+  $form['reminder_settings']['reminder_date'] = array(
     '#type' => 'actions',
     '#tree' => TRUE,
     '#element_suffix' => t('before due date')
   );
 
-  $form['settings']['reminder_settings']['reminder_date']['metric'] = array(
+  $form['reminder_settings']['reminder_date']['metric'] = array(
     '#type' => 'textfield',
     '#size' => 3,
     '#maxlength' => 2,
     '#default_value' => $job->getReminderMetric()
   );
 
-  $form['settings']['reminder_settings']['reminder_date']['unit'] = array(
+  $form['reminder_settings']['reminder_date']['unit'] = array(
     '#type' => 'select',
     '#options' => array(
       'i' => t('Minute(s)'),
@@ -96,15 +97,16 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#default_value' => $job->getReminderUnit()
   );
 
-  $form['settings']['date_due_settings'] = array(
+  $form['date_due_settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Date Due'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
-    '#group' => 'settings'
+    '#group' => 'settings',
+    '#tree' => TRUE
   );
 
-  $form['settings']['date_due_settings']['date_due_override'] = array(
+  $form['date_due_settings']['date_due_override'] = array(
     '#type' => 'checkbox',
     '#title' => t('@override date due notification for this job', array('@override' =>
       variable_get('job_date_due_disabled', FALSE) ? 'Disable' : 'Enable')),
@@ -113,7 +115,7 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
         : !variable_get('job_date_due_disabled', FALSE)
   );
 
-  $form['settings']['past_due_settings'] = array(
+  $form['past_due_settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Past Due'),
     '#collapsible' => TRUE,
@@ -121,7 +123,7 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#group' => 'settings'
   );
 
-  $form['settings']['past_due_settings']['past_due_override'] = array(
+  $form['past_due_settings']['past_due_override'] = array(
     '#type' => 'checkbox',
     '#title' => t('@override past due notification for this job', array('@override' =>
       variable_get('job_past_due_disabled', FALSE) ? 'Disable' : 'Enable')),
@@ -130,15 +132,16 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
         : !variable_get('job_past_due_disabled', FALSE)
   );
 
-  $form['settings']['closed_settings'] = array(
+  $form['closed_settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Closed Notification'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
-    '#group' => 'settings'
+    '#group' => 'settings',
+    '#tree' => TRUE
   );
 
-  $form['settings']['closed_settings']['closed_override'] = array(
+  $form['closed_settings']['closed_override'] = array(
     '#type' => 'checkbox',
     '#title' => t('@override closed notification for this job', array('@override' =>
       variable_get('job_closed_disabled', FALSE) ? 'Disable' : 'Enable')),
@@ -147,15 +150,16 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
         : !variable_get('job_closed_disabled', FALSE)
   );
 
-  $form['settings']['cancelled_settings'] = array(
+  $form['cancelled_settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Closed Notification'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
-    '#group' => 'settings'
+    '#group' => 'settings',
+    '#tree' => TRUE
   );
 
-  $form['settings']['cancelled_settings']['cancelled_override'] = array(
+  $form['cancelled_settings']['cancelled_override'] = array(
     '#type' => 'checkbox',
     '#title' => t('@override cancelled notification for this job', array('@override' =>
       variable_get('job_cancelled_disabled', FALSE) ? 'Disable' : 'Enable')),
@@ -164,15 +168,16 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
         : !variable_get('job_cancelled_disabled', FALSE)
   );
 
-  $form['settings']['status_options'] = array(
+  $form['status_options'] = array(
     '#type' => 'fieldset',
     '#title' => t('Status'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
-    '#group' => 'settings'
+    '#group' => 'settings',
+    '#tree' => TRUE
   );
 
-  $form['settings']['status_options']['status'] = array(
+  $form['status_options']['status'] = array(
     '#type' => 'radios',
     '#title' => t('Status'),
     '#title_display' => 'invisible',
