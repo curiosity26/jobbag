@@ -50,7 +50,8 @@ function jobbag_default_rules_configuration() {
   $job_notify->event('job_insert');
   $job_notify->event('job_update');
   $job_vars = $job_notify->availableVariables();
-  $job_notify->action('job_notifications', array('job' => $job_vars['job']));
+  //$job_notify->action('job_notifications', array('job' => $job_vars['job']));
+  $job_notify->action('job_notifications');
   $rules['job_notification_setup'] = $job_notify;
 
   $closed = rules_reaction_rule();
@@ -58,9 +59,7 @@ function jobbag_default_rules_configuration() {
   $closed->event('job_insert');
   $closed->event('job_update');
   $closed->condition('data_is', array('data:select' => 'job:status', 'value' => JOB_STATUS_CLOSED));
-  $closed_vars = $closed->availableVariables();
   $closed->action('job_send_notification', array(
-      'job' => $closed_vars['job'],
       'subject' => variable_get('job_cancelled_subject', _jobbag_default_cancelled_subject()),
       'message' => variable_get('job_cancelled_message', _jobbag_default_cancelled_message())
     )
@@ -72,9 +71,7 @@ function jobbag_default_rules_configuration() {
   $cancelled->event('job_insert');
   $cancelled->event('job_update');
   $cancelled->condition('data_is', array('data:select' => 'job:status', 'value' => JOB_STATUS_CANCELLED));
-  $cancelled_vars = $cancelled->availableVariables();
   $cancelled->action('job_send_notification', array(
-      'job' => $cancelled_vars['job'],
       'subject' => variable_get('job_cancelled_subject', _jobbag_default_cancelled_subject()),
       'message' => variable_get('job_cancelled_message', _jobbag_default_cancelled_message())
     )
