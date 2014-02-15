@@ -25,7 +25,7 @@ function jobbag_entity_info() {
       'path' => 'admin/jobs/clients',
       'menu wildcard' => '%job_client',
       'controller class' => 'JobClientUIController',
-      'file' => 'jobbag.admin.php'
+      'file' => 'jobbag.admin.inc'
     ),
     'view modes' => array(
       'full' => array(
@@ -90,7 +90,7 @@ function jobbag_entity_info() {
           'real path' => 'admin/structure/jobs/manage/' . str_replace('_', '-', $type),
           'bundle argument' => 4,
           'access arguments' => array('administer jobs'),
-          'file' => 'jobbag.admin.php'
+          'file' => 'jobbag.admin.inc'
         )
       );
     }
@@ -114,7 +114,7 @@ function jobbag_entity_info() {
       'path' => 'admin/structure/jobs',
       'menu wildcard' => '%job_type',
       'controller class' => 'EntityDefaultUIController',
-      'file' => 'jobbag.admin.php'
+      'file' => 'jobbag.admin.inc'
     ),
   );
 
