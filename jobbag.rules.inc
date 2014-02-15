@@ -97,7 +97,7 @@ function rules_actions_job_notifications($args, $element) {
     $component = rules_get_cache('comp_job_'.$job->identifier().'_'.$notify);
     dpm($component, 'Component');
     dpm($job, 'Job');
-    if ($job->data[$notify.'_enabled'] == TRUE && !isset($component)) {
+    if ($job->data[$notify.'_override'] != variable_get('job_'.$notify.'_disabled', FALSE) && !isset($component)) {
       $schedule_settings = array(
         'job_'.$job->identifier().'_'.$notify.'_send',
         $time,
@@ -125,7 +125,7 @@ function rules_actions_job_notifications($args, $element) {
       $schedule_rule->action('schedule', $schedule_settings);
       $schedule_rule->save('job_'.$job->identifier().'_'.$notify, 'jobbag');
     }
-    elseif ($job->data[$notify.'_enabled'] == FALSE && isset($component)) {
+    elseif ($job->data[$notify.'_override'] == variable_get('job_'.$notify.'_disabled', FALSE) && isset($component)) {
       rules_config_delete(array('job_'.$job->identifier().'_'.$notify.'_send', 'job_'.$job->identifier().'_'.$notify));
     }
   }

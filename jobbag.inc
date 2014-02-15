@@ -69,8 +69,8 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#type' => 'checkbox',
     '#title' => t('@override reminders for this job', array('@override' =>
       variable_get('job_reminder_disabled', FALSE) ? 'Disable' : 'Enable')),
-    '#default_value' => isset($job->data['reminder_enabled'])
-        ? $job->data['reminder_enabled'] == variable_get('job_reminder_disabled', FALSE)
+    '#default_value' => isset($job->data['reminder_override'])
+        ? $job->data['reminder_override']
         : !variable_get('job_reminder_disabled', FALSE)
   );
 
@@ -111,8 +111,8 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#title' => t('@override date due notification for this job', array('@override' =>
       variable_get('job_date_due_disabled', FALSE) ? 'Disable' : 'Enable')),
     '#default_value' => isset($job->data['date_due_enabled'])
-        ? $job->data['date_due_enabled'] == variable_get('job_date_due_disabled', FALSE)
-        : !variable_get('job_date_due_disabled', FALSE)
+        ? $job->data['date_due_enabled']
+        : FALSE
   );
 
   $form['past_due_settings'] = array(
@@ -128,9 +128,9 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#type' => 'checkbox',
     '#title' => t('@override past due notification for this job', array('@override' =>
       variable_get('job_past_due_disabled', FALSE) ? 'Disable' : 'Enable')),
-    '#default_value' => isset($job->data['past_due_enabled'])
-        ? $job->data['past_due_enabled'] == variable_get('job_past_due_disabled', FALSE)
-        : !variable_get('job_past_due_disabled', FALSE)
+    '#default_value' => isset($job->data['past_due_override'])
+        ? $job->data['past_due_override']
+        : FALSE
   );
 
   $form['closed_settings'] = array(
@@ -145,10 +145,10 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
   $form['closed_settings']['closed_override'] = array(
     '#type' => 'checkbox',
     '#title' => t('@override closed notification for this job', array('@override' =>
-      variable_get('job_closed_disabled', FALSE) ? 'Disable' : 'Enable')),
-    '#default_value' => isset($job->data['closed_enabled'])
-        ? $job->data['closed_enabled'] == variable_get('job_closed_disabled', FALSE)
-        : !variable_get('job_closed_disabled', FALSE)
+      variable_get('job_closed_disabled', FALSE) ? 'Enable' : 'Disable')),
+    '#default_value' => isset($job->data['closed_override'])
+        ? $job->data['closed_override']
+        : FALSE
   );
 
   $form['cancelled_settings'] = array(
@@ -164,9 +164,9 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#type' => 'checkbox',
     '#title' => t('@override cancelled notification for this job', array('@override' =>
       variable_get('job_cancelled_disabled', FALSE) ? 'Disable' : 'Enable')),
-    '#default_value' => isset($job->data['cancelled_enabled'])
-        ? $job->data['cancelled_enabled'] == variable_get('job_cancelled_disabled', FALSE)
-        : !variable_get('job_cancelled_disabled', FALSE)
+    '#default_value' => isset($job->data['cancelled_override'])
+        ? $job->data['cancelled_override']
+        : FALSE
   );
 
   $form['status_options'] = array(
@@ -227,14 +227,10 @@ function jobbag_type_form_submit($form, &$form_state) {
       $values['reminder_settings']['reminder_date']['unit']);
   }
 
-  $job->data['date_due_enabled'] =
-    (variable_get('job_date_due_disable', FALSE) == $values['date_due_settings']['date_due_override']);
-  $job->data['past_due_enabled'] =
-    (variable_get('job_past_due_disable', FALSE) == $values['past_due_settings']['past_due_override']);
-  $job->data['closed_enabled'] =
-    (variable_get('job_closed_disable', FALSE) == $values['closed_settings']['closed_override']);
-  $job->data['cancelled_enabled'] =
-    (variable_get('job_cancelled_disable', FALSE) == $values['cancelled_settings']['cancelled_override']);
+  $job->data['date_due_override'] = $values['date_due_settings']['date_due_override'];
+  $job->data['past_due_override'] = $values['past_due_settings']['past_due_override'];
+  $job->data['closed_override'] = $values['closed_settings']['closed_override'];
+  $job->data['cancelled_override'] = $values['cancelled_settings']['cancelled_override'];
 
   // PreSave Field Data
   field_attach_presave('job', $job);
