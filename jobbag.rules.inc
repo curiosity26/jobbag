@@ -134,7 +134,7 @@ function rules_actions_job_notifications($args, $element) {
       }
       else {
         $component->settings = $schedule_settings;
-        $component->save();
+        entity_save('rules_config', $component);
       }
     }
     elseif ((($job->data[$notify.'_override'] == FALSE
