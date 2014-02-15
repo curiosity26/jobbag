@@ -85,8 +85,7 @@ function jobbag_default_rules_configuration() {
 
 function rules_actions_job_notifications($args, $element) {
   module_load_include('inc', 'jobbag', 'jobbag.defaults');
-  print_r($args);
-  $job = $args['job'];
+  $job = $args['state']['job'];
 
   $notifications = array(
     'reminder' => $job->getReminder(),
@@ -111,7 +110,7 @@ function rules_actions_job_notifications($args, $element) {
       );
 
       $reminder_send->action('job_send_notification', array(
-        'job' => $args['state']['job'],
+        'job' => $job,
         'subject' => variable_get('job_'.$notify.'_subject', _jobbag_default_reminder_subject()),
         'message' => variable_get('job_'.$notify.'_message', _jobbag_default_reminder_message())
       ));
