@@ -107,8 +107,8 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#type' => 'checkbox',
     '#title' => t('@override date due notification for this job', array('@override' =>
       variable_get('job_date_due_disabled', FALSE) ? 'Disable' : 'Enable')),
-    '#default_value' => isset($job->data['date_due_override'])
-        ? $job->data['date_due_override'] == variable_get('job_date_due_disabled', FALSE)
+    '#default_value' => isset($job->data['date_due_enabled'])
+        ? $job->data['date_due_enabled'] == variable_get('job_date_due_disabled', FALSE)
         : !variable_get('job_date_due_disabled', FALSE)
   );
 
@@ -142,7 +142,8 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#title' => t('@override closed notification for this job', array('@override' =>
       variable_get('job_closed_disabled', FALSE) ? 'Disable' : 'Enable')),
     '#default_value' => isset($job->data['closed_enabled'])
-        ? $job->data['closed_enabled'] == variable_get('job_closed_disabled', FALSE) : FALSE
+        ? $job->data['closed_enabled'] == variable_get('job_closed_disabled', FALSE)
+        : !variable_get('job_closed_disabled', FALSE)
   );
 
   $form['cancelled_settings'] = array(
