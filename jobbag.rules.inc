@@ -94,7 +94,7 @@ function rules_actions_job_notifications($args, $element) {
   );
 
   foreach ($notifications as $notify => $time) {
-    $component = entity_load('rule', array('job_'.$job->identifier().'_'.$notify));
+    $component = rules_get_cache('comp_job_'.$job->identifier().'_'.$notify);
     if ($job->data[$notify.'_enabled'] == TRUE && $component === FALSE) {
       $schedule_settings = array(
         'job_'.$job->identifier().'_'.$notify.'_send',
@@ -124,7 +124,7 @@ function rules_actions_job_notifications($args, $element) {
       $schedule_rule->save('job_'.$job->identifier().'_'.$notify, 'jobbag');
     }
     elseif ($job->data[$notify.'_enabled'] == FALSE && $component !== FALSE) {
-      entity_delete('rule', $component);
+      rules_config_delete(array('job_'.$job->identifier().'_'.$notify.'_send', 'job_'.$job->identifier().'_'.$notify));
     }
   }
 }
