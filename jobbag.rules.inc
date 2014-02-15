@@ -95,6 +95,7 @@ function rules_actions_job_notifications($args, $element) {
 
   foreach ($notifications as $notify => $time) {
     $component = rules_get_cache('comp_job_'.$job->identifier().'_'.$notify);
+    dpm($component);
     if ($job->data[$notify.'_enabled'] == TRUE && !isset($component)) {
       $schedule_settings = array(
         'job_'.$job->identifier().'_'.$notify.'_send',
