@@ -168,12 +168,13 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#title' => t('Status'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
+    '#group' => 'settings'
   );
 
   $form['status_options']['status'] = array(
     '#type' => 'radios',
-    '#title' => 'Status',
-    '#title_display' => 'hidden',
+    '#title' => t('Status'),
+    '#title_display' => 'invisible',
     '#options' => job_status(),
     '#default_value' => isset($job->status) ? $job->status : 1
   );
