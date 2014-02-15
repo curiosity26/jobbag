@@ -18,22 +18,22 @@ function _jobbag_default_reminder_message() {
 }
 
 function _jobbag_default_date_due_subject() {
-  return t("[job:job_number] is now due date");
+  return t("[job:title] is now due date");
 }
 
 function _jobbag_default_date_due_message() {
-  return t("Job number [job:job_number] is now due.
+  return t("Job number [job:title] is now due.
   Details about this job can be found at [job:url].
 
   Thank You");
 }
 
 function _jobbag_default_past_due_subject() {
-  return t("[job:job_number] is past its due date!");
+  return t("[job:title] is past its due date!");
 }
 
 function _jobbag_default_past_due_message() {
-  return t("Job number [job:job_number] is past due.
+  return t("Job number [job:title] is past due.
   Details about this job can be found at [job:url].
 
   If the due date has changed, please update the job to reflect this.
@@ -42,23 +42,23 @@ function _jobbag_default_past_due_message() {
 }
 
 function _jobbag_default_closed_subject() {
-  return t("[job:job_number] has been closed");
+  return t("[job:title] has been closed");
 }
 
 function _jobbag_default_closed_message() {
-  return t("Job number [job:job_number] has been closed.
+  return t("Job number [job:title] has been closed.
 
-  Great Job!
+Great Job!
 
-  Thank You");
+Thank You");
 }
 
 function _jobbag_default_cancelled_subject() {
-  return t("[job:job_number] has been cancelled");
+  return t("[job:title] has been cancelled");
 }
 
 function _jobbag_default_cancelled_message() {
-  return t("Job number [job:job_number] has been cancelled.
+  return t("Job number [job:title] has been cancelled.
 
-   Thank You");
+Thank You");
 }
