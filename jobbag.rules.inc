@@ -87,6 +87,7 @@ function rules_actions_job_notifications($args, $element) {
   module_load_include('inc', 'jobbag', 'jobbag.defaults');
   dpm($args, 'Args');
   dpm($element, 'Element');
+  print_r($element);
   $job = $args['state']->get('job');
   $notifications = array(
     'reminder' => $job->getReminder(),
