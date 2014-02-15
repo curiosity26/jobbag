@@ -50,7 +50,6 @@ function jobbag_default_rules_configuration() {
   $job_notify->event('job_insert');
   $job_notify->event('job_update');
   $job_notify->action('job_notifications', array('job' => 'job'));
-  $job_notify->action('job_notifications');
   $rules['job_notification_setup'] = $job_notify;
 
   $closed = rules_reaction_rule();
@@ -88,7 +87,7 @@ function rules_actions_job_notifications($args, $element) {
   module_load_include('inc', 'jobbag', 'jobbag.defaults');
   dpm(func_get_args(), 'Args');
   dpm($args['state'], 'State');
-  dpm($args['state']['job']->value());
+  dpm($args['state']->job->value());
   /*$job = $args['state']->get('job');
   $notifications = array(
     'reminder' => $job->getReminder(),
