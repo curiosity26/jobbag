@@ -93,7 +93,7 @@ function rules_actions_job_notifications($args, $element) {
     'past_due' => strtotime($job->job_due_date) + 86400,
   );
   foreach ($notifications as $notify => $time) {
-    $component = rules_get_cache('comp_job_'.$job->identifier().'_'.$notify);
+    $component = rules_config_load('job_'.$job->identifier().'_'.$notify);
     dpm($component, 'Component');
     dpm($job, 'Job');
     if ((($job->data[$notify.'_override'] == FALSE
@@ -108,6 +108,8 @@ function rules_actions_job_notifications($args, $element) {
       );
 
       $reminder_send = rule();
+      $reminder_send->label = t('Send a @notify notification for @job',
+        array('@job' => $job->title, '@notify' => $notify));
       $reminder_send->action('entity_fetch', array(
           'type' => 'job',
           'id' => $job->identifier()
