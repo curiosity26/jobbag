@@ -67,7 +67,7 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#type' => 'checkbox',
     '#title' => t('@override reminders for this job', array('@override' =>
       variable_get('job_reminder_disabled', FALSE) ? 'Disable' : 'Enable')),
-    '#default_settings' => isset($job->data['reminder_enabled'])
+    '#default_value' => isset($job->data['reminder_enabled'])
         ? $job->data['reminder_enabled'] == variable_get('job_reminder_disabled', FALSE)
         : !variable_get('job_reminder_disabled', FALSE)
   );
@@ -124,7 +124,7 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#type' => 'checkbox',
     '#title' => t('@override past due notification for this job', array('@override' =>
       variable_get('job_past_due_disabled', FALSE) ? 'Disable' : 'Enable')),
-    '#default_settings' => isset($job->data['past_due_enabled'])
+    '#default_value' => isset($job->data['past_due_enabled'])
         ? $job->data['past_due_enabled'] == variable_get('job_past_due_disabled', FALSE)
         : !variable_get('job_past_due_disabled', FALSE)
   );
@@ -141,7 +141,7 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#type' => 'checkbox',
     '#title' => t('@override closed notification for this job', array('@override' =>
       variable_get('job_closed_disabled', FALSE) ? 'Disable' : 'Enable')),
-    '#default_settings' => isset($job->data['closed_enabled'])
+    '#default_value' => isset($job->data['closed_enabled'])
         ? $job->data['closed_enabled'] == variable_get('job_closed_disabled', FALSE) : FALSE
   );
 
@@ -157,7 +157,7 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     '#type' => 'checkbox',
     '#title' => t('@override cancelled notification for this job', array('@override' =>
       variable_get('job_cancelled_disabled', FALSE) ? 'Disable' : 'Enable')),
-    '#default_settings' => isset($job->data['cancelled_enabled'])
+    '#default_value' => isset($job->data['cancelled_enabled'])
         ? $job->data['cancelled_enabled'] == variable_get('job_cancelled_disabled', FALSE)
         : !variable_get('job_cancelled_disabled', FALSE)
   );
