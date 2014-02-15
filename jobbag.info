@@ -12,4 +12,3 @@ files[] = jobbag.controller.inc
 files[] = jobbag.entity.inc
 files[] = jobbag.inc
 files[] = jobbag.admin.inc
-files[] = jobbag.test

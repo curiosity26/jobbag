@@ -1,4 +1,4 @@
-	<?php
+<?php
 
 class JobBag extends Entity {
   public $jid;
