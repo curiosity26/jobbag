@@ -244,7 +244,6 @@ function jobbag_type_form_submit($form, &$form_state) {
 
   if ($job->status == 0) {
     $job->cancelled = REQUEST_TIME;
-    $controller->invoke('cancelled', $job);
     $actions = trigger_get_assigned_actions('jobbag_cancelled');
     if ($actions) {
       actions_do($actions, $job);
@@ -256,7 +255,6 @@ function jobbag_type_form_submit($form, &$form_state) {
 
   if ($job->status == 2){
     $job->closed = REQUEST_TIME;
-    $controller->invoke('closed', $job);
     $actions = trigger_get_assigned_actions('jobbag_closed');
     if ($actions) {
       actions_do($actions, $job);
