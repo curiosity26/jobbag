@@ -113,6 +113,7 @@ function rules_actions_job_notifications($args, $element) {
   module_load_include('inc', 'jobbag', 'jobbag.defaults');
   $job = $args['state']->get('job')->value();
   $due = $job->job_due_date['und'][0];
+  dpm($due);
   $notifications = array(
     'reminder' => $job->getReminder(),
     'date_due' => strtotime($due),
@@ -170,6 +171,7 @@ function rules_actions_job_notifications($args, $element) {
           'date:select' => 'date',
           'identifier' => 'job_'.$job->identifier().'_'.$notify
         ));
+        dpm($actions);
         $actions->save('job_'.$job->identifier().'_'.$notify.'_set', 'jobbag');
       }
       else {
