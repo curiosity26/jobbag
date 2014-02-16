@@ -112,8 +112,7 @@ function jobbag_default_rules_configuration() {
 function rules_actions_job_notifications($args, $element) {
   module_load_include('inc', 'jobbag', 'jobbag.defaults');
   $job = $args['state']->get('job')->value();
-  $due = $job->job_due_date['und'][0];
-  dpm($due);
+  $due = $job->job_due_date['und'][0]['date'].$job->job_due_date['und'][0]['timezone'];
   $notifications = array(
     'reminder' => $job->getReminder(),
     'date_due' => strtotime($due),
@@ -121,7 +120,7 @@ function rules_actions_job_notifications($args, $element) {
   );
 
   foreach ($notifications as $notify => $time) {
-    $component = rules_config_load('job_'.$job->identifier().'_'.$notify.'_set');
+    $component = rules_config_load('job_'.$job->identifier().'_'.$notify);
     if ((($job->data[$notify.'_override'] == FALSE
           && $job->data[$notify.'_override'] == variable_get('job_'.$notify.'_disabled', FALSE))
         || ($job->data[$notify.'_override'] == TRUE
@@ -145,39 +144,12 @@ function rules_actions_job_notifications($args, $element) {
 
         $reminder_send->save('job_'.$job->identifier().'_'.$notify.'_send', 'jobbag');
       }
-
-
-      if ($component == FALSE) {
-        $actions = rules_action_set(array(
-            'component' => array(
-              'type' => 'text',
-              'label' => t('Component')
-            ),
-            'date' => array(
-              'type' => 'date',
-              'label' => t('Scheduled evaluation date'),
-            ),
-            'identifier' => array(
-              'type' => 'text',
-              'label' => t('Identifier')
-            )
-          ),
-          array(
-            'date' => $time
-          )
-        );
-        $actions->action('schedule', array(
+        $action = rules_action('schedule', array(
           'component' => 'job_'.$job->identifier().'_'.$notify.'_send',
-          'date:select' => 'date',
+          'date' => $time,
           'identifier' => 'job_'.$job->identifier().'_'.$notify
         ));
-        dpm($actions);
-        $actions->save('job_'.$job->identifier().'_'.$notify.'_set', 'jobbag');
-      }
-      else {
-        $component->settings['date'] = $time;
-        $component->save();
-      }
+        $action->execute();
     }
     elseif ((($job->data[$notify.'_override'] == FALSE
           && $job->data[$notify.'_override'] != variable_get('job_'.$notify.'_disabled', FALSE))
@@ -185,7 +157,7 @@ function rules_actions_job_notifications($args, $element) {
           && $job->data[$notify.'_override'] == variable_get('job_'.$notify.'_disabled', FALSE)))
       && isset($component)) {
       rules_config_delete(array('job_'.$job->identifier().'_'.$notify.'_send',
-        'job_'.$job->identifier().'_'.$notify, 'job_'.$job->identifier().'_'.$notify.'_set'));
+        'job_'.$job->identifier().'_'.$notify));
     }
   }
 }
