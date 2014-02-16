@@ -169,9 +169,9 @@ function rules_actions_job_notifications($args, $element) {
           )
         );
         $actions->action('schedule', array(
-          'component' => 'component',
-          'date' => 'date',
-          'identifier' => 'identifier'
+          'component:select' => 'component',
+          'date:select' => 'date',
+          'identifier:select' => 'identifier'
         ));
         $actions->save('job_'.$job->identifier().'_'.$notify.'_set', 'jobbag');
       }
