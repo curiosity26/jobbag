@@ -112,12 +112,12 @@ function jobbag_default_rules_configuration() {
 function rules_actions_job_notifications($args, $element) {
   module_load_include('inc', 'jobbag', 'jobbag.defaults');
   $job = $args['state']->get('job')->value();
-  dpm($job->job_due_date['und'][0]);
-  $due = $job->job_due_date['und'][0]['date'].$job->job_due_date['und'][0]['timezone'];
+  $date = new DateObject($job->job_due_date['und'][0]['value'], $job->job_due_date['und'][0]['timezone']);
+  $due = $date->getTimestamp();
   $notifications = array(
     'reminder' => $job->getReminder(),
-    'date_due' => strtotime($due),
-    'past_due' => strtotime($due) + 86400,
+    'date_due' => $due,
+    'past_due' => $due + 86400,
   );
 
   foreach ($notifications as $notify => $time) {
