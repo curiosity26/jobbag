@@ -145,12 +145,14 @@ function rules_actions_job_notifications($args, $element) {
 
         $reminder_send->save('job_'.$job->identifier().'_'.$notify.'_send', 'jobbag');
       }
-        $action = rules_action('schedule', array(
-          'component' => 'job_'.$job->identifier().'_'.$notify.'_send',
-          'date' => $time,
-          'identifier' => 'job_'.$job->identifier().'_'.$notify
-        ));
-        $action->execute();
+
+      $action = rules_action('schedule', array(
+        'component' => 'job_'.$job->identifier().'_'.$notify.'_send',
+        'date' => $time,
+        'identifier' => 'job_'.$job->identifier().'_'.$notify
+      ));
+      $action->execute();
+      dpm($action);
     }
     elseif ((($job->data[$notify.'_override'] == FALSE
           && $job->data[$notify.'_override'] != variable_get('job_'.$notify.'_disabled', FALSE))
