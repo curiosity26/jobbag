@@ -26,7 +26,7 @@ class JobEntityController extends EntityAPIController {
     return $metric * $units[$unit];
   }
 
-  static public function reminderFromTime($time) {
+  static public function reminderFromTime($time = 0) {
     $units = self::reminderUnitValues();
 
     foreach ($units as $u => $t) {
@@ -46,7 +46,7 @@ class JobEntityController extends EntityAPIController {
 
   public function getReminder(JobBag $job) {
     $time = isset($job->data['reminder_date']) ? $job->data['reminder_date'] : NULL;
-    return $time ? $this->reminderFromTime($time) : NULL;
+    return $this->reminderFromTime($time);
   }
 
   public function getReminderUnit(JobBag $job) {
