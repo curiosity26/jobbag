@@ -77,6 +77,9 @@ function jobbag_default_rules_configuration() {
       'message' => variable_get('job_cancelled_message', _jobbag_default_cancelled_message())
     )
   );
+  $closed->action('job_notification_cleanup', array(
+    'job' => 'job'
+  ));
   $rules['job_closed_send'] = $closed;
 
   $cancelled = rules_reaction_rule();
@@ -90,6 +93,9 @@ function jobbag_default_rules_configuration() {
       'message' => variable_get('job_cancelled_message', _jobbag_default_cancelled_message())
     )
   );
+  $cancelled->action('job_notifications_cleanup', array(
+    'job' => 'job'
+  ));
   $rules['job_cancelled_send'] = $cancelled;
 
   $cleanse = rules_reaction_rule();
