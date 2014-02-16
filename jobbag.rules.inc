@@ -213,7 +213,7 @@ function rules_actions_job_send_notification($args, $element) {
   $action->execute();
 }
 
-function rules_actions_job_notifications_cleaup($args, $element) {
+function rules_actions_job_notifications_cleanup($args, $element) {
   $job = $args['state']->get('job')->value();
   $notifications = array(
     'reminder' => $job->getReminder(),
