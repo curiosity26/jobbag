@@ -122,10 +122,12 @@ function rules_actions_job_notifications($args, $element) {
 
   foreach ($notifications as $notify => $time) {
     $component = rules_config_load('job_'.$job->identifier().'_'.$notify);
+    dpm($job->data[$notify.'_override'], $notify.' override');
+    dpm(variable_get('job_'.$notify.'_disabled', FALSE), $notify.' disabled');
     if ((($job->data[$notify.'_override'] == FALSE
-          && $job->data[$notify.'_override'] == variable_get('job_'.$notify.'_disabled', FALSE))
+          && variable_get('job_'.$notify.'_disabled', FALSE) == FALSE)
         || ($job->data[$notify.'_override'] == TRUE
-          && $job->data[$notify.'_override'] != variable_get('job_'.$notify.'_disabled', FALSE)))) {
+          && variable_get('job_'.$notify.'_disabled', FALSE) == TRUE))) {
 
       if(($reminder_send = rules_config_load('job_'.$job->identifier().'_'.$notify.'_send')) === FALSE) {
         $reminder_send = rule();
@@ -155,9 +157,9 @@ function rules_actions_job_notifications($args, $element) {
       dpm($action);
     }
     elseif ((($job->data[$notify.'_override'] == FALSE
-          && $job->data[$notify.'_override'] != variable_get('job_'.$notify.'_disabled', FALSE))
+          && variable_get('job_'.$notify.'_disabled', FALSE) == TRUE)
         || ($job->data[$notify.'_override'] == TRUE
-          && $job->data[$notify.'_override'] == variable_get('job_'.$notify.'_disabled', FALSE)))
+          && variable_get('job_'.$notify.'_disabled', FALSE) == FALSE))
       && isset($component)) {
       rules_config_delete(array('job_'.$job->identifier().'_'.$notify.'_send',
         'job_'.$job->identifier().'_'.$notify));
