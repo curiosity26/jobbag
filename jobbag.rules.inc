@@ -123,7 +123,7 @@ function rules_actions_job_notifications($args, $element) {
   foreach ($notifications as $notify => $time) {
     $component = rules_config_load('job_'.$job->identifier().'_'.$notify);
     dpm($job->data[$notify.'_override'], $notify.' override');
-    dpm(variable_get('job_'.$notify.'_disabled', FALSE), $notify.' disabled');
+    dpm((int)variable_get('job_'.$notify.'_disabled', FALSE), $notify.' disabled');
     if ((($job->data[$notify.'_override'] == FALSE
           && variable_get('job_'.$notify.'_disabled', FALSE) == FALSE)
         || ($job->data[$notify.'_override'] == TRUE
@@ -147,6 +147,7 @@ function rules_actions_job_notifications($args, $element) {
 
         $reminder_send->save('job_'.$job->identifier().'_'.$notify.'_send', 'jobbag');
       }
+      dpm($reminder_send, 'Reminder Send');
 
       $action = rules_action('schedule', array(
         'component' => 'job_'.$job->identifier().'_'.$notify.'_send',
