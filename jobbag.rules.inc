@@ -119,7 +119,8 @@ function rules_actions_job_notifications($args, $element) {
     'date_due' => $due,
     'past_due' => $due + 86400,
   );
-  dpm($notifications, 'Notifications');
+
+
   foreach ($notifications as $notify => $time) {
     $component = rules_config_load('job_'.$job->identifier().'_'.$notify);
     if ((($job->data[$notify.'_override'] == FALSE
@@ -148,12 +149,10 @@ function rules_actions_job_notifications($args, $element) {
 
       $action = rules_action('schedule', array(
         'component' => 'job_'.$job->identifier().'_'.$notify.'_send',
-        'date' => $due,
+        'date' => $time,
         'identifier' => 'job_'.$job->identifier().'_'.$notify
       ));
-      dpm($action);
       $action->executeByArgs();
-      dpm($action, 'Post execution');
     }
     elseif ((($job->data[$notify.'_override'] == FALSE
           && variable_get('job_'.$notify.'_disabled', FALSE) == TRUE)
@@ -181,20 +180,19 @@ function rules_actions_job_send_notification($args, $element) {
 
   drupal_alter('job_send_notifcation', $action, $args, $element);
 
-  $action->execute();
+  $action->executeByArgs();
 }
 
 function rules_actions_job_notifications_cleanup($args, $element) {
   $job = $args['state']->get('job')->value();
   $notifications = array(
-    'reminder' => $job->getReminder(),
-    'date_due' => strtotime($job->job_due_date),
-    'past_due' => strtotime($job->job_due_date) + 86400,
+    'reminder',
+    'date_due',
+    'past_due'
   );
-  foreach ($notifications as $notify => $time) {
+  foreach ($notifications as $notify) {
     $comps = array('job_'.$job->identifier().'_'.$notify,
-      'job_'.$job->identifier().'_'.$notify.'_send',
-      'job_'.$job->identifier().'_'.$notify.'_set');
+      'job_'.$job->identifier().'_'.$notify.'_send');
     rules_config_delete($comps);
   }
 }
