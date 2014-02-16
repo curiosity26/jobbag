@@ -115,7 +115,7 @@ function rules_actions_job_notifications($args, $element) {
   $date = new DateObject($job->job_due_date['und'][0]['value'], $job->job_due_date['und'][0]['timezone']);
   $due = $date->getTimestamp();
   $notifications = array(
-    'reminder' => $due - (int)$job->getReminder(),
+    'reminder' => $due - $job->reminder(),
     'date_due' => $due,
     'past_due' => $due + 86400,
   );

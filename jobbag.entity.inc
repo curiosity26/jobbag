@@ -90,6 +90,11 @@ class JobBag extends Entity {
     return url($uri['path'], $uri);
   }
 
+  public function reminder() {
+    $controller = entity_get_controller($this->entityType());
+    return $controller->reminder($this);
+  }
+
   public function getReminder() {
     $controller = entity_get_controller($this->entityType());
     return $controller->getReminder($this);
