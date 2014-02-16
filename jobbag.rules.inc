@@ -112,7 +112,7 @@ function jobbag_default_rules_configuration() {
 function rules_actions_job_notifications($args, $element) {
   module_load_include('inc', 'jobbag', 'jobbag.defaults');
   $job = $args['state']->get('job')->value();
-
+  dpm($job->job_due_date);
   $notifications = array(
     'reminder' => $job->getReminder(),
     'date_due' => strtotime($job->job_due_date),
@@ -147,15 +147,6 @@ function rules_actions_job_notifications($args, $element) {
 
 
       if ($component == FALSE) {
-        $schedule_rule = rules_action('job_'.$job->identifier().'_'.$notify, array(
-          'component' => 'component',
-          'date' => 'date',
-          'identifier' => 'identifier'
-        ));
-        $schedule_rule->label = t('Set a @notify notification for @job',
-          array('@job' => $job->title, '@notify' => $notify));
-        $schedule_rule->save('job_'.$job->identifier().'_'.$notify, 'jobbag');
-
         $actions = rules_action_set(array(
             'component' => array(
               'type' => 'text',
@@ -176,7 +167,11 @@ function rules_actions_job_notifications($args, $element) {
             'identifier' => 'job_'.$job->identifier().'_'.$notify
           )
         );
-        $actions->action($schedule_rule);
+        $actions->action('schedule', array(
+          'component' => 'component',
+          'date' => 'date',
+          'identifier' => 'identifier'
+        ));
         $actions->save('job_'.$job->identifier().'_'.$notify.'_set', 'jobbag');
       }
       else {
