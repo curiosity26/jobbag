@@ -162,15 +162,13 @@ function rules_actions_job_notifications($args, $element) {
             )
           ),
           array(
-            'component' => 'job_'.$job->identifier().'_'.$notify.'_send',
-            'date' => $time,
-            'identifier' => 'job_'.$job->identifier().'_'.$notify
+            'date' => $time
           )
         );
         $actions->action('schedule', array(
-          'component:select' => 'component',
+          'component' => 'job_'.$job->identifier().'_'.$notify.'_send',
           'date:select' => 'date',
-          'identifier:select' => 'identifier'
+          'identifier' => 'job_'.$job->identifier().'_'.$notify
         ));
         $actions->save('job_'.$job->identifier().'_'.$notify.'_set', 'jobbag');
       }
