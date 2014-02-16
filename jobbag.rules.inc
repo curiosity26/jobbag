@@ -119,7 +119,7 @@ function rules_actions_job_notifications($args, $element) {
     'date_due' => $due,
     'past_due' => $due + 86400,
   );
-
+  dpm($notifications, 'Notifications');
   foreach ($notifications as $notify => $time) {
     $component = rules_config_load('job_'.$job->identifier().'_'.$notify);
     if ((($job->data[$notify.'_override'] == FALSE
@@ -148,11 +148,12 @@ function rules_actions_job_notifications($args, $element) {
 
       $action = rules_action('schedule', array(
         'component' => 'job_'.$job->identifier().'_'.$notify.'_send',
-        'date' => $time,
+        'date' => $due,
         'identifier' => 'job_'.$job->identifier().'_'.$notify
       ));
       dpm($action);
-      $action->execute();
+      $action->executeByArgs();
+      dpm($action, 'Post execution');
     }
     elseif ((($job->data[$notify.'_override'] == FALSE
           && variable_get('job_'.$notify.'_disabled', FALSE) == TRUE)
