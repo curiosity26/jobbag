@@ -80,7 +80,7 @@ function job_permissions_job_form_submit($form, &$form_state) {
       $role = entity_create('job_role', array('rid' => $rid, 'jid' => $job->identifier()));
     }
 
-    $role->permissions = (array)$permissions;
+    $role->permissions = array_filter((array)$permissions);
 
     $success = entity_save('job_role', $role);
 
