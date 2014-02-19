@@ -123,34 +123,6 @@ function jobbag_roles_schema() {
     'unique keys' => array('rid_jid' => array('rid', 'jid'))
   );
 
-  $schema['jobbag_job_roles_users'] = array(
-    'fields' => array(
-      'ruid' => array(
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE
-      ),
-      'jrid' => array(
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE
-      ),
-      'uid' => array(
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE
-      )
-    ),
-    'primary key' => array('ruid'),
-    'foreign keys' => array(
-      'job_role_id' => array(
-        'table' => 'jobbag_job_roles',
-        'columns' => array('jrid' => 'jrid')
-      )
-    ),
-    'unique keys' => array('jrid_uid' => array('jrid', 'uid'))
-  );
-
   return $schema;
 }
 
@@ -164,7 +136,7 @@ function jobbag_roles_install() {
     'filter_by' => 0,
     'filter_users' => job_roles_eligible_users(),
     'permissions' => array('full access'),
-    'users' => array(1),
+    'users' => array(),
     'cardinality' => 0,
   );
 
