@@ -56,6 +56,7 @@ function jobbag_role_job_form($form, &$form_state, $job) {
 }
 
 function jobbag_role_job_form_submit(&$form, &$form_state) {
+  dpm($form_state);
   $job = $form_state['storage']['entity'];
   $success = FALSE; // It's not a success until the job is done.
   $hook_info = array(
@@ -84,7 +85,7 @@ function jobbag_role_job_form_submit(&$form, &$form_state) {
         );
       }
 
-      $role->users = !is_array($uids) ? array($uids) : $uids;
+      $role->users = !is_array($uids) ? array($uids) : (array)$uids;
       $success = entity_save('job_role', $role);
       /*$jrid = db_select('jobbag_job_roles', 'r')
         ->distinct()
