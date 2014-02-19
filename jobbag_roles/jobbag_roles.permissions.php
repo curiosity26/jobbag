@@ -3,7 +3,7 @@
 function job_permissions_job_form($form, &$form_state, $job) {
   $form_state['storage']['entity'] = $job;
   $perms = job_role_perms();
-  $roles = job_roles_load_multiple();
+  $roles = jobbag_role_load_multiple();
 
   drupal_set_title(t("@job_number's Permissions", array('@job_number' => $job->getJobNumber())));
 
@@ -56,6 +56,7 @@ function job_permissions_job_form($form, &$form_state, $job) {
 
 function job_permissions_job_form_submit($form, &$form_state) {
   $job = $form_state['storage']['entity'];
+  $controller = entity_get_controller('job_role');
   $perms = array();
 
   $values = $form_state['values'];
@@ -66,6 +67,19 @@ function job_permissions_job_form_submit($form, &$form_state) {
   }
 
   foreach ($perms as $rid => $permissions) {
+    $role = $controller::loadByJob($job, array('rid' => $rid));
+    if ($role) {
+      $role = entity_create('job_role', array('rid' => $rid, 'jid' => $job->identifier()));
+    }
+    if (!is_array($permissions)) {
+      $permissions = array($permissions);
+    }
+
+    $role->permissions = $permissions;
+
+    $success = entity_save('job_role', $role);
+
+    /*
     $jrid = db_select('jobbag_job_roles', 'r')
       ->distinct()
       ->fields('r', array('jrid'))
@@ -95,7 +109,7 @@ function job_permissions_job_form_submit($form, &$form_state) {
 
     unset($jrid);
     unset($record);
-    unset($key);
+    unset($key);*/
 
     if (!$success) {
       form_error($form['role_users'][$rid], 'Unable to save job permission settings');

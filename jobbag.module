@@ -14,6 +14,7 @@ function jobbag_entity_info() {
     'controller class' => 'JobClientControllerExportable',
     'base table' => 'jobbag_client',
     'exportable' => TRUE,
+    'fieldable' => TRUE,
     'bundles' => array(),
     'entity keys' => array(
       'id' => 'cid',
@@ -463,7 +464,7 @@ function jobbag_access($op, $entity = NULL, $account = NULL, $job_type = NULL) {
 	
 	// Only grant access if at least one module granted access and no one denied
 	// access.
-	if (in_array(TRUE, $access, TRUE)) {
+	if (in_array(TRUE, $access, TRUE) && !in_array(FALSE, $access, TRUE)) {
       return TRUE;
     }
   

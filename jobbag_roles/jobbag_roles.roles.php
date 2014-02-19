@@ -1,7 +1,7 @@
 <?php
 
-function job_roles_job_form($form, &$form_state, $job) {
-    $roles = job_roles_load_multiple();
+function jobbag_role_job_form($form, &$form_state, $job) {
+    $roles = jobbag_role_load_multiple();
     $form_state['storage']['entity'] = $job;
     drupal_set_title(t("@job_number's Roles", array('@job_number' => $job->getJobNumber())));
     
@@ -24,11 +24,16 @@ function job_roles_job_form($form, &$form_state, $job) {
         '#markup' => $role->label
       );
 
-      $eligible = job_roles_eligible_users($role);
+      $eligible = array();
 
-      if ($role->rid == 1) {
-       unset($users[0]);
+      foreach (job_roles_eligible_users($role) as $id => $account) {
+        $eligible[$id] = $account->name;
       }
+      /*
+      if ($role->rid == 1) {
+       unset($users[0]); // Anons not allowed
+      }
+      */
 
       $form['role_users'][$role->rid] = array(
         '#type' => 'select',
@@ -48,12 +53,36 @@ function job_roles_job_form($form, &$form_state, $job) {
     return $form;
 }
 
-function job_roles_job_form_submit(&$form, &$form_state) {
+function jobbag_role_job_form_submit(&$form, &$form_state) {
   $job = $form_state['storage']['entity'];
-
+  $hook_info = array(
+    'user_added' => array(),
+    'user_removed' => array()
+  );
   if (is_object($job)) {
+    $controller = entity_get_controller('job_role');
     foreach ($form_state['values']['role_users'] as $rid => $uids) {
-      $jrid = db_select('jobbag_job_roles', 'r')
+      $role = $controller->loadByJob($job, array('rid' => $rid));
+      if (!$role) {
+        $role = entity_create('job_role', array('rid' => $rid, 'jid' => $job->identifier()));
+        $hook_info['user_added'][$rid] = array('role' => $role, 'users' => $uids);
+      }
+      elseif (count($uids) > count($role->users)) {
+        $hook_info['user_added'][$rid] = array(
+          'role' => $role,
+          'users' => array_diff($uids, array_keys($role->users))
+        );
+      }
+      elseif (count($uids) < count($role->users)) {
+        $hook_info['user_deleted'][$rid] = array(
+          'role' => $role,
+          'users' => array_diff(array_keys($role->users), $uids)
+        );
+      }
+
+      $role->users = !is_array($uids) ? array($uids) : $uids;
+      $success = entity_save('job_role', $role);
+      /*$jrid = db_select('jobbag_job_roles', 'r')
         ->distinct()
         ->fields('r', array('jrid'))
         ->condition('jid', $job->identifier())
@@ -77,7 +106,7 @@ function job_roles_job_form_submit(&$form, &$form_state) {
 
       unset($jrid);
       unset($record);
-      unset($key);
+      unset($key);*/
 
       if (!$success) {
         form_error($form['role_users'][$rid], 'Unable to save job role settings');
@@ -85,16 +114,15 @@ function job_roles_job_form_submit(&$form, &$form_state) {
         break;
       }
     }
-  }
 
-  drupal_set_message('Successfully saved job role settings');
+    drupal_set_message('Successfully saved job role settings');
+    job_load_roles($job, TRUE);
 
-  $context['old_roles'] = $job->roles;
-  job_load_roles($job, TRUE);
-
-  $actions = trigger_get_assigned_actions('jobbag_roles_add_users');
-  $context['new_roles'] = $job->roles;
-  if ($actions) {
-    actions_do($actions, $job, $context, $context['old_roles'], $context['new_roles']);
+    // Rules Rule
+    foreach ($hook_info as $hook => $info) {
+      foreach ($info['users'] as $uid) {
+        $controller->invoke($hook, $info['role'], user_load($uid));
+      }
+    }
   }
 }

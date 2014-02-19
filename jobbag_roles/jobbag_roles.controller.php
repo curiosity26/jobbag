@@ -1,15 +1,15 @@
 <?php
 
-class JobRoleControllerExportable extends EntityAPIControllerExportable {
-    public function export($entity, $prefix = '') {
-        if (is_array($entity))
-            $entity = array_shift($entity);
-        
-        return parent::export($entity, $prefix);
+class JobBagRoleControllerExportable extends EntityAPIControllerExportable {
+  public function export($entity, $prefix = '') {
+    if (is_array($entity)) {
+      $entity = array_shift($entity);
     }
+    return parent::export($entity, $prefix);
+  }
 }
 
-class JobRoleUIController extends EntityDefaultUIController {
+class JobBagRoleUIController extends EntityDefaultUIController {
   public function hook_menu() {
     $items = parent::hook_menu();
     $items[$this->path]['type']['title'] = t('Job Roles');
@@ -24,5 +24,110 @@ class JobRoleUIController extends EntityDefaultUIController {
   public function overviewForm($form, &$form_state) {
     drupal_set_title('Job Roles');
     return parent::overviewForm($form, $form_state);
+  }
+}
+
+class JobRoleController extends EntityAPIController {
+  public function create(array $values = array()) {
+    $entity = parent::create($values, 'job_role');
+    if (!isset($entity->role)) {
+      $entity->role = jobbag_role_load($entity->rid);
+    }
+  }
+
+  public function buildQuery($ids, $conditions = array(), $revision_id = FALSE) {
+    $query = parent::buildQuery($ids, $conditions, $revision_id);
+    $query->groupBy('rid');
+    return $query;
+  }
+
+  public function load($ids = array(), $conditions = array()) {
+    $entities = parent::load($ids, $conditions);
+    foreach ($entities as $entity) {
+      $entity->role = jobbag_role_load($entity->rid);
+      $entity->setUsers($entity->users);
+    }
+    return $entities;
+  }
+
+  public function loadByJob(JobBag $job, $conditions = array()) {
+    $job_info = $job->entityInfo();
+    if (array_key_exists($job_info['entity keys']['id'], $conditions)) {
+      unset($conditions[$job_info['entity keys']['id']]);
+    }
+
+    $jids = db_select($this->entityInfo['base table'], 'bt')
+      ->fields('bt', array('jrid'))
+      ->condition('jid', $job->identifier());
+
+    foreach ($conditions as $field => $value) {
+      $jids->condition($field, $value);
+    }
+
+    $jids->execute()->fetchAllAssoc('jrid');
+
+    return $this::load(array_keys($jids));
+  }
+
+  public function access(JobRole $role, $op, $account = NULL) {
+    global $user;
+    if (!isset($account)) {
+      $account = $user;
+    }
+
+    if (!empty($role->users) && !empty($role->permissions) && in_array($account->uid, $role->users)) {
+      return in_array('full access', $role->permissions) || in_array($op, $role->permissions);
+    }
+
+    return NULL;
+  }
+
+  public function hasPermission(JobRole $role, $op) {
+    if (!is_array($role->permissions)) {
+      return FALSE;
+    }
+    return in_array($op, $role->permissions);
+  }
+
+  public function setUsers(JobRole $role, $uids = array()) {
+    if (!empty($uids)) {
+      $role->users = user_load_multiple($uids);
+    }
+  }
+
+  public function addUser(JobRole $role, stdClass $account) {
+    if (!$role->hasUser($account)) {
+      $role->users[$account->uid] = $account;
+    }
+    return $role;
+  }
+
+  public function getUsers(JobRole $role) {
+    return $role->users;
+  }
+
+  public function hasUser(JobRole $role, stdClass $account) {
+    return isset($role->users[$account->uid]) && $role->users[$account->uid] === $account;
+  }
+
+  public function save($role) {
+    $users = $role->users;
+    $uids = array_keys($users);
+    $role->users = $uids;
+    parent::save($role);
+    $role->users = $users;
+  }
+
+  public function invoke($hook, $role) {
+    $args = func_get_args();
+    array_shift($args); // Shift off role
+    array_shift($args); // Shift off hook
+
+    if ($hook == 'user_added' || $hook == 'user_deleted') {
+
+    }
+    else {
+      parent::invoke($hook, $role);
+    }
   }
 }

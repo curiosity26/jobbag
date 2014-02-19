@@ -10,4 +10,3 @@ files[] = jobbag_roles.controller.php
 files[] = jobbag_roles.entity.php
 files[] = jobbag_roles.permissions.php
 files[] = jobbag_roles.roles.php
-files[] = jobbag_roles.admin.php

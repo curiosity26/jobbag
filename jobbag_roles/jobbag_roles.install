@@ -1,156 +1,170 @@
 <?php
 
 function jobbag_roles_schema() {
-    $schema = array();
-    
-    $schema['jobbag_roles'] = array(
-        'fields' => array(
-            'rid' => array(
-                'type' => 'serial',
-                'unsigned' => TRUE,
-                'not null' => TRUE
-            ),
-            'machine_name' => array(
-                'type' => 'varchar',
-                'length' => 64,
-                'not null' => TRUE
-            ),
-            'label' => array(
-                'type' => 'varchar',
-                'length' => 50,
-                'not null' => TRUE
-            ),
-            'cardinality' => array(
-                'type' => 'int',
-                'not null' => TRUE,
-                'default' => 1
-            ),
-            'filter_by' => array(
-                'type' => 'int',
-                'not null' => TRUE,
-                'default' => 1 // Allow all except...
-            ),
-            'filter_users' => array(
-                'type' => 'text',
-                'serialize' => TRUE,
-                'not null' => FALSE
-            ),
-            'default_users' => array(
-                'type' => 'text',
-                'serialize' => TRUE,
-                'not null' => FALSE
-            ),
-            'permissions' => array(
-                'type' => 'text',
-                'serialize' => TRUE,
-                'not null' => FALSE
-            ),
-            'module' => array(
-              'type' => 'varchar',
-              'length' => 255,
-              'not null' => FALSE,
-              'default' => 'jobbag_roles'
-            ),
-            'status' => array(
-                'type' => 'int', 
-                'not null' => TRUE,
-                // Set the default to ENTITY_CUSTOM without using the constant as it is
-                // not safe to use it at this point. 
-                'default' => 0x01, 
-                'size' => 'tiny', 
-                'description' => 'The exportable status of the entity.',
-              ),
-            'changed' => array(
-                'type' => 'int',
-                'not null' => TRUE,
-                'unsigned' => TRUE,
-                'default' => 0
-            ),
-            'created' => array(
-                'type' => 'int',
-                'not null' => TRUE,
-                'unsigned' => TRUE,
-                'default' => 0
-            ),
-            'weight' => array(
-                'type' => 'int',
-                'not null' => TRUE,
-                'default' => 0
-            )
+  $schema = array();
+
+  $schema['jobbag_roles'] = array(
+    'fields' => array(
+      'rid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'machine_name' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE
+      ),
+      'label' => array(
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE
+      ),
+      'cardinality' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1
+      ),
+      'filter_by' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1 // Allow all except...
+      ),
+      'filter_users' => array(
+        'type' => 'text',
+        'serialize' => TRUE,
+        'not null' => FALSE
+      ),
+      'default_users' => array(
+        'type' => 'text',
+        'serialize' => TRUE,
+        'not null' => FALSE
+      ),
+      'permissions' => array(
+        'type' => 'text',
+        'serialize' => TRUE,
+        'not null' => FALSE
+      ),
+      'module' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'default' => 'jobbag_roles'
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        // Set the default to ENTITY_CUSTOM without using the constant as it is
+        // not safe to use it at this point.
+        'default' => 0x01,
+        'size' => 'tiny',
+        'description' => 'The exportable status of the entity.',
         ),
-        'primary key' => array('rid')
-    );
+      'changed' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0
+      ),
+      'created' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0
+      ),
+      'weight' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0
+      )
+    ),
+    'primary key' => array('rid')
+  );
     
-    $schema['jobbag_job_roles'] = array(
-        'fields' => array(
-            'jrid' => array(
-                'type' => 'serial',
-                'unsigned' => TRUE,
-                'not null' => TRUE
-            ),
-            'rid' => array(
-                'type' => 'int',
-                'unsigned' => TRUE,
-                'not null' => TRUE
-            ),
-            'jid' => array(
-                'type' => 'int',
-                'unsigned' => TRUE,
-                'not null' => TRUE
-            ),
-            'users' => array(
-                'type' => 'text',
-                'serialize' => TRUE,
-                'not null' => FALSE
-            ),
-            'permissions' => array(
-                'type' => 'text',
-                'serialize' => TRUE,
-                'not null' => FALSE
-            )
-        ),
-        'primary key' => array('jrid'),
-        'foreign keys' => array('role_id' => array('table' => 'jobbag_roles', 'columns' => array('rid' => 'rid')), 'job_id' => array('table' => 'jobbag', 'columns' => array('jid' => 'jid'))),
-        'unique keys' => array('rid_jid' => array('rid', 'jid'))
-    );
-    
-    $schema['jobbag_job_roles_users'] = array(
-        'fields' => array(
-            'ruid' => array(
-                'type' => 'int',
-                'unsigned' => TRUE,
-                'not null' => TRUE
-            ),
-            'jrid' => array(
-                'type' => 'int',
-                'unsigned' => TRUE,
-                'not null' => TRUE
-            ),
-            'uid' => array(
-                'type' => 'int',
-                'unsigned' => TRUE,
-                'not null' => TRUE
-            )
-        ),
-        'primary key' => array('ruid'),
-        'foreign keys' => array('job_role_id' => array('table' => 'jobbag_job_roles', 'columns' => array('jrid' => 'jrid'))),
-        'unique keys' => array('jrid_uid' => array('jrid', 'uid'))
-    );
-    
-    return $schema;
+  $schema['jobbag_job_roles'] = array(
+    'fields' => array(
+      'jrid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'rid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'jid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'users' => array(
+        'type' => 'text',
+        'serialize' => TRUE,
+        'not null' => FALSE
+      ),
+      'permissions' => array(
+        'type' => 'text',
+        'serialize' => TRUE,
+        'not null' => FALSE
+      )
+    ),
+    'primary key' => array('jrid'),
+    'foreign keys' => array(
+      'role_id' => array(
+        'table' => 'jobbag_roles',
+        'columns' => array('rid' => 'rid')
+      ),
+      'job_id' => array(
+        'table' => 'jobbag',
+        'columns' => array('jid' => 'jid')
+      )
+    ),
+    'unique keys' => array('rid_jid' => array('rid', 'jid'))
+  );
+
+  $schema['jobbag_job_roles_users'] = array(
+    'fields' => array(
+      'ruid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'jrid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'uid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      )
+    ),
+    'primary key' => array('ruid'),
+    'foreign keys' => array(
+      'job_role_id' => array(
+        'table' => 'jobbag_job_roles',
+        'columns' => array('jrid' => 'jrid')
+      )
+    ),
+    'unique keys' => array('jrid_uid' => array('jrid', 'uid'))
+  );
+
+  return $schema;
 }
 
 function jobbag_roles_install() {
-    $settings = array(
-        'label' => st('Account Manager'),
-        'machine_name' => 'account_manager',
-        'filter_by' => 0,
-        'filter_users' => job_roles_eligible_users(),
-        'permissions' => array('full access'),
-        'users' => array(1),
-        'cardinality' => 0,
-    );
-    
-    $role = entity_create('job_roles', $settings);
-    entity_save('job_roles', $role);
+  $settings = array(
+    'label' => st('Account Manager'),
+    'machine_name' => 'account_manager',
+    'filter_by' => 0,
+    'filter_users' => job_roles_eligible_users(),
+    'permissions' => array('full access'),
+    'users' => array(1),
+    'cardinality' => 0,
+  );
+
+  $role = entity_create('job_roles', $settings);
+  entity_save('job_roles', $role);
 }
