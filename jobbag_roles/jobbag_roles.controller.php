@@ -20,7 +20,7 @@ class JobBagRoleControllerExportable extends EntityAPIControllerExportable {
   }
 
   public function hasPermission(JobBagRole $role, $op) {
-    if (!is_array($role->permissions)) {
+    if (!isset($role->permissions) || !is_array($role->permissions)) {
       return FALSE;
     }
     return in_array($op, $role->permissions);
