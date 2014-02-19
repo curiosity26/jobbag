@@ -319,13 +319,7 @@ function job_role_has_permission($op, $role) {
 /* Entity Functions */
 
 function jobbag_role_load($id, $reset = FALSE) {
-  if (is_string($id)) {
-    $roles = jobbag_role_load_multiple(array(), array('machine_name' => $id), $reset);
-  }
-  else {
-    $roles = jobbag_role_load_multiple(array($id), array(), $reset);
-  }
-
+  $roles = jobbag_role_load_multiple(array($id), array(), $reset);
   return is_array($roles) && !empty($roles) ? array_shift($roles) : $roles;
 }
 
@@ -341,7 +335,7 @@ function jobbag_role_save($role) {
 
 function jobbag_role_form($form, &$form_state) {
   list($entity, $op) = $form_state['build_info']['args'];
-  dpm($entity);
+
   if (!$entity) {
     $entity = entity_create('jobbag_role', array('filter_by' => JOB_ROLE_FILTER_ALLOW));
     $form_state['build_info']['args'][0] = $entity;
