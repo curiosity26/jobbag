@@ -13,6 +13,9 @@ class JobBagRoleControllerExportable extends EntityAPIControllerExportable {
     if (isset($entity->is_new) || !isset($entity->created)) {
       $entity->created = REQUEST_TIME;
     }
+    if (!isset($entity->module)) {
+      $entity->module = 'jobbag_roles';
+    }
     return parent::save($entity);
   }
 }
