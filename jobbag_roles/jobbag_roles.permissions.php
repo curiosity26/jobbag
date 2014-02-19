@@ -4,7 +4,7 @@ function job_permissions_job_form($form, &$form_state, $job) {
   $form_state['storage']['entity'] = $job;
   $perms = job_role_perms();
   $roles = jobbag_role_load_multiple();
-  $success = FALSE; // It's not a success until it's done
+  $controller = entity_get_controller('job_role');
 
   drupal_set_title(t("@job_number's Permissions", array('@job_number' => $job->getJobNumber())));
 
@@ -33,6 +33,9 @@ function job_permissions_job_form($form, &$form_state, $job) {
 
     // Add columns for each role
     foreach ($roles as $role) {
+      if (($tmp = $controller->loadByJob($job, array('rid' => $role->rid))) !== FALSE) {
+        $role = $tmp;
+      }
       $form['checkboxes'][$name][$role->rid] = array(
         '#tree' => TRUE,
         '#type' => 'checkbox',
