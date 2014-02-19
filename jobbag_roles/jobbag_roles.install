@@ -155,6 +155,9 @@ function jobbag_roles_schema() {
 }
 
 function jobbag_roles_install() {
+  module_load_include('inc', 'jobbag_roles', 'jobbag_roles.entity');
+  module_load_include('inc', 'jobbag_roles', 'jobbag_roles.controller');
+
   $settings = array(
     'label' => st('Account Manager'),
     'machine_name' => 'account_manager',
