@@ -320,7 +320,7 @@ function job_role_has_permission($op, $role) {
 
 function jobbag_role_load($id, $reset = FALSE) {
   $roles = jobbag_role_load_multiple(array($id), array(), $reset);
-  return !empty($roles) ? array_shift($roles) : new stdClass();
+  return is_array($roles) && !empty($roles) ? array_shift($roles) : $roles;
 }
 
 function jobbag_role_load_multiple($ids = FALSE, $conditions = array(), $reset = FALSE) {
