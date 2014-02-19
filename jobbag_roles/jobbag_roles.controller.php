@@ -51,6 +51,7 @@ class JobRoleController extends EntityAPIController {
     if (!isset($entity->role)) {
       $entity->role = jobbag_role_load($entity->rid);
     }
+    return $entity;
   }
 
   public function buildQuery($ids, $conditions = array(), $revision_id = FALSE) {
