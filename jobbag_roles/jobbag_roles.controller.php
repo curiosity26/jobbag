@@ -7,6 +7,14 @@ class JobBagRoleControllerExportable extends EntityAPIControllerExportable {
     }
     return parent::export($entity, $prefix);
   }
+
+  public function save($entity) {
+    $entity->changed = REQUEST_TIME;
+    if (isset($entity->is_new) || !isset($entity->created)) {
+      $entity->created = REQUEST_TIME;
+    }
+    return parent::save($entity);
+  }
 }
 
 class JobBagRoleUIController extends EntityDefaultUIController {
@@ -114,8 +122,9 @@ class JobRoleController extends EntityAPIController {
     $users = $role->users;
     $uids = array_keys($users);
     $role->users = $uids;
-    parent::save($role);
+    $success = parent::save($role);
     $role->users = $users;
+    return $success;
   }
 
   public function invoke($hook, $role) {

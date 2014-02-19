@@ -127,9 +127,6 @@ function jobbag_roles_schema() {
 }
 
 function jobbag_roles_install() {
-  module_load_include('inc', 'jobbag_roles', 'jobbag_roles.entity');
-  module_load_include('inc', 'jobbag_roles', 'jobbag_roles.controller');
-
   $settings = array(
     'label' => st('Account Manager'),
     'machine_name' => 'account_manager',
@@ -142,7 +139,6 @@ function jobbag_roles_install() {
   dpm($settings, 'settings');
   $role = entity_create('jobbag_role', $settings);
   dpm($role, 'role');
-  $role->save();
-  #entity_save('jobbag_role', $role);
+  entity_save('jobbag_role', $role);
   dpm($role, 'role - post save');
 }
