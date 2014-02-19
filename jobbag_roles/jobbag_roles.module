@@ -17,7 +17,8 @@ function jobbag_roles_entity_info() {
     'bundles' => array(),
     'entity keys' => array(
       'id' => 'rid',
-      'label' => 'label'
+      'label' => 'label',
+      'name' => 'machine_name'
     ),
     'access callback' => 'jobbag_roles_access',
     'admin ui' => array(
