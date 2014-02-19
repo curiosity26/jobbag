@@ -165,6 +165,6 @@ function jobbag_roles_install() {
     'cardinality' => 0,
   );
 
-  $role = entity_create('job_roles', $settings);
-  entity_save('job_roles', $role);
+  $role = entity_create('jobbag_role', $settings);
+  entity_save('jobbag_role', $role);
 }
