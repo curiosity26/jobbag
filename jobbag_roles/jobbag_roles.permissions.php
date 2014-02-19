@@ -24,7 +24,7 @@ function job_permissions_job_form($form, &$form_state, $job) {
     $form['permission'][$name] =  array(
       '#type' => 'item',
       '#markup' => $perm['title'],
-      '#description' => t($perm['description']),
+      '#description' => isset($perm['description']) ? t($perm['description']) : '',
       '#tree' => TRUE
     );
 
@@ -41,7 +41,8 @@ function job_permissions_job_form($form, &$form_state, $job) {
 
       if ($role->rid == 1) {
         $form['checkboxes'][$name][$role->rid]['#disabled'] = TRUE;
-        $form['checkboxes']['full access'][$role->rid]['#value'] = $form['checkboxes']['full access'][$role->rid]['#default_value'] = 'full access';
+        $form['checkboxes']['full access'][$role->rid]['#value'] =
+          $form['checkboxes']['full access'][$role->rid]['#default_value'] = 'full access';
       }
     }
   }

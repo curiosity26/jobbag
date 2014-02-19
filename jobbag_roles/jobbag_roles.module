@@ -182,7 +182,7 @@ function job_role_perms() {
       ),
       'notify' => array(
         'title' => t('Receive Notifications'),
-        'descriptions' => t('Allow users of this role to receive notifications if the job settings allow for them')
+        'description' => t('Allow users of this role to receive notifications if the job settings allow for them')
       )
     );
 
