@@ -24,10 +24,12 @@ function jobbag_role_job_form($form, &$form_state, $job) {
         '#markup' => $role->label
       );
 
-      $eligible = array();
+      $eligible = array(0 => t('-- None --'));
 
-      foreach (job_roles_eligible_users($role) as $id => $account) {
-        $eligible[$id] = $account->name;
+      foreach (job_roles_eligible_users($role) as $account) {
+        if (isset($account->uid) && isset($account->name)) {
+          $eligible[$account->uid] = $account->name;
+        }
       }
       /*
       if ($role->rid == 1) {

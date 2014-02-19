@@ -302,7 +302,7 @@ function job_roles_eligible_users($role = NULL, $accounts = NULL) {
     }
   }
 
-  $ret = array(0 => '-- None --');
+  $ret = array();
   foreach ($accounts as $account) {
     if ($account->uid != 1) { // The admin account has access to everything and is always eligible (or never if negative filter
       $ret[$account->uid] = $account;
@@ -341,13 +341,13 @@ function jobbag_role_save($role) {
 
 function jobbag_role_form($form, &$form_state) {
   list($entity, $op) = $form_state['build_info']['args'];
-
+  dpm($entity);
   if (!$entity) {
     $entity = entity_create('jobbag_role', array('filter_by' => JOB_ROLE_FILTER_ALLOW));
     $form_state['build_info']['args'][0] = $entity;
   }
 
-  $eligible = array();
+  $eligible = array(0 => '-- None --');
   foreach(job_roles_eligible_users() as $account) {
     if (isset($account->uid) && $account->name) {
       $eligible[$account->uid] = $account->name;
