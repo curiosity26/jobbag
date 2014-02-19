@@ -15,7 +15,7 @@ class JobBagRole extends Entity {
   public $changed;
 
   public function __construct($values = array()) {
-      parent::__construct($values, 'job_roles');
+      parent::__construct($values, 'jobbag_role');
   }
 
   public function hasPermission($op) {

@@ -138,7 +138,5 @@ function jobbag_roles_install() {
   );
 
   $role = entity_create('jobbag_role', $settings);
-  // entity_save won't work here. The entityInfo doesn't populate when creating the jobbag_role entity
-  $controller = entity_get_controller('jobbag_role');
-  $controller->save($role);
+  entity_save('jobbag_role', $role);
 }
