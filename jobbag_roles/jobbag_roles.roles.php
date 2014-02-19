@@ -2,7 +2,6 @@
 
 function jobbag_role_job_form($form, &$form_state, $job) {
   $roles = jobbag_role_load_multiple();
-  $form_state['storage']['entity'] = $job;
   drupal_set_title(t("@job_number's Roles", array('@job_number' => $job->getJobNumber())));
 
   $form['role_users']['#tree'] = TRUE;
@@ -56,8 +55,7 @@ function jobbag_role_job_form($form, &$form_state, $job) {
 }
 
 function jobbag_role_job_form_submit(&$form, &$form_state) {
-  dpm($form_state);
-  $job = $form_state['storage']['entity'];
+  $job = $form_state['build_info']['args'][0];
   $success = FALSE; // It's not a success until the job is done.
   $hook_info = array(
     'user_added' => array(),
@@ -69,8 +67,8 @@ function jobbag_role_job_form_submit(&$form, &$form_state) {
       $role = $controller->loadByJob($job, array('rid' => $rid));
       if (!$role) {
         $role = entity_create('job_role', array('rid' => $rid, 'jid' => $job->identifier()));
-        dpm($role);
         $hook_info['user_added'][$rid] = array('role' => $role, 'users' => $uids);
+        dpm($hook_info);
       }
       elseif (count($uids) > count($role->users)) {
         $hook_info['user_added'][$rid] = array(

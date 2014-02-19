@@ -39,7 +39,7 @@ function jobbag_roles_entity_info() {
     'entity keys' => array(
       'id' => 'jrid'
     ),
-    'access callback' => TRUE
+    'label callback' => 'job_role_label'
   );
 
   return $info;
@@ -191,6 +191,10 @@ function job_role_perms() {
   }
 
   return $perms;
+}
+
+function job_role_label($role) {
+  return $role->role->label();
 }
 
 function job_role_access($op, $role, $account = NULL) {
