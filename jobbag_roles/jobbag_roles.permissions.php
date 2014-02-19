@@ -35,6 +35,7 @@ function job_permissions_job_form($form, &$form_state, $job) {
     foreach ($roles as $role) {
       if (($tmp = $controller->loadByJob($job, array('rid' => $role->rid))) !== FALSE) {
         $role = array_shift($tmp);
+        dpm($role);
       }
       $form['checkboxes'][$name][$role->rid] = array(
         '#tree' => TRUE,
