@@ -60,6 +60,7 @@ function job_permissions_job_form_submit($form, &$form_state) {
   $job = $form_state['storage']['entity'];
   $controller = entity_get_controller('job_role');
   $perms = array();
+  $success = FALSE; // Can't be successful until the job is done
 
   $values = $form_state['values'];
   foreach ($values['checkboxes'] as $roles) {
@@ -73,45 +74,10 @@ function job_permissions_job_form_submit($form, &$form_state) {
     if ($role) {
       $role = entity_create('job_role', array('rid' => $rid, 'jid' => $job->identifier()));
     }
-    if (!is_array($permissions)) {
-      $permissions = array($permissions);
-    }
 
-    $role->permissions = $permissions;
+    $role->permissions = (array)$permissions;
 
     $success = entity_save('job_role', $role);
-
-    /*
-    $jrid = db_select('jobbag_job_roles', 'r')
-      ->distinct()
-      ->fields('r', array('jrid'))
-      ->condition('jid', $job->identifier())
-      ->condition('rid', $rid)
-      ->execute()
-      ->fetchField();
-
-    $record = new stdClass();
-    $key = array();
-
-    if ($jrid) {
-      $key[] = 'jrid';
-      $record->jrid = $jrid;
-    }
-
-    $record->rid = $rid;
-    $record->jid = $job->identifier();
-
-    if (!is_array($permissions)) {
-      $permissions = array($permissions);
-    }
-
-    $record->permissions = array_filter($permissions);
-
-    $success = drupal_write_record('jobbag_job_roles', $record, $key);
-
-    unset($jrid);
-    unset($record);
-    unset($key);*/
 
     if ($success === FALSE) {
       form_error($form['role_users'][$rid], 'Unable to save job permission settings');

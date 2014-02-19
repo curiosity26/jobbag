@@ -83,33 +83,8 @@ function jobbag_role_job_form_submit(&$form, &$form_state) {
         );
       }
 
-      $role->users = !is_array($uids) ? array($uids) : (array)$uids;
+      $role->setUsers((array)$uids);
       $success = entity_save('job_role', $role);
-      /*$jrid = db_select('jobbag_job_roles', 'r')
-        ->distinct()
-        ->fields('r', array('jrid'))
-        ->condition('jid', $job->identifier())
-        ->condition('rid', $rid)
-        ->execute()
-        ->fetchField();
-
-      $record = new stdClass();
-      $key = array();
-
-      if ($jrid) {
-          $key[] = 'jrid';
-          $record->jrid = $jrid;
-      }
-
-      $record->rid = $rid;
-      $record->jid = $job->jid;
-      $record->users = !is_array($uids) ? array($uids) : $uids;
-
-      $success = drupal_write_record('jobbag_job_roles', $record, $key);
-
-      unset($jrid);
-      unset($record);
-      unset($key);*/
 
       if ($success === FALSE) {
         form_error($form['role_users'][$rid], 'Unable to save job role settings');
@@ -124,9 +99,11 @@ function jobbag_role_job_form_submit(&$form, &$form_state) {
     }
 
     // Rules Rule
-    foreach ($hook_info as $hook => $info) {
-      foreach ($info['users'] as $uid) {
-        $controller->invoke($hook, $info['role'], user_load($uid));
+    foreach ($hook_info as $hook => $roles) {
+      foreach ($roles as $rid => $info) {
+        foreach ($info['users'] as $uid) {
+          $controller->invoke($hook, $info['role'], user_load($uid));
+        }
       }
     }
   }
