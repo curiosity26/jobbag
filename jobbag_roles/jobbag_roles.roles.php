@@ -68,7 +68,6 @@ function jobbag_role_job_form_submit(&$form, &$form_state) {
       if (!$role) {
         $role = entity_create('job_role', array('rid' => $rid, 'jid' => $job->identifier()));
         $hook_info['user_added'][$rid] = array('role' => $role, 'users' => $uids);
-        dpm($hook_info);
       }
       elseif (count($uids) > count($role->users)) {
         $hook_info['user_added'][$rid] = array(
