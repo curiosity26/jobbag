@@ -38,7 +38,11 @@ class JobRole extends Entity {
   public $jid;
   public $rid;
   public $users = array();
-  public $permissons = array();
+  public $permissions = array();
+
+  public function __construct(array $values = array()) {
+    return parent::__construct($values, 'job_role');
+  }
 
   public function access($op, $account = NULL) {
     $controller = entity_get_controller($this->entityType());
