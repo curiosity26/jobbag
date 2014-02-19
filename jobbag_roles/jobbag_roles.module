@@ -429,7 +429,7 @@ function jobbag_role_form($form, &$form_state) {
       $form['perm_object'][$name] = array(
         '#type' => 'item',
         '#markup' => $perm['title'],
-        '#description' => $perm['description']
+        '#description' => isset($perm['description']) ? $perm['description'] : ''
       );
 
       $form['perm_checkbox'][$name] = array(
