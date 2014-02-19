@@ -19,6 +19,7 @@ class JobBagRole extends Entity {
   }
 
   public function hasPermission($op) {
+    dpm($this, 'JobBagRole');
     $class = $this->entityInfo['controller class'];
     return $class::hasPermission($this, $op);
   }
