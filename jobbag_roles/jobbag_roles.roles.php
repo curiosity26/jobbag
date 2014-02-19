@@ -64,7 +64,8 @@ function jobbag_role_job_form_submit(&$form, &$form_state) {
   if (is_object($job)) {
     $controller = entity_get_controller('job_role');
     foreach ($form_state['values']['role_users'] as $rid => $uids) {
-      $role = $controller->loadByJob($job, array('rid' => $rid));
+      $roles = $controller->loadByJob($job, array('rid' => $rid));
+      $role = array_shift($roles);
       if (!$role) {
         $role = entity_create('job_role', array('rid' => $rid, 'jid' => $job->identifier()));
         $hook_info['user_added'][$rid] = array('role' => $role, 'users' => $uids);

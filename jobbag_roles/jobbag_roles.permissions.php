@@ -74,7 +74,8 @@ function job_permissions_job_form_submit($form, &$form_state) {
   }
 
   foreach ($perms as $rid => $permissions) {
-    $role = $controller->loadByJob($job, array('rid' => $rid));
+    $roles = $controller->loadByJob($job, array('rid' => $rid));
+    $role = array_shift($roles);
     if (!$role) {
       $role = entity_create('job_role', array('rid' => $rid, 'jid' => $job->identifier()));
     }
