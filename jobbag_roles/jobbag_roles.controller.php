@@ -56,15 +56,15 @@ class JobRoleController extends EntityAPIController {
       unset($conditions[$job_info['entity keys']['id']]);
     }
 
-    $jids = db_select($this->entityInfo['base table'], 'bt')
+    $query = db_select($this->entityInfo['base table'], 'bt')
       ->fields('bt', array('jrid'))
       ->condition('jid', $job->identifier());
 
     foreach ($conditions as $field => $value) {
-      $jids->condition($field, $value);
+      $query->condition($field, $value);
     }
 
-    $jids->execute()->fetchAllAssoc('jrid');
+    $jids = $query->execute()->fetchAllAssoc('jrid');
 
     return $this::load(array_keys($jids));
   }
@@ -120,11 +120,11 @@ class JobRoleController extends EntityAPIController {
 
   public function invoke($hook, $role) {
     $args = func_get_args();
-    array_shift($args); // Shift off role
     array_shift($args); // Shift off hook
 
     if ($hook == 'user_added' || $hook == 'user_deleted') {
-
+      array_unshift($args, $this->entityType().'_'.$hook);
+      call_user_func_array('rules_invoke_event', $args);
     }
     else {
       parent::invoke($hook, $role);

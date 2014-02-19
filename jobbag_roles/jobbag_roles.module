@@ -269,11 +269,11 @@ function job_get_by_user($account = NULL) {
   }
 
   if (empty($jobs[$account->uid])) {
-    $jids = db_select('jobbag_job_roles', 'r')
+    $query = db_select('jobbag_job_roles', 'r')
       ->distinct()
       ->fields('r', array('jid'));
-    $jids->join('jobbag_job_roles_users', 'u', 'u.jrid = r.jrid');
-    $jids->where('u.uid', array($account->uid))->execute()->fetchAllAssoc('jid');
+    $query->join('jobbag_job_roles_users', 'u', 'u.jrid = r.jrid');
+    $jids = $query->where('u.uid', array($account->uid))->execute()->fetchAllAssoc('jid');
 
     $jobs[$account->uid] = jobbag_load_multiple($jids);
   }
@@ -523,7 +523,6 @@ function theme_jobbag_role_job_form($vars) {
       )
     );
   }
-
 
   $variables = array(
     'header' => array(),
