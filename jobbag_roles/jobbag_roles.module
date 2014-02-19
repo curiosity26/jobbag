@@ -312,7 +312,7 @@ function job_roles_eligible_users($role = NULL, $accounts = NULL) {
   return $ret;
 }
 
-function job_role_has_permission($op, $role) {
+function job_role_has_permission($op, JobRole $role) {
   return $role->hasPermission($op);
 }
 
