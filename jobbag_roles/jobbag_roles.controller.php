@@ -18,6 +18,13 @@ class JobBagRoleControllerExportable extends EntityAPIControllerExportable {
     }
     return parent::save($entity);
   }
+
+  public function hasPermission(JobBagRole $role, $op) {
+    if (!is_array($role->permissions)) {
+      return FALSE;
+    }
+    return in_array($op, $role->permissions);
+  }
 }
 
 class JobBagRoleUIController extends EntityDefaultUIController {

@@ -18,6 +18,11 @@ class JobBagRole extends Entity {
       parent::__construct($values, 'job_roles');
   }
 
+  public function hasPermission($op) {
+    $class = $this->entityInfo['controller class'];
+    return $class::hasPermission($this, $op);
+  }
+
   public function save() {
     if (empty($this->created) && (isset($this->is_new) || !$this->jid)) {
       $this->created = REQUEST_TIME;
