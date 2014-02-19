@@ -344,7 +344,9 @@ function jobbag_role_form($form, &$form_state) {
 
   $eligible = array();
   foreach(job_roles_eligible_users() as $account) {
-    $eligible[$account->uid] = $account->name;
+    if (isset($account->uid) && $account->name) {
+      $eligible[$account->uid] = $account->name;
+    }
   }
 
   if ($op == 'add' || $op == 'edit') {
