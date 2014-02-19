@@ -492,7 +492,6 @@ function jobbag_role_form_submit($form, &$form_state) {
   $entity->permissions = array_filter($values['perm_checkbox']);
 
   $success = entity_save($entity->entityType(), $entity);
-  dpm($success);
   if ($success !== FALSE) {
     drupal_set_message(t('Successfully saved role'));
   }

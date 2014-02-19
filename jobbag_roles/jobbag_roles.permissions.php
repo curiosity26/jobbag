@@ -4,6 +4,7 @@ function job_permissions_job_form($form, &$form_state, $job) {
   $form_state['storage']['entity'] = $job;
   $perms = job_role_perms();
   $roles = jobbag_role_load_multiple();
+  $success = FALSE; // It's not a success until it's done
 
   drupal_set_title(t("@job_number's Permissions", array('@job_number' => $job->getJobNumber())));
 
@@ -112,14 +113,15 @@ function job_permissions_job_form_submit($form, &$form_state) {
     unset($record);
     unset($key);*/
 
-    if (!$success) {
+    if ($success === FALSE) {
       form_error($form['role_users'][$rid], 'Unable to save job permission settings');
       $form_state['rebuild'] = TRUE;
       break;
     }
   }
+  if ($success !== FALSE) {
+    drupal_set_message('Successfully saved job permission settings');
+    job_load_roles($job, TRUE);
+  }
 
-  drupal_set_message('Successfully saved job permission settings');
-
-  job_load_roles($job, TRUE);
 }

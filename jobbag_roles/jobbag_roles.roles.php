@@ -1,62 +1,63 @@
 <?php
 
 function jobbag_role_job_form($form, &$form_state, $job) {
-    $roles = jobbag_role_load_multiple();
-    $form_state['storage']['entity'] = $job;
-    drupal_set_title(t("@job_number's Roles", array('@job_number' => $job->getJobNumber())));
-    
-    $form['role_users']['#tree'] = TRUE;
-    
-    $form['roles'] = array(
-      '#type' => 'value',
-      '#value' => $roles
-    );
-    
-    foreach ($roles as $role) {
-      $users = array();
+  $roles = jobbag_role_load_multiple();
+  $form_state['storage']['entity'] = $job;
+  drupal_set_title(t("@job_number's Roles", array('@job_number' => $job->getJobNumber())));
 
-      if (!empty($job->roles[$role->rid]) && !empty($job->roles[$role->rid]->users)) {
-        $users = $job->roles[$role->rid]->users;
-      }
+  $form['role_users']['#tree'] = TRUE;
 
-      $form['role_name'][$role->rid] = array(
-        '#type' => 'markup',
-        '#markup' => $role->label
-      );
+  $form['roles'] = array(
+    '#type' => 'value',
+    '#value' => $roles
+  );
 
-      $eligible = array(0 => t('-- None --'));
+  foreach ($roles as $role) {
+    $users = array();
 
-      foreach (job_roles_eligible_users($role) as $account) {
-        if (isset($account->uid) && isset($account->name)) {
-          $eligible[$account->uid] = $account->name;
-        }
-      }
-      /*
-      if ($role->rid == 1) {
-       unset($users[0]); // Anons not allowed
-      }
-      */
-
-      $form['role_users'][$role->rid] = array(
-        '#type' => 'select',
-        '#multiple' => $role->cardinality != 1,
-        '#options' => $eligible,
-        '#default_value' => !empty($users) ? $users : NULL,
-        '#size' => $role->cardinality == 1 ? 1 : min(10, count($users)),
-        '#tree' => TRUE
-      );
+    if (!empty($job->roles[$role->rid]) && !empty($job->roles[$role->rid]->users)) {
+      $users = $job->roles[$role->rid]->users;
     }
-    
-    $form['submit'] = array(
-      '#type' => 'submit',
-      '#value' => t('Save roles')
+
+    $form['role_name'][$role->rid] = array(
+      '#type' => 'markup',
+      '#markup' => $role->label
     );
-    
-    return $form;
+
+    $eligible = array(0 => t('-- None --'));
+
+    foreach (job_roles_eligible_users($role) as $account) {
+      if (isset($account->uid) && isset($account->name)) {
+        $eligible[$account->uid] = $account->name;
+      }
+    }
+    /*
+    if ($role->rid == 1) {
+     unset($users[0]); // Anons not allowed
+    }
+    */
+
+    $form['role_users'][$role->rid] = array(
+      '#type' => 'select',
+      '#multiple' => $role->cardinality != 1,
+      '#options' => $eligible,
+      '#default_value' => !empty($users) ? $users : NULL,
+      '#size' => $role->cardinality == 1 ? 1 : min(10, count($users)),
+      '#tree' => TRUE
+    );
+  }
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save roles')
+  );
+
+  return $form;
 }
 
 function jobbag_role_job_form_submit(&$form, &$form_state) {
   $job = $form_state['storage']['entity'];
+  $success = FALSE; // It's not a success until the job is done.
   $hook_info = array(
     'user_added' => array(),
     'user_removed' => array()
@@ -110,15 +111,17 @@ function jobbag_role_job_form_submit(&$form, &$form_state) {
       unset($record);
       unset($key);*/
 
-      if (!$success) {
+      if ($success === FALSE) {
         form_error($form['role_users'][$rid], 'Unable to save job role settings');
         $form_state['rebuild'] = TRUE;
         break;
       }
     }
 
-    drupal_set_message('Successfully saved job role settings');
-    job_load_roles($job, TRUE);
+    if ($success !== FALSE) {
+      drupal_set_message('Successfully saved job role settings');
+      job_load_roles($job, TRUE);
+    }
 
     // Rules Rule
     foreach ($hook_info as $hook => $info) {
