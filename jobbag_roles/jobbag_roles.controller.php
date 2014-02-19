@@ -40,7 +40,6 @@ class JobBagRoleUIController extends EntityDefaultUIController {
   }
 
   public function overviewForm($form, &$form_state) {
-    dpm($form_state, 'Form State');
     drupal_set_title('Job Roles');
     return parent::overviewForm($form, $form_state);
   }
