@@ -420,6 +420,14 @@ function jobbag_role_form($form, &$form_state) {
 
     $form['perm_checkbox']['#tree'] = TRUE;
 
+    $default_state = array(
+      '#state' => array(
+        'disabled' => array(
+          ':input[name="perm_checkbox[full access]"]' => array('checked' => TRUE)
+        )
+      )
+    );
+
     foreach($perms as $name => $perm) {
       $form['perm_object'][$name] = array(
         '#type' => 'item',
@@ -434,6 +442,10 @@ function jobbag_role_form($form, &$form_state) {
         '#prefix' => '<span style="text-align:center;">',
         '#suffix' => '</span>'
       );
+
+      if ($name !== 'full access') {
+        $form['perm_checkbox'][$name] += $default_state;
+      }
     }
 
     $form['save'] = array(
