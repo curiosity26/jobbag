@@ -19,8 +19,8 @@ class JobBagRole extends Entity {
   }
 
   public function hasPermission($op) {
-    $class = $this->entityInfo['controller class'];
-    return $class::hasPermission($this, $op);
+    $controller = entity_get_controller($this->entityType());
+    return $controller->hasPermission($this, $op);
   }
 
   public function save() {
@@ -41,33 +41,33 @@ class JobRole extends Entity {
   public $permissons = array();
 
   public function access($op, $account = NULL) {
-    $class = $this->entityInfo['controller class'];
-    return $class::access($this, $op, $account);
+    $controller = entity_get_controller($this->entityType());
+    return $controller->access($this, $op, $account);
   }
 
   public function hasPermission($op) {
-    $class = $this->entityInfo['controller class'];
-    return $class::hasPermission($this, $op);
+    $controller = entity_get_controller($this->entityType());
+    return $controller->hasPermission($this, $op);
   }
 
   public function setUsers(array $uids = array()) {
-    $class = $this->entityInfo['controller class'];
-    return $class::setUsers($this, $uids);
+    $controller = entity_get_controller($this->entityType());
+    return $controller->setUsers($this, $uids);
   }
 
   public function getUsers() {
-    $class = $this->entityInfo['controller class'];
-    return $class::getUsers($this);
+    $controller = entity_get_controller($this->entityType());
+    return $controller->getUsers($this);
   }
 
   public function addUser(stdClass $account) {
-    $class = $this->entityInfo['controller class'];
-    return $class::addUser($this, $account);
+    $controller = entity_get_controller($this->entityType());
+    return $controller->addUser($this, $account);
   }
 
   public function hasUser(stdClass $account) {
-    $class = $this->entityInfo['controller class'];
-    return $class::hasUser($this, $account);
+    $controller = entity_get_controller($this->entityType());
+    return $controller->hasUser($this, $account);
   }
 
   public function __sleep() {
