@@ -319,7 +319,13 @@ function job_role_has_permission($op, JobRole $role) {
 /* Entity Functions */
 
 function jobbag_role_load($id, $reset = FALSE) {
-  $roles = jobbag_role_load_multiple(array($id), array(), $reset);
+  if (is_string($id)) {
+    $roles = jobbag_role_load_multiple(FALSE, array('machine_name' => $id), $reset);
+  }
+  else {
+    $roles = jobbag_role_load_multiple(array($id), array(), $reset);
+  }
+
   return is_array($roles) && !empty($roles) ? array_shift($roles) : $roles;
 }
 
