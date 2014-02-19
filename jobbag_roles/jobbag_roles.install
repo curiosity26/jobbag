@@ -143,4 +143,5 @@ function jobbag_roles_install() {
   $role = entity_create('jobbag_role', $settings);
   dpm($role, 'role');
   entity_save('jobbag_role', $role);
+  dpm($role, 'role - post save');
 }
