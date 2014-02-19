@@ -240,7 +240,7 @@ function job_load_roles($job, $reset = FALSE) {
     }*/
   }
 
-  $job->roles = $roles[$job->identifier()];
+  $job->roles = isset($roles[$job->identifier()]) ? $roles[$job->identifier()] : array();
 
   return $job;
 }
