@@ -6,11 +6,13 @@ define('JOB_ROLE_FILTER_DENY', 0);
 /* Entity Info */
 
 function jobbag_roles_entity_info() {
-  $entity['jobbag_role'] = array(
+  $info = array();
+  $info['jobbag_role'] = array(
     'label' => t('Job Bag Role'),
     'entity class' => 'JobBagRole',
     'controller class' => 'JobBagRoleControllerExportable',
     'base table' => 'jobbag_roles',
+    'module' => 'jobbag_roles',
     'exportable' => TRUE,
     'bundles' => array(),
     'entity keys' => array(
@@ -22,14 +24,15 @@ function jobbag_roles_entity_info() {
       'path' => 'admin/jobs/roles',
       'menu wildcard' => '%jobbag_role',
       'controller class' => 'JobBagRoleUIController',
-    ),
+    )
   );
 
-  $entity['job_role'] = array(
+  $info['job_role'] = array(
     'label' => t('Job Role'),
     'entity class' => 'JobRole',
     'controller class' => 'JobRoleController',
     'base table' => 'jobbag_job_roles',
+    'module' => 'jobbag_roles',
     'exportable' => FALSE,
     'fieldable' => FALSE,
     'entity keys' => array(
@@ -38,7 +41,7 @@ function jobbag_roles_entity_info() {
     'access callback' => TRUE
   );
 
-  return $entity;
+  return $info;
 }
 
 /* Hook Theme */
