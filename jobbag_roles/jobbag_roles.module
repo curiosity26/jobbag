@@ -203,7 +203,8 @@ function job_role_access($op, $role, $account = NULL) {
 
 function jobbag_roles_job_access($op, $job = NULL, $account = NULL) {
   if ($job && !empty($job->roles)) {
-    foreach ($job->roles as $role) {
+    $roles = job_get_user_roles($job, $account);
+    foreach ($roles as $role) {
       $access = job_role_access($op, $role, $account);
       if ($access === TRUE) {
         return TRUE;
@@ -231,21 +232,6 @@ function job_load_roles($job, $reset = FALSE) {
     foreach ($job_roles as $role) {
       $roles[$job->identifier()][$role->rid] = $role;
     }
-    /*
-    $result = db_select('jobbag_job_roles', 'r')
-      ->fields('r', array('rid', 'jrid', 'users', 'permissions'))
-      ->condition('jid', $job->identifier())
-      ->groupBy('rid')
-      ->execute();
-
-    while($role = $result->fetchObject()) {
-      $entity = jobbag_role_load($role->rid);
-      $entity->users = array_values(unserialize($role->users));
-      if (!empty($role->permissions)) {
-        $entity->permissions = array_values(unserialize($role->permissions));
-      }
-      $roles[$job->jid][$entity->rid] = $entity;
-    }*/
   }
 
   $job->roles = isset($roles[$job->identifier()]) ? $roles[$job->identifier()] : array();
@@ -288,6 +274,20 @@ function job_get_by_user($account = NULL) {
 
   return $jobs;
 }
+
+function job_get_user_roles(JobBag $job, $account = NULL) {
+  if (!$account) {
+    $account = $GLOBALS['user'];
+  }
+  $roles = array();
+  foreach ($job->roles as $role) {
+    if ($role->hasUser($account)) {
+      $roles[$role->identifier()] = $role;
+    }
+  }
+  return $roles;
+}
+
 
 function job_roles_eligible_users($role = NULL, $accounts = NULL) {
   if (!$accounts) {
