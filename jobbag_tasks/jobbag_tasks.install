@@ -1,0 +1,493 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: alexboyce
+ * Date: 2/22/14
+ * Time: 10:30 AM
+ */
+
+function jobbag_tasks_schema() {
+  $t = get_t();
+
+  $schema = array();
+
+  $schema['jobbag_tasks'] = array(
+    'description' => $t('Tasks that can be added to jobs'),
+    'field' => array(
+      'id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'machine_name' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE
+      ),
+      'type' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE
+      ),
+      'module' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE
+      ),
+      'label' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'created' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'changed' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'status' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0x1
+      )
+    ),
+    'primary key' => 'id',
+    'indexes' => array(
+      'machine_name' => array('machine_name')
+    ),
+    'foreign keys' => array(
+      'type' => array(
+        'table' => 'jobbag_tasks_type',
+        'columns' => array('type' => 'type')
+      )
+    ),
+    'unique keys' => array(
+      'id_name' => array('id', 'machine_name')
+    )
+  );
+
+  $schema['jobbag_tasks_type'] = array(
+    'description' => $t('Types of tasks that can be created'),
+    'fields' => array(
+      'tid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'type' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE
+      ),
+      'label' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'module' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE
+      ),
+      'created' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'changed' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'status' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0x1
+      )
+    ),
+    'primary key' => 'tid',
+    'indexes' => array(
+      'type' => array('type')
+    ),
+    'unique keys' => array(
+      'tid_type' => array('tid', 'type')
+    )
+  );
+
+  $schema['jobbag_tasks_status'] = array(
+    'description' => $t('Different statuses to be given to a task'),
+    'fields' => array(
+      'sid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'machine_name' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE
+      ),
+      'type' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE
+      ),
+      'label' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'status' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0x1
+      )
+    ),
+    'primary key' => 'sid',
+    'indexes' => array(
+      'machine_name' => array('machine_name')
+    ),
+    'unique keys' => array(
+      'sid_name' => array('sid', 'machine_name')
+    ),
+    'foreign keys' => array(
+      'type' => array(
+        'table' => 'jobbag_tasks_status_type',
+        'columns' => array('type' => 'type')
+      )
+    )
+  );
+
+  $schema['jobbag_tasks_status_type'] = array(
+    'description' => $t('Types of tasks that can be created'),
+    'fields' => array(
+      'stid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'type' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE
+      ),
+      'label' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'module' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE
+      ),
+      'created' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'changed' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'status' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0x1
+      )
+    ),
+    'primary key' => 'tid',
+    'indexes' => array(
+      'type' => array('type')
+    ),
+    'unique keys' => array(
+      'stid_type' => array('stid', 'type')
+    )
+  );
+
+  $schema['jobbag_tasks_workflow_type'] = array(
+    'description' => $t('Different sets of task workflow that can be created'),
+    'fields' => array(
+      'wtid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'type' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE
+      ),
+      'label' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'module' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE
+      ),
+      'created' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'changed' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'status' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0x1
+      )
+    ),
+    'primary key' => 'tid',
+    'indexes' => array(
+      'type' => array('type')
+    ),
+    'unique keys' => array(
+      'wtid_type' => array('wtid', 'type')
+    )
+  );
+
+  $schema['jobbag_tasks_workflow'] = array(
+    'description' => $t('Workflow of tasks to be given to a job'),
+    'fields' => array(
+      'wid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'machine_name' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE
+      ),
+      'type' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE
+      ),
+      'label' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'status' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0x1
+      )
+    ),
+    'primary key' => 'sid',
+    'indexes' => array(
+      'machine_name' => array('machine_name')
+    ),
+    'unique keys' => array(
+      'wid_name' => array('wid', 'machine_name')
+    ),
+    'foreign keys' => array(
+      'type' => array(
+        'table' => 'jobbag_tasks_workflow_type',
+        'columns' => array('type' => 'type')
+      )
+    )
+  );
+
+  $schema['jobbag_tasks_status_workflow_type'] = array(
+    'description' => $t('Different sets of status workflow that can be created'),
+    'fields' => array(
+      'swtid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'type' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE
+      ),
+      'label' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'module' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE
+      ),
+      'created' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'changed' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'status' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0x1
+      )
+    ),
+    'primary key' => 'tid',
+    'indexes' => array(
+      'type' => array('type')
+    ),
+    'unique keys' => array(
+      'swtid_type' => array('swtid', 'type')
+    )
+  );
+
+  $schema['jobbag_tasks_status_workflow'] = array(
+    'description' => $t('Workflow of statuses to be given to a task'),
+    'fields' => array(
+      'swid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'machine_name' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE
+      ),
+      'type' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE
+      ),
+      'label' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE
+      ),
+      'status' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0x1
+      )
+    ),
+    'primary key' => 'sid',
+    'indexes' => array(
+      'machine_name' => array('machine_name')
+    ),
+    'unique keys' => array(
+      'swid_name' => array('swid', 'machine_name')
+    ),
+    'foreign keys' => array(
+      'type' => array(
+        'table' => 'jobbag_tasks_workflow_type',
+        'columns' => array('type' => 'type')
+      )
+    )
+  );
+
+  return $schema;
+}
+
+function jobbag_tasks_field_schema($field) {
+
+  if (in_array($field['type'], array('jobbag_status_workflow', 'jobbag_task_workflow'))) {
+    return array(
+      'columns' => array(
+        'settings' => array(
+          'type' => 'text',
+          'size' => 'medium',
+          'serialize' => TRUE,
+          'not null' => FALSE
+        )
+      )
+    );
+  }
+
+  if ($field['type'] == 'jobbag_tasks') {
+    return array(
+      'columns' => array(
+        'entity' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => FALSE
+        )
+      ),
+      'foreign keys' => array(
+        'entity' => array(
+          'table' => 'jobbag_tasks',
+          'columns' => array('value' => 'tid')
+        )
+      )
+    );
+  }
+
+  if ($field['type'] == 'jobbag_statuses') {
+    return array(
+      'columns' => array(
+        'entity' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => FALSE
+        )
+      ),
+      'foreign keys' => array(
+        'entity' => array(
+          'table' => 'jobbag_tasks_status',
+          'columns' => array('value' => 'sid')
+        )
+      )
+    );
+  }
+
+  return NULL;
+}
+
+function jobbag_tasks_install() {
+
+  _jobbag_tasks_create_default_statuses();
+}
+
+function _jobbag_tasks_create_default_statuses() {
+  $t = get_t();
+
+  $status_new = entity_create('jobbagtask_status', array(
+      'name' => 'created',
+      'label' => $t('Created'),
+      'status' => ENTITY_FIXED
+    )
+  );
+  entity_save('jobbagtask_status', $status_new);
+
+  $status_complete = entity_create('jobbagtask_status', array(
+      'name' => 'complete',
+      'label' => $t('Complete'),
+      'status' => ENTITY_FIXED
+    )
+  );
+  entity_save('jobbagtask_status', $status_complete);
+}

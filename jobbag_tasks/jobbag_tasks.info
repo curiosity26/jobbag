@@ -1,0 +1,12 @@
+;$id;
+
+name = Job Bag Tasks
+description = Tasks to be associated with jobs and assigned to roles or users of roles
+core = 7.x
+package = Job Bag
+dependencies[] = entity
+dependencies[] = jobbag
+dependencies[] = jobbag_roles
+files[] = jobbag_tasks.controller.php
+files[] = jobbag_tasks.entity.php
+files[] = jobbag_tasks.field.php

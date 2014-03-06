@@ -1,0 +1,68 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: alexboyce
+ * Date: 2/23/14
+ * Time: 11:27 AM
+ */
+
+function jobbag_tasks_task_field_item($variables) {
+  $output = '';
+  $element = $variables['#element'];
+  $output .= '<div class="task-field-item">';
+  $output .= drupal_render_children($element);
+  $output .= '</div>';
+  return $output;
+}
+
+function jobbag_tasks_task_field_widget($variables) {
+  $elements = $variables['#element'];
+  $element_children = element_children($elements);
+  $weight_class = $elements['#id'] . '-weight';
+  $table_id = $elements['#id'].'-table';
+  $add_element = array();
+
+  $rows = array();
+  foreach ($element_children as $key) {
+    $element = &$element_children[$key];
+    if ($element['entity']['#type'] === 'select') {
+      $add_element = $element;
+      continue;
+    }
+
+    hide($element['remove']);
+    hide($element['_weight']);
+    $element['_weight']['#attributes']['class'] = array($weight_class);
+    $row = array(
+      drupal_render($element),
+      render($element['_weight']),
+      render($element['remove'])
+    );
+
+    $rows[] = array(
+      'data' => $row,
+      'class' => isset($element['#attributes']['class'])
+          ? array_merge($element['#attributes']['class'], array('draggable')) : array('draggable'),
+    );
+  }
+
+  hide($add_element['_weight']);
+  $add_element['_weight']['#attributes']['class'] = array($weight_class);
+  $row = array(
+    drupal_render($add_element),
+    array('data' => render($add_element['_weight']), 'class' => $weight_class),
+    ''
+  );
+
+  $rows[] = array(
+    'data' => $row,
+    'class' => isset($add_element['#attributes']['class'])
+        ? array_merge($add_element['#attributes']['class'], array('draggable')) : array('draggable'),
+  );
+
+  drupal_add_tabledrag($table_id, 'order', 'sibling', $weight_class);
+
+  $output = empty($rows) ? '' : theme('table', array('header' => array(), 'rows' => $rows, 'attributes' => array('id' => $table_id)));
+  $output .= drupal_render_children($elements);
+  return $output;
+}
