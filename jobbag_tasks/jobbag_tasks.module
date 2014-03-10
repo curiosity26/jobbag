@@ -8,6 +8,7 @@
 
 module_load_include('inc', 'jobbag_tasks', 'jobbag_tasks.entity');
 module_load_include('inc', 'jobbag_tasks', 'jobbag_tasks.controller');
+module_load_include('inc', 'jobbag_tasks', 'jobbag_tasks.field');
 
 function jobbag_tasks_entity_info() {
 
