@@ -74,8 +74,8 @@ function jobbag_tasks_entity_info() {
     ->execute()->fetchAllAssoc('type');
 
   foreach ($types as $type => $t) {
-    $info['jobbag_task']['bundles'][$type->type] = array(
-      'label' => $type->label(),
+    $info['jobbag_task']['bundles'][$type] = array(
+      'label' => t($t['label']),
       'admin' => array(
         'path' => 'admin/structure/job_tasks/manage/%jobbag_task_type',
         'real path' => 'admin/structure/job_tasks/manage/' . str_replace('_', '-', $type),
