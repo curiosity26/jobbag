@@ -83,7 +83,7 @@ function jobbag_tasks_schema() {
         'columns' => array('type' => 'type')
       ),
       'job' => array(
-        'table' => 'job',
+        'table' => 'jobbag',
         'columns' => array('job' => 'jid')
       )
     ),
@@ -153,7 +153,7 @@ function jobbag_tasks_field_schema($field) {
         'id' => array(
           'type' => 'int',
           'unsigned' => TRUE,
-          'not null' => FALSE
+          'not null' => TRUE
         )
       ),
       'foreign keys' => array(
