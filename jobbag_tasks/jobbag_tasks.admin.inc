@@ -26,7 +26,7 @@ function jobbag_task_type_form($form, &$form_state, $jobbag_task_type, $op = 'ed
     '#type' => 'machine_name',
     '#default_value' => isset($jobbag_task_type->type) ? $jobbag_task_type->type : '',
     '#maxlength' => 32,
-    '#disabled' => $jobbag_task_type->isLocked() && $op != 'clone',
+    '#disabled' => $op != 'clone',
     '#machine_name' => array(
       'exists' => 'jobbag_task_type_exists',
       'source' => array('label'),
@@ -41,7 +41,7 @@ function jobbag_task_type_form($form, &$form_state, $jobbag_task_type, $op = 'ed
     '#weight' => 40,
   );
 
-  if (!$jobbag_task_type->isLocked() && $op != 'add' && $op != 'clone') {
+  if ($op != 'add' && $op != 'clone') {
     $form['actions']['delete'] = array(
       '#type' => 'submit',
       '#value' => t('Delete'),
