@@ -75,7 +75,7 @@ function jobbag_tasks_entity_info() {
 function jobbag_tasks_entity_info_alter(&$entity_info) {
   $types = jobbag_task_type_load_multiple();
   foreach ($types as $type) {
-    $entity_info['jobbagtask']['bundles'][$type->type] = array(
+    $entity_info['jobbag_task']['bundles'][$type->type] = array(
       'label' => $type->label(),
       'admin' => array(
         'path' => 'admin/structure/job_tasks/manage/%jobbag_task_type',
