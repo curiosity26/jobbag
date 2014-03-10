@@ -49,7 +49,7 @@ function jobbag_tasks_field_widget_info() {
 function jobbag_tasks_field_widget_settings_form($field, $instance) {
   $widget = $instance['widget'];
   $settings = $widget['settings'];
-  $items = (array) $settings['task_types'];
+  $items = isset($settings['task_types']) ? (array) $settings['task_types'] : array();
   $types = jobbag_task_type_load_multiple();
   $form = array();
   $form['task_types'] = array(
