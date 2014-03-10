@@ -13,7 +13,7 @@ function jobbag_tasks_schema() {
 
   $schema['jobbag_tasks'] = array(
     'description' => $t('Tasks that can be added to jobs'),
-    'field' => array(
+    'fields' => array(
       'id' => array(
         'type' => 'serial',
         'unsigned' => TRUE,
