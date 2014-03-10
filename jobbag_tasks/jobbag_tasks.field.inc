@@ -16,8 +16,7 @@ function jobbag_tasks_field_info() {
     'label' => t('Tasks'),
     'settings' => array(),
     'default_widget' => 'tasks_widget',
-    'default_formatter' => 'tasks_formatter',
-    'no ui' => TRUE
+    'default_formatter' => 'tasks_formatter'
   );
 
   return $info;
