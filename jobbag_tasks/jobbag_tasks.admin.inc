@@ -5,6 +5,8 @@
  * Date: 2/22/14
  * Time: 11:29 AM
  */
+module_load_include('inc', 'jobbag_tasks', 'jobbag_tasks.entity');
+module_load_include('inc', 'jobbag_tasks', 'jobbag_tasks.controller');
 
 function jobbag_task_type_form($form, &$form_state, $jobbag_task_type, $op = 'edit') {
   if ($op == 'clone') {

@@ -4,8 +4,6 @@
  * Admin Jobs Listing Section
  *
  */
-module_load_include('inc', 'jobbag_tasks', 'jobbag_tasks.entity');
-module_load_include('inc', 'jobbag_tasks', 'jobbag_tasks.controller');
 
 function jobbag_list($form, &$form_state, $limit = 50) {
   if (isset($form_state['values']['operation']) && $form_state['values']['operation'] == 'delete') {
