@@ -193,6 +193,10 @@ function jobbag_tasks_access($op, JobBag $job, JobBagTask $task = NULL, $account
   return FALSE;
 }
 
+function jobbag_task_access($op, $entity_type, JobBagTask $task = NULL, $account = NULL) {
+  return jobbag_tasks_access($op, $task->job(), $task, $account);
+}
+
 function jobbag_task_type_access($op, $entity_type, $entity = NULL, $account = NULL) {
   if (!$account) {
     $account = $GLOBALS['user'];
