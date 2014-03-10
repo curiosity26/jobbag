@@ -8,9 +8,7 @@
 module_load_include('inc', 'jobbag_tasks', 'jobbag_tasks.entity');
 module_load_include('inc', 'jobbag_tasks', 'jobbag_tasks.controller');
 
-function jobbag_task_type_form($form, &$form_state, $entity_type, $op = 'edit') {
-  dpm(func_get_args());
-  $entity = $form_state[$entity_type];
+function jobbag_task_type_form($form, &$form_state, $entity, $op = 'edit', $entity_type) {
   if ($op == 'clone') {
     $entity->label .= ' (cloned)';
     $entity->type = '';
@@ -19,7 +17,7 @@ function jobbag_task_type_form($form, &$form_state, $entity_type, $op = 'edit') 
   $form['label'] = array(
     '#title' => t('Label'),
     '#type' => 'textfield',
-    '#default_value' => $entity->label,
+    '#default_value' => isset($entity->label) ? $entity->label : '',
     '#description' => t('The human-readable name of this profile type.'),
     '#required' => TRUE,
     '#size' => 30,
