@@ -5,8 +5,6 @@
  * Date: 2/22/14
  * Time: 11:29 AM
  */
-module_load_include('inc', 'jobbag_tasks', 'jobbag_tasks.entity');
-module_load_include('inc', 'jobbag_tasks', 'jobbag_tasks.controller');
 
 function jobbag_task_type_form($form, &$form_state, $entity, $op = 'edit', $entity_type) {
   if ($op == 'clone') {
@@ -28,7 +26,7 @@ function jobbag_task_type_form($form, &$form_state, $entity, $op = 'edit', $enti
     '#type' => 'machine_name',
     '#default_value' => isset($entity->type) ? $entity->type : '',
     '#maxlength' => 32,
-    '#disabled' => $op != 'clone',
+    '#disabled' => $op == 'edit',
     '#machine_name' => array(
       'exists' => 'jobbag_task_type_exists',
       'source' => array('label'),

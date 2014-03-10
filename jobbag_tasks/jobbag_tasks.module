@@ -6,9 +6,10 @@
  * Time: 10:29 AM
  */
 
+module_load_include('inc', 'jobbag_tasks', 'jobbag_tasks.entity');
+module_load_include('inc', 'jobbag_tasks', 'jobbag_tasks.controller');
+
 function jobbag_tasks_entity_info() {
-  module_load_include('inc', 'jobbag_tasks', 'jobbag_tasks.entity');
-  module_load_include('inc', 'jobbag_tasks', 'jobbag_tasks.controller');
 
   $info = array();
 
