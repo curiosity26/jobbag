@@ -28,7 +28,7 @@ function jobbag_task_type_form($form, &$form_state, $entity, $op = 'edit', $enti
     '#type' => 'machine_name',
     '#default_value' => isset($entity->type) ? $entity->type : '',
     '#maxlength' => 32,
-    '#disabled' => $op != 'clone',
+    '#disabled' => $op == 'edit',
     '#machine_name' => array(
       'exists' => 'jobbag_task_type_exists',
       'source' => array('label'),
