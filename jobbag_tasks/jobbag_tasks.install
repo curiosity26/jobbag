@@ -167,7 +167,7 @@ function jobbag_tasks_field_schema($field) {
 
   return NULL;
 }
-
+/*
 function jobbag_tasks_install() {
 
   $field = array(
@@ -192,4 +192,4 @@ function jobbag_tasks_install() {
     $instance['bundle'] = $name;
     field_create_instance($instance);
   }
-}
+}*/
