@@ -9,6 +9,7 @@ module_load_include('inc', 'jobbag_tasks', 'jobbag_tasks.entity');
 module_load_include('inc', 'jobbag_tasks', 'jobbag_tasks.controller');
 
 function jobbag_task_type_form($form, &$form_state, $entity_type, $op = 'edit') {
+  dpm(func_get_args());
   $entity = $form_state[$entity_type];
   if ($op == 'clone') {
     $entity->label .= ' (cloned)';
