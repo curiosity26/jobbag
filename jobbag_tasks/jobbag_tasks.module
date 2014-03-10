@@ -21,7 +21,7 @@ function jobbag_tasks_entity_info() {
       'label' => 'label',
       'name' => 'type'
     ),
-    'fieldable' => FALSE,
+    'fieldable' => TRUE,
     'exportable' => TRUE,
     'module' => 'jobbag_tasks',
     'bundle of' => 'jobbag_task',
@@ -39,7 +39,7 @@ function jobbag_tasks_entity_info() {
     'controller class' => 'JobBagTaskController',
     'base table' => 'jobbag_tasks',
     'fieldable' => TRUE,
-    'exportable' => TRUE,
+    'exportable' => FALSE,
     'entity keys' => array(
       'id' => 'id',
       'label' => 'label'
@@ -48,150 +48,28 @@ function jobbag_tasks_entity_info() {
     'bundle keys' => array(
       'bundle' => 'type'
     ),
-    'bundles' => array()
-  );
-
-  // Statuses
-
-  $info['jobbag_task_status_type'] = array(
-    'label' => t('Job Bag Task Status Type'),
-    'entity class' => 'JobBagTaskStatusType',
-    'controller class' => 'JobBagTaskStatusTypeController',
-    'base table' => 'jobbag_tasks_status_type',
-    'entity keys' => array(
-      'id' => 'stid',
-      'label' => 'label',
-      'name' => 'type'
-    ),
-    'fieldable' => FALSE,
-    'exportable' => TRUE,
-    'module' => 'jobbag_tasks',
-    'bundle of' => 'jobbag_task_status',
-    'admin ui' => array(
-      'path' => 'admin/structure/job_status',
-      'menu wildcard' => '%jobbag_task_status_type',
-      'controller class' => 'JobBagTaskStatusTypeUIController',
-      'file' => 'jobbag_tasks.status.inc'
+    'bundles' => array(),
+    'view modes' => array(
+      'full' => array(
+        'label' => t('Default')
+      ),
+      'teaser' => array(
+        'label' => t('Teaser')
+      ),
+      'field' => array(
+        'label' => t('Field')
+      )
     )
-  );
-
-  $info['jobbag_task_status'] = array(
-    'label' => t('Job Bag Task Status'),
-    'entity class' => 'JobBagTaskStatus',
-    'controller class' => 'JobBagTaskStatusController',
-    'base table' => 'jobbag_tasks_status',
-    'fieldable' => FALSE,
-    'exportable' => TRUE,
-    'entity keys' => array(
-      'id' => 'sid',
-      'label' => 'label',
-      'name' => 'machine_name'
-    ),
-    'module' => 'jobbag_tasks',
-    'bundle keys' => array(
-      'bundle' => 'type'
-    ),
-    'bundles' => array()
-  );
-
-  // Workflows
-
-  $info['jobbag_task_workflow_type'] = array(
-    'label' => t('Task Workflow Type'),
-    'entity class' => 'JobBagTaskWorkflowType',
-    'controller class' => 'JobBagTaskWorkflowTypeController',
-    'bundle of' => 'jobbag_task_workflow',
-    'entity keys' => array(
-      'id' => 'wtid',
-      'name' => 'type',
-      'label' => 'label'
-    ),
-    'module' => 'jobbag_tasks',
-    'base table' => 'jobbag_tasks_workflow_type',
-    'exportable' => TRUE,
-    'admin ui' => array(
-      'path' => 'admin/structure/job_task_workflow',
-      'menu wildcard' => '%job_task_workflow',
-      'controller class' => 'JobBagTaskWorkflowUIController',
-      'file' => 'jobbag_tasks.workflow.inc'
-    )
-  );
-
-  $info['jobbag_task_workflow'] = array(
-    'label' => t('Task Workflow'),
-    'plural label' => t('Task Workflow'),
-    'entity class' => 'JobBagTaskWorkflow',
-    'controller class' => 'JobBagTaskWorkflowController',
-    'bundle keys' => array(
-      'bundle' => 'type'
-    ),
-    'entity keys' => array(
-      'id' => 'wid',
-      'name' => 'machine_name',
-      'label' => 'label'
-    ),
-    'bundle' => array(),
-    'base table' => 'jobbag_tasks_workflow',
-    'module' => 'jobbag_tasks',
-    'exportable' => TRUE,
-    'fieldable' => TRUE
-  );
-
-  $info['jobbag_status_workflow_type'] = array(
-    'label' => t('Task Status Workflow Type'),
-    'entity class' => 'JobBagStatusWorkflowType',
-    'controller class' => 'JobBagStatusWorkflowTypeController',
-    'bundle of' => 'jobbag_status_workflow',
-    'entity keys' => array(
-      'id' => 'swtid',
-      'name' => 'type',
-      'label' => 'label'
-    ),
-    'module' => 'jobbag_tasks',
-    'base table' => 'jobbag_tasks_status_workflow_type',
-    'exportable' => TRUE,
-    'admin ui' => array(
-      'path' => 'admin/structure/job_status_workflow',
-      'menu wildcard' => '%job_status_workflow',
-      'controller class' => 'JobBagStatusWorkflowUIController',
-      'file' => 'jobbag_tasks.workflow.inc'
-    )
-  );
-
-  $info['jobbag_status_workflow'] = array(
-    'label' => t('Task Status Workflow'),
-    'plural label' => t('Task Status Workflow'),
-    'entity class' => 'JobBagStatusWorkflow',
-    'controller class' => 'JobBagStatusWorkflowController',
-    'bundle keys' => array(
-      'bundle' => 'type'
-    ),
-    'entity keys' => array(
-      'id' => 'wid',
-      'name' => 'machine_name',
-      'label' => 'label'
-    ),
-    'bundle' => array(),
-    'base table' => 'jobbag_tasks_status_workflow',
-    'module' => 'jobbag_tasks',
-    'exportable' => TRUE,
-    'fieldable' => TRUE
   );
 
   return $info;
 }
 
 function jobbag_tasks_entity_info_alter(&$entity_info) {
-  $types = jobbag_tasks_type_load_multiple();
+  $types = jobbag_task_type_load_multiple();
   foreach ($types as $type) {
     $entity_info['jobbagtask']['bundles'][$type->type] = array(
-      'label' => $type->label(),
-      'admin' => array(
-        'path' => 'admin/jobs/tasks/manage/%jobbag_tasks_type',
-        'bundle argument' => array(4),
-        'access arguments' => array('administer job tasks'),
-        'file' => 'jobbag_tasks.tasks.inc'
-      )
+      'label' => $type->label()
     );
   }
 }
@@ -214,65 +92,36 @@ function jobbag_task_type_load_multiple($ids = array(), $conditions = array(), $
   return entity_load('jobbag_task_type', $ids, $conditions, $reset);
 }
 
-/* Load Statuses */
+/* Utility Functions */
 
-function jobbag_task_status_load($id) {
-  return entity_load_single('jobbag_task_status', $id);
+function jobbag_task_status_check($status, JobBagTask $task, $account = NULL) {
+  if ($task->status !== $status) {
+    return FALSE;
+  }
+  if (!$account) {
+    $account = $GLOBALS['user'];
+  }
+
+  if (in_array(0, $task->accounts)) {
+    foreach ($task->roles() as $role) {
+      if ($role->hasUser($account)) {
+        return TRUE;
+      }
+    }
+  }
+
+  return in_array($account->uid, $task->accounts);
 }
 
-function jobbag_task_status_load_multiple($ids = array(), $conditions = array(), $reset = FALSE) {
-  return entity_load('jobbag_task_status', $ids, $conditions, $reset);
+function jobbag_task_is_delegated(JobBagTask $task, $account = NULL) {
+  return jobbag_task_status_check('delegated', $task, $account);
 }
 
-/* Load Status Types */
-
-function jobbag_task_status_type_load($id) {
-  return entity_load_single('jobbag_task_status_type', $id);
+function jobbag_task_is_accepted(JobBagTask $task, $account = NULL) {
+  return jobbag_task_status_check('accepted', $task, $account);
 }
 
-function jobbag_task_status_type_load_multiple($ids = array(), $conditions = array(), $reset = FALSE) {
-  return entity_load('jobbag_task_status_type', $ids, $conditions, $reset);
-}
-
-/* Load Task Workflow */
-
-function jobbag_task_workflow_load($id) {
-  return entity_load_single('jobbag_task_workflow', $id);
-}
-
-function jobbag_task_workflow_load_multiple($ids = array(), $conditions = array(), $reset = FALSE) {
-  return entity_load('jobbag_task_workflow', $ids, $conditions, $reset);
-}
-
-/* Load Task Workflow Types */
-
-function jobbag_task_workflow_type_load($id) {
-  return entity_load_single('jobbag_task_workflow_type', $id);
-}
-
-function jobbag_task_workflow_type_load_multiple($ids = array(), $conditions = array(), $reset = FALSE) {
-  return entity_load('jobbag_task_workflow_type', $ids, $conditions, $reset);
-}
-
-/* Load Status Workflow */
-
-function jobbag_status_workflow_load($id) {
-  return entity_load_single('jobbag_task_workflow', $id);
-}
-
-function jobbag_status_workflow_load_multiple($ids = array(), $conditions = array(), $reset = FALSE) {
-  return entity_load('jobbag_task_workflow', $ids, $conditions, $reset);
-}
-
-/* Load Status Workflow Types */
-
-function jobbag_status_workflow_type_load($id) {
-  return entity_load_single('jobbag_task_workflow_type', $id);
-}
-
-function jobbag_status_workflow_type_load_multiple($ids = array(), $conditions = array(), $reset = FALSE) {
-  return entity_load('jobbag_task_workflow_type', $ids, $conditions, $reset);
-}
+/* Permissions */
 
 function jobbag_tasks_permission() {
   $perms = array();
@@ -320,13 +169,18 @@ function jobbag_tasks_access($op, JobBag $job, JobBagTask $task = NULL, $account
 
   if ($op == 'view' || $op == 'create') {
     if (!$task) {
-      return jobbag_access($op, $job, $account);
+      return jobbag_access($op.' tasks', $job, $account);
     }
-    // TODO: see if the user is assigned the task or if they have privilege
-    return jobbag_access($op, $job, $account);
+
+    if (jobbag_access($op.' tasks', $job, $account)) {
+      return TRUE;
+    }
+
+    return jobbag_task_is_delegated($task, $account) || jobbag_task_is_accepted($task, $account);
+
   }
   elseif(!!$task) {
-    return jobbag_access($op, $job, $account); // Or has task assigned to them
+    return jobbag_access($op.' tasks', $job, $account);
   }
 
   return FALSE;
@@ -343,20 +197,40 @@ function jobbag_tasks_menu() {
     'type' => MENU_CALLBACK
   );
 
+  $items['job/tasks/widget/ajax'] = array(
+    'page callback' => 'jobbag_tasks_widget_ajax',
+    'delivery callback' => 'ajax_deliver',
+    'access arguments' => array('access content'),
+    'theme callback' => 'ajax_base_page_theme',
+    'type' => MENU_CALLBACK
+  );
+
   return $items;
 }
 
 function jobbag_tasks_element_info() {
   $info = array();
 
+  $info['task_field'] = array(
+    '#process' => array('task_field_process'),
+  );
+
   $info['task_field_item'] = array(
     '#input' => TRUE,
     '#pre_render' => array('task_field_item_pre_render'),
     '#process' => array('task_field_item_process'),
     '#theme_wrappers' => array('form_element'),
-    '#entity_load' => 'jobbag_task_load',
-    '#entity_load_arguments' => array(), // The input/default value is added last to conform with entity loading
     '#options' => array()
+  );
+
+  $info['task_field_widget_item'] = array(
+    '#input' => TRUE,
+    '#process' => array('task_field_widget_item_process'),
+    '#theme_wrappers' => array('form_element'),
+    '#roles' => array(),
+    '#account' => array(),
+    '#job' => NULL,
+    '#weight' => 0
   );
 
   return $info;
@@ -365,12 +239,27 @@ function jobbag_tasks_element_info() {
 function jobbag_tasks_theme() {
   $themes = array();
 
+  $themes['tasks_field_widget_settings'] = array(
+    'render element' => 'element',
+    'file' => 'jobbag_tasks.theme'
+  );
+
   $themes['task_field_item'] = array(
     'render element' => 'element',
     'file' => 'jobbag_tasks.theme'
   );
 
   $themes['tasks_field_widget'] = array(
+    'render element' => 'element',
+    'file' => 'jobbag_tasks.theme'
+  );
+
+  $themes['tasks_field_widget_item'] = array(
+    'render element' => 'element',
+    'file' => 'jobbag_tasks.theme'
+  );
+
+  $themes['tasks_formatter_items'] = array(
     'render element' => 'element',
     'file' => 'jobbag_tasks.theme'
   );
@@ -431,6 +320,63 @@ function jobbag_tasks_ajax() {
 
   $commands = array();
   $commands[] = ajax_command_replace(NULL, $output, $settings);
+  return array('#type' => 'ajax', '#commands' => $commands);
+}
+
+function jobbag_tasks_widget_ajax() {
+  $form_parents = func_get_args();
+  $form_build_id = (string) array_pop($form_parents);
+
+  if (empty($_POST['form_build_id']) || $form_build_id != $_POST['form_build_id']) {
+    // Invalid request.
+    drupal_set_message(t('An unrecoverable error occurred.'), 'error');
+    $commands = array();
+    $commands[] = ajax_command_replace(NULL, theme('status_messages'));
+    return array('#type' => 'ajax', '#commands' => $commands);
+  }
+
+  list($form, $form_state) = ajax_get_form();
+
+  if (!$form) {
+    // Invalid form_build_id.
+    drupal_set_message(t('An unrecoverable error occurred. Use of this form has expired. Try reloading the page and submitting again.'), 'error');
+    $commands = array();
+    $commands[] = ajax_command_replace(NULL, theme('status_messages'));
+    return array('#type' => 'ajax', '#commands' => $commands);
+  }
+
+  $parents = $form_state['triggering_element']['#array_parents'];
+  $commands = array();
+  $trigger = array_pop($parents);
+  $element = drupal_array_get_nested_value($form, $parents);
+
+  if ($trigger == 'roles') {
+    $roles = drupal_array_get_nested_value($form_state['input'], array_merge($element['#parents'], array('roles')));
+    $accounts = array();
+    $options = array();
+
+    foreach ($roles as $role) {
+      $accounts = array_merge($accounts, job_roles_eligible_users($role, job_role_users($role)));
+    }
+
+    array_unshift($accounts, array(0 => t('Any User in Select Roles')));
+
+    foreach ($accounts as $uid => $user) {
+      $options[$uid] = $user->name;
+    }
+    // Process user input. $form and $form_state are modified in the process.
+    drupal_process_form($form['#form_id'], $form, $form_state);
+
+    // Retrieve the element to be rendered.
+    $element['accounts']['#options'] = $options;
+    unset($element['accounts']['#prefix'], $element['accounts']['#suffix']);
+
+    $output = drupal_render($element['accounts']);
+    $js = drupal_add_js();
+    $settings = call_user_func_array('array_merge_recursive', $js['settings']['data']);
+
+    $commands[] = ajax_command_replace(NULL, $output, $settings);
+  }
   return array('#type' => 'ajax', '#commands' => $commands);
 }
 
@@ -502,11 +448,10 @@ function task_field_item_value(&$element, $input = FALSE, $form_state = NULL) {
 
   if ($input !== FALSE) {
     $return = $input;
-    if (isset($input['entity']) && function_exists($element['#entity_load'])) {
-      $args = $element['#entity_load_args'];
-      $args[] = $input['entity'];
-      if ($entity = call_user_func_array($element['#entity_load'], $args)) {
-        $entity = is_object($entity) && method_exists($entity, 'identifier') ? $entity->identifier() : 0;
+    if (isset($input['entity'])) {
+      $entity = jobbag_task_type_load($input['entity']);
+      if (!!$entity) {
+        $entity = $entity->identifier();
       }
     }
   }
@@ -514,11 +459,10 @@ function task_field_item_value(&$element, $input = FALSE, $form_state = NULL) {
     $default_entity = isset($element['#default_value']) ? $element['#default_value'] : 0;
     $return = array('entity' => 0);
 
-    if ($default_entity && function_exists($element['#entity_load'])) {
-      $args = $element['#entity_load_args'];
-      $args[] = $default_entity;
-      if ($entity = call_user_func_array($element['#entity_load'], $args)) {
-        $entity = is_object($entity) && method_exists($entity, 'identifier') ? $entity->identifier() : 0;
+    if ($default_entity) {
+      $entity = jobbag_task_type_load($default_entity);
+      if (!!$entity) {
+        $entity = $entity->identifier();
       }
     }
   }
@@ -548,3 +492,123 @@ function task_field_item_pre_render($element) {
   }
 }
 
+function task_field_widget_item_process($element, &$form_state, $form) {
+  $parents = $element['#array_parents'];
+  $values = $form_state['values'];
+  $form_state_roles = drupal_array_get_nested_value($values, array_merge($parents, array('roles')));
+  $form_state_accounts = drupal_array_get_nested_value($values, array_merge($parents, array('accounts')));
+  $job = $element['#job'];
+  $task = jobbag_task_load($element['#task']);
+  $task_type = jobbag_task_type_load($element['#task_type']);
+
+  if ($task && empty($element['#roles'])) {
+    $element['#roles'] = $task->roles;
+  }
+
+  if ($task && empty($element['#accounts'])) {
+    $element['#accounts'] = $task->accounts;
+  }
+
+  if ($task_type && !isset($element['#title'])) {
+    $element['#title'] = $task_type->label();
+  }
+
+  $roles = $job->roles;
+
+  $role_options = array(0 => t('Any Role'));
+  $role_users = array();
+  $account_options = array();
+
+  foreach ($roles as $rid => $role) {
+    $role_options[$rid] = $role->label();
+    $role_users = array_merge($role_users, job_roles_eligible_users($role, job_role_users($role)));
+  }
+
+  array_unshift($role_users, array(0 => t('Any Account in Selected Roles')));
+
+  foreach ($role_users as $uid => $user) {
+    $account_options[$uid] = $user->name;
+  }
+
+  $wrapper = $element['#id'].'-ajax-accounts';
+  $path = 'job/task/widget/ajax/'.implode('/', $parents).'/'.$form['form_build_id']['#value'];
+
+  $element['#tree'] = TRUE;
+
+  $element['id'] = array(
+    '#type' => 'hidden',
+    '#default_value' => isset($element['#task']) ? $element['#task'] : 0
+  );
+
+  $element['type'] = array(
+    '#type' => 'hidden',
+    '#default_value' => $element['#task_type']
+  );
+
+  $element['roles'] = array(
+    '#type' => 'select',
+    '#title' => t('Roles'),
+    '#title_display' => 'hidden',
+    '#options' => $role_options,
+    '#default_value' => empty($form_state_roles) ? $element['#roles'] : $form_state_roles,
+    '#multiple' => TRUE,
+    '#ajax' => array(
+      'wrapper' => $wrapper,
+      'path' => $path
+    )
+  );
+
+  $element['accounts'] = array(
+    '#type' => 'select',
+    '#title' => t('Accounts'),
+    '#title_display' => 'hidden',
+    '#options' => $account_options,
+    '#default_value' => empty($form_state_accounts) ?  $element['#accounts'] : $form_state_accounts,
+    '#prefix' => '<div id="'.$wrapper.'">',
+    '#suffix' => '</div>',
+    '#multiple' => TRUE,
+    '#states' => array(
+      'invisible' => array(
+        ':input[name="'.$element['#name'].'[roles]]"' => array('value' => 0)
+      )
+    )
+  );
+
+  $element['status'] = array(
+    '#type' => 'select',
+    '#title' => t('Status'),
+    '#title_display' => 'hidden',
+    '#options' => array(
+      'new' => t('New'),
+      'delegated' => t('Delegated'),
+      'accepted' => t('Accepted'),
+      'completed' => t('Completed')
+    ),
+    '#default_value' => $element['#status']
+  );
+
+  return $element;
+}
+
+function task_field_process($element, &$form_state, $form) {
+  global $user;
+  $entity = $element['#entity'];
+  $job = $entity->job();
+  $status = $entity->status;
+  switch($status) {
+    case 'new':
+      $element['status'] = t('New');
+      break;
+    case 'delegated':
+
+      break;
+    case 'accepted':
+
+      break;
+    case 'completed':
+      $element['status'] = t('Completed');
+      break;
+  }
+
+  return $element;
+}

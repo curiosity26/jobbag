@@ -10,6 +10,19 @@ class JobBagTaskTypeController extends EntityAPIControllerExportable {
   public function create(array $values = array()) {
     return parent::create($values, 'jobbag_task_type');
   }
+
+  public function save($entity) {
+    $entity->changed = REQUEST_TIME;
+    if (isset($entity->is_new)) {
+      $entity->created = REQUEST_TIME;
+    }
+
+    if (!isset($entity->module)) {
+      $entity->module = 'jobbag_tasks';
+    }
+
+    return parent::save($entity);
+  }
 }
 
 class JobBagTaskTypeUIController extends EntityDefaultUIController {
@@ -18,70 +31,54 @@ class JobBagTaskTypeUIController extends EntityDefaultUIController {
   }
 }
 
-class JobBagTaskController extends EntityAPIControllerExportable {
+class JobBagTaskController extends EntityAPIController {
   public function create(array $values = array()) {
     return parent::create($values, 'jobbag_task');
   }
-}
 
-class JobBagTaskStatusTypeController extends EntityAPIControllerExportable {
-  public function create(array $values = array()) {
-    return parent::create($values, 'jobbag_task_status_type');
-  }
-}
-
-class JobBagTaskStatusController extends EntityAPIControllerExportable {
-  public function create(array $values = array()) {
-    return parent::create($values, 'jobbag_task_status');
-  }
-}
-
-class JobBagTaskStatusUIController extends EntityDefaultUIController {
-  public function __construct($entity_type = NULL, $entity_info) {
-    return parent::__construct('jobbag_task_status', $entity_info);
-  }
-}
-
-class JobBagTaskWorkflowTypeController extends EntityAPIControllerExportable {
-  public function create(array $values = array()) {
-    return parent::create($values, 'jobbag_task_workflow_type');
-  }
-}
-
-class JobBagTaskWorkflowController extends EntityAPIControllerExportable {
-  public function create(array $values = array()) {
-    return parent::create($values, 'jobbag_task_workflow');
-  }
-}
-
-class JobBagTaskWorkflowUIController extends EntityDefaultUIController {
-  public function __construct($entity_type = NULL, $entity_info) {
-    return parent::__construct('jobbag_task_workflow', $entity_info);
-  }
-}
-
-class JobBagStatusWorkflowTypeController extends EntityAPIControllerExportable {
-  public function create(array $values = array()) {
-    return parent::create($values, 'jobbag_status_workflow_type');
-  }
-}
-
-class JobBagStatusWorkflowController extends EntityAPIControllerExportable {
-  public function create(array $values = array()) {
-    return parent::create($values, 'jobbag_status_workflow');
+  public function roles(JobBagTask $entity) {
+    $ids = $entity->roles;
+    if (!empty($ids)) {
+      return entity_load('jobbag_role', $ids);
+    }
+    return FALSE;
   }
 
-  public function currentStatus(JobBagStatusWorkflow $workflow) {
-
+  public function accounts(JobBagTask $entity) {
+    $ids = $entity->accounts;
+    if (!empty($ids)) {
+      return user_load_multiple($ids);
+    }
+    return FALSE;
   }
 
-  public function getStatuses(JobBagStatusWorkflow $workflow) {
-
+  public function job(JobBagTask $entity) {
+    if ($entity->job) {
+      return job_load($entity->job);
+    }
+    return FALSE;
   }
-}
 
-class JobBagStatusWorkflowUIController extends EntityDefaultUIController {
-  public function __construct($entity_type = NULL, $entity_info) {
-    return parent::__construct('jobbag_status_workflow', $entity_info);
+  public function buildContent($entity, $view_mode = 'full', $langcode = NULL) {
+    $output = parent::buildContent($entity, $view_mode, $langcode);
+    if ($view_mode == 'field') {
+      $output['#type'] = 'task_field';
+      $output['#entity'] = $entity;
+    }
+    return $output;
+  }
+
+  public function save($entity) {
+    $entity->changed = REQUEST_TIME;
+    if (isset($entity->is_new)) {
+      $entity->created = REQUEST_TIME;
+      $entity->status = 'new';
+    }
+
+    if (!isset($entity->module)) {
+      $entity->module = 'jobbag_tasks';
+    }
+
+    return parent::save($entity);
   }
 }

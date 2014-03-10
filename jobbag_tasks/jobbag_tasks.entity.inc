@@ -13,43 +13,27 @@ class JobBagTaskType extends Entity {
 }
 
 class JobBagTask extends Entity {
+  public $roles = array();
+  public $accounts = array();
+  public $job;
+  public $status = 'new';
+
   public function __construct($values = array()) {
     return parent::__construct($values,'jobbag_task');
   }
-}
 
-class JobBagTaskStatusType extends Entity {
-  public function __construct($values = array()) {
-    return parent::__construct($values, 'jobbag_task_status_type');
+  public function roles() {
+    $controller = $this->entityInfo['controller class'];
+    return $controller->roles($this);
   }
-}
 
-class JobBagTaskStatus extends Entity {
-  public function __construct($values = array()) {
-    return parent::__construct($values, 'jobbag_task_status');
+  public function accounts() {
+    $controller = $this->entityInfo['controller class'];
+    return $controller->accounts($this);
   }
-}
 
-class JobBagTaskWorkflowType extends Entity {
-  public function __construct($values = array()) {
-    return parent::__construct($values, 'jobbag_task_workflow_type');
-  }
-}
-
-class JobBagTaskWorkflow extends Entity {
-  public function __construct($values = array()) {
-    return parent::__construct($values, 'jobbag_task_workflow');
-  }
-}
-
-class JobBagStatusWorkflowType extends Entity {
-  public function __construct($values = array()) {
-    return parent::__construct($values, 'jobbag_status_workflow_type');
-  }
-}
-
-class JobBagStatusWorkflow extends Entity {
-  public function __construct($values = array()) {
-    return parent::__construct($values, 'jobbag_status_workflow');
+  public function job() {
+    $controller = $this->entityInfo['controller class'];
+    return $controller->job($this);
   }
 }

@@ -6,7 +6,7 @@
  * Time: 11:27 AM
  */
 
-function jobbag_tasks_task_field_item($variables) {
+function theme_task_field_item($variables) {
   $output = '';
   $element = $variables['#element'];
   $output .= '<div class="task-field-item">';
@@ -15,7 +15,7 @@ function jobbag_tasks_task_field_item($variables) {
   return $output;
 }
 
-function jobbag_tasks_task_field_widget($variables) {
+function theme_tasks_field_widget_settings($variables) {
   $elements = $variables['#element'];
   $element_children = element_children($elements);
   $weight_class = $elements['#id'] . '-weight';
@@ -65,4 +65,67 @@ function jobbag_tasks_task_field_widget($variables) {
   $output = empty($rows) ? '' : theme('table', array('header' => array(), 'rows' => $rows, 'attributes' => array('id' => $table_id)));
   $output .= drupal_render_children($elements);
   return $output;
+}
+
+function theme_tasks_field_widget($variables) {
+  $element = $variables['element'];
+  $children = element_children($element);
+
+  $header = array(
+    t('Task'),
+    t('Roles'),
+    t('Accounts'),
+    t('Status')
+  );
+
+  $rows = array();
+
+  foreach ($children as $name) {
+    $widget = &$children[$name];
+    hide($widget['roles']);
+    hide($widget['accounts']);
+    hide($widget['status']);
+    $rows[] = array(
+      drupal_render($widget),
+      render($widget['roles']),
+      render($widget['accounts']),
+      render($widget['status'])
+    );
+  }
+
+  $empty = t('No tasks have been created. %link.', array('%link' => l('Create a new task', 'admin/jobs/tasks')));
+
+  return theme('table', array('header' => $header, 'rows' => $rows, 'empty' => $empty));
+}
+
+function theme_tasks_field_widget_item($variables) {
+  $element = $variables['element'];
+  $output = '<div class="task-widget-item">';
+  $output .= drupal_render_children($element);
+  $output .= '</div>';
+  return $output;
+}
+
+function theme_tasks_formatter_items($variables) {
+  $elements = $variables['element'];
+
+  $header = array(
+    t('Task'),
+    t('Operation')
+  );
+
+  $rows = array();
+
+  foreach (element_children($elements) as $name) {
+    $element = &$elements[$name];
+    $entity = $element['#entity'];
+    $type = entity_load_multiple_by_name('jobbag_task_type', array($entity->type));
+    $element['#title_display'] = 'hidden';
+    $rows[] = array(
+      $type->label(),
+      drupal_render($element)
+    );
+  }
+
+  return theme('table', array('header' => $header, 'rows' => $rows));
 }
