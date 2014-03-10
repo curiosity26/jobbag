@@ -170,6 +170,10 @@ function jobbag_tasks_access($op, JobBag $job, JobBagTask $task = NULL, $account
     $account = $GLOBALS['user'];
   }
 
+  if ($account->uid == 1) {
+    return TRUE;
+  }
+
   if ($op == 'view' || $op == 'create') {
     if (!$task) {
       return jobbag_access($op.' tasks', $job, $account);
@@ -187,6 +191,22 @@ function jobbag_tasks_access($op, JobBag $job, JobBagTask $task = NULL, $account
   }
 
   return FALSE;
+}
+
+function jobbag_task_type_access($op, $entity_type, $entity = NULL, $account = NULL) {
+  if (!$account) {
+    $account = $GLOBALS['user'];
+  }
+
+  if ($account->uid == 1) {
+    return TRUE;
+  }
+
+  if (user_access('administer job tasks', $account)) {
+    return TRUE;
+  }
+
+  return entity_access($op, $entity_type, $entity, $account);
 }
 
 function jobbag_tasks_menu() {
