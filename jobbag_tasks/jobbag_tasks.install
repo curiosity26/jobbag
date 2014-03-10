@@ -73,7 +73,7 @@ function jobbag_tasks_schema() {
         'default' => 'new'
       )
     ),
-    'primary key' => 'id',
+    'primary key' => array('id'),
     'indexes' => array(
       'machine_name' => array('machine_name')
     ),
@@ -133,7 +133,7 @@ function jobbag_tasks_schema() {
         'default' => 0x1
       )
     ),
-    'primary key' => 'tid',
+    'primary key' => array('tid'),
     'indexes' => array(
       'type' => array('type')
     ),
