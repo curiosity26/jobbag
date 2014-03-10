@@ -46,9 +46,8 @@ function jobbag_tasks_field_widget_info() {
   return $info;
 }
 
-function jobbag_tasks_field_widget_settings_form($field, $instance) {
-  $widget = $instance['widget'];
-  $settings = $widget['settings'];
+function jobbag_tasks_field_instance_settings_form($field, $instance) {
+  $settings = $instance['settings'];
   $items = isset($settings['task_types']) ? (array) $settings['task_types'] : array();
   $types = jobbag_task_type_load_multiple();
   $form = array();
@@ -87,17 +86,15 @@ function jobbag_tasks_field_widget_settings_form($field, $instance) {
 }
 
 function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
-  $entity_type = $form_state['entity_type'];
-  $entity = $form_state[$entity_type];
-  $settings = $instance['widget']['settings'];
+  dpm($form_state, 'Form State');
+  $settings = $instance['settings'];
   $types = $settings['task_types'];
   $elements = array(
     '#theme' => 'task_field_widget',
   );
 
   $element += array(
-    '#type' => 'task_field_widget_item',
-    '#job' => $entity
+    '#type' => 'task_field_widget_item'
   );
 
   foreach ($items as $delta => $item) {
@@ -214,6 +211,7 @@ function jobbag_tasks_field_load($entity_type, $entities, $field, $instances, $l
         $item['roles'] = $item['task']->roles;
         $item['accounts'] = $item['task']->accounts;
         $item['status'] = $item['task']->status;
+        $item['job'] = $item['task']->job;
       }
     }
   }
