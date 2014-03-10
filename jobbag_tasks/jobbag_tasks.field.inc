@@ -15,6 +15,7 @@ function jobbag_tasks_field_info() {
   $info['jobbag_tasks'] = array(
     'label' => t('Tasks'),
     'settings' => array(),
+    'instance settings' => array(),
     'default_widget' => 'tasks_widget',
     'default_formatter' => 'tasks_formatter'
   );
@@ -183,7 +184,8 @@ function jobbag_tasks_formatter_info() {
     'description' => t('Displays the current tasks attached to a job'),
     'field types' => array(
       'jobbag_tasks'
-    )
+    ),
+    'settings' => array()
   );
 
   return $info;
