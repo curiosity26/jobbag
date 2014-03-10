@@ -72,5 +72,5 @@ function jobbag_task_type_form_submit(&$form, &$form_state) {
  * Form API submit callback for the delete button.
  */
 function jobbag_task_type_form_submit_delete(&$form, &$form_state) {
-  $form_state['redirect'] = 'admin/structure/job_tasks/manage/' . $form_state['job_type']->type . '/delete';
+  $form_state['redirect'] = 'admin/structure/job_tasks/manage/' . $form_state['jobbag_tasks_type']->type . '/delete';
 }
