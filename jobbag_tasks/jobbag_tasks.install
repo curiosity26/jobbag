@@ -169,13 +169,16 @@ function jobbag_tasks_field_schema($field) {
 }
 
 function jobbag_tasks_install() {
-  field_create_field(
-    array(
-      'field_name' => 'tasks',
-      'type' => 'jobbag_tasks',
-      'cardinality' => -1
-    )
+
+  $field = array(
+    'field_name' => 'tasks',
+    'type' => 'jobbag_tasks',
+    'cardinality' => -1,
+    'module' => 'jobbag_tasks',
+    'settings' => array()
   );
+
+  field_create_field($field);
 
   $bundles = jobbag_get_types();
   $instance = array(
