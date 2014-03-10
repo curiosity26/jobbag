@@ -47,7 +47,8 @@ function jobbag_tasks_entity_info() {
     'exportable' => FALSE,
     'entity keys' => array(
       'id' => 'id',
-      'label' => 'label'
+      'label' => 'label',
+      'bundle' => 'type'
     ),
     'access callback' => 'jobbag_task_access',
     'module' => 'jobbag_tasks',
@@ -75,7 +76,14 @@ function jobbag_tasks_entity_info_alter(&$entity_info) {
   $types = jobbag_task_type_load_multiple();
   foreach ($types as $type) {
     $entity_info['jobbagtask']['bundles'][$type->type] = array(
-      'label' => $type->label()
+      'label' => $type->label(),
+      'admin' => array(
+        'path' => 'admin/structure/job_tasks/manage/%jobbag_task_type',
+        'real path' => 'admin/structure/job_tasks/manage/' . str_replace('_', '-', $type),
+        'bundle argument' => 4,
+        'access arguments' => array('administer job tasks'),
+        'file' => 'jobbag_tasks.admin.inc'
+      )
     );
   }
 }
