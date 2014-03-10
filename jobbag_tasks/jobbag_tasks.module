@@ -33,7 +33,8 @@ function jobbag_tasks_entity_info() {
       'menu wildcard' => '%jobbag_task_type',
       'controller class' => 'JobBagTaskTypeUIController',
       'file' => 'jobbag_tasks.admin.inc'
-    )
+    ),
+    'access callback' => 'jobbag_task_type_access'
   );
 
   $info['jobbag_task'] = array(
@@ -47,6 +48,7 @@ function jobbag_tasks_entity_info() {
       'id' => 'id',
       'label' => 'label'
     ),
+    'access callback' => 'jobbag_task_access',
     'module' => 'jobbag_tasks',
     'bundle keys' => array(
       'bundle' => 'type'
@@ -193,11 +195,11 @@ function jobbag_tasks_access($op, JobBag $job, JobBagTask $task = NULL, $account
   return FALSE;
 }
 
-function jobbag_task_access($op, $entity_type, JobBagTask $task = NULL, $account = NULL) {
+function jobbag_task_access($op, JobBagTask $task = NULL, $account = NULL, $entity_type) {
   return jobbag_tasks_access($op, $task->job(), $task, $account);
 }
 
-function jobbag_task_type_access($op, $entity_type, $entity = NULL, $account = NULL) {
+function jobbag_task_type_access($op, $entity = NULL, $account = NULL, $entity_type) {
   if (!$account) {
     $account = $GLOBALS['user'];
   }
@@ -210,7 +212,7 @@ function jobbag_task_type_access($op, $entity_type, $entity = NULL, $account = N
     return TRUE;
   }
 
-  return entity_access($op, $entity_type, $entity, $account);
+  return FALSE;
 }
 
 function jobbag_tasks_menu() {
