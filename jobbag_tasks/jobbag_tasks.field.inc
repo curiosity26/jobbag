@@ -25,7 +25,7 @@ function jobbag_tasks_field_info() {
 
 // Widget
 
-function jobbag_tasks_widget_info() {
+function jobbag_tasks_field_widget_info() {
   $info = array();
 
   $info['tasks_widget'] = array(
@@ -46,7 +46,7 @@ function jobbag_tasks_widget_info() {
   return $info;
 }
 
-function jobbag_tasks_widget_settings_form($field, $instance) {
+function jobbag_tasks_field_widget_settings_form($field, $instance) {
   $widget = $instance['widget'];
   $settings = $widget['settings'];
   $items = (array) $settings['task_types'];
