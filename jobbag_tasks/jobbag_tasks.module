@@ -260,7 +260,7 @@ function jobbag_tasks_element_info() {
     '#pre_render' => array('task_field_item_pre_render'),
     '#process' => array('task_field_item_process'),
     '#theme_wrappers' => array('form_element'),
-    '#options' => array()
+    '#types' => array()
   );
 
   $info['task_field_widget_item'] = array(
@@ -445,7 +445,7 @@ function task_field_item_process($element, &$form_state, $form) {
     $element['entity'] = array(
       '#type' => 'select',
       '#title' => t('Add a Task Type'),
-      '#options' => $element['#options'],
+      '#options' => $element['#types'],
       '#theme_wrappers' => array()
     );
   }
