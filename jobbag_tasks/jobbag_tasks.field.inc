@@ -121,7 +121,8 @@ function jobbag_tasks_widget_process($element, &$form_state, $form) {
   $parents = array_slice($element['#array_parents'], 0, -1);
   $new_path = 'job/tasks/ajax/' . implode('/', $parents) . '/' . $form['form_build_id']['#value'];
   $field_element = drupal_array_get_nested_value($form, $parents);
-  $new_wrapper = $field_element['#id'] . '-ajax-wrapper';
+  dpm($parents,'Widget Parents');
+  $new_wrapper = $element['#id'] . '-ajax-wrapper';
   foreach (array('add', 'remove') as $key) {
     if (isset($element[$key]['#ajax'])) {
       $element[$key]['#ajax']['path'] = $new_path;

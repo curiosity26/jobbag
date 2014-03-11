@@ -16,6 +16,7 @@ function theme_task_field_item($variables) {
 }
 
 function theme_tasks_field_widget_settings($variables) {
+  dpm(func_get_args(), 'Tasks Field Widget');
   $elements = $variables['#element'];
   $element_children = element_children($elements);
   $weight_class = $elements['#id'] . '-weight';
