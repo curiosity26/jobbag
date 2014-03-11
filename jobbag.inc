@@ -194,15 +194,15 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
 
   $form['actions']['add'] = array(
     '#type' => 'submit',
-    '#value' => $op == 'add' ? t('Create job') : t('Save job'),
-    '#weight' => 100
+    '#value' => $op == 'add' ? t('Create job') : t('Save job')
   );
 
   if ($op != 'add' && jobbag_access('delete', $job)) {
     $form['actions']['delete'] = array(
       '#type' => 'submit',
       '#value' => t('Delete'),
-      '#submit' => 'jobbag_type_form_delete'
+      '#submit' => 'jobbag_type_form_delete',
+      '#weight' => 100
     );
   }
 
