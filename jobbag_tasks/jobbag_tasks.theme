@@ -26,6 +26,7 @@ function theme_tasks_field_instance_settings($variables) {
   $rows = array();
   foreach ($element_children as $key) {
     $element = &$elements[$key];
+    dpm($element, 'Instance Setting Element');
     if ($element['entity']['#type'] === 'select') {
       $add_element = &$element;
       continue;
@@ -39,7 +40,7 @@ function theme_tasks_field_instance_settings($variables) {
       render($element['_weight']),
       render($element['remove'])
     );
-    dpm($row, 'Instance Setting Row');
+
     $rows[] = array(
       'data' => $row,
       'class' => isset($element['#attributes']['class'])
