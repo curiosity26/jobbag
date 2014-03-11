@@ -441,17 +441,13 @@ function task_field_item_process($element, &$form_state, $form) {
     );
     $element['#entity'] = $entity;
   }
-  elseif (!empty($element['#options'])) {
+  else {
     $element['entity'] = array(
       '#type' => 'select',
       '#title' => t('Add a Task Type'),
       '#options' => $element['#types'],
       '#theme_wrappers' => array()
     );
-  }
-  else {
-    hide($element['add']);
-    hide($element['remove']);
   }
 
   return $element;
