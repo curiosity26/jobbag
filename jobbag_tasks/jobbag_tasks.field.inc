@@ -81,6 +81,8 @@ function jobbag_tasks_field_instance_settings_form($field, $instance) {
     $options[$id] = $entity->label();
   }
 
+  dpm($options, 'Type Options');
+
   $form['task_types'][$delta] = $element;
   $form['task_types'][$delta]['#weight'] = $delta;
   $form['task_types'][$delta]['#options'] = $options;
@@ -124,7 +126,6 @@ function jobbag_tasks_instance_process($element, &$form_state, $form) {
   $parents = array_slice($element['#array_parents'], 0, -1);
   $new_path = 'job/tasks/ajax/' . implode('/', $parents) . '/' . $form['form_build_id']['#value'];
   $field_element = drupal_array_get_nested_value($form, $parents);
-  dpm($field_element, 'Field Element');
   $new_wrapper = $field_element['#id'] . '-ajax-wrapper';
   foreach (array('add', 'remove') as $key) {
     if (isset($element[$key]['#ajax'])) {
@@ -159,11 +160,6 @@ function jobbag_tasks_instance_process_multiple($element, &$form_state, $form) {
   // Add a new wrapper around all the elements for AJAX replacement.
   $element['#prefix'] = '<div id="' . $element['#id'] . '-ajax-wrapper">';
   $element['#suffix'] = '</div>';
-
-  foreach (array('add', 'remove') as $key) {
-    $element[$key]['#submit'][] = '_jobbag_task_widget_submit';
-    $element[$key]['#limit_validation_errors'] = array(array_slice($element['#parents'], 0, -1));
-  }
 
   return $element;
 }
