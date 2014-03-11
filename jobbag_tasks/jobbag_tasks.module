@@ -421,7 +421,8 @@ function jobbag_tasks_widget_ajax() {
 }
 
 function task_field_item_process($element, &$form_state, $form) {
-  $entity = jobbag_task_load($element['#value']);
+  $value = drupal_array_get_nested_value($form_state['values'], array_merge($element['#parents'], array('entity')));
+  $entity = jobbag_task_load($value);
   $element['#tree'] = TRUE;
 
   $ajax_settings = array(
@@ -537,9 +538,9 @@ function task_field_widget_item_process($element, &$form_state, $form) {
   $values = $form_state['values'];
   $form_state_roles = drupal_array_get_nested_value($values, array_merge($parents, array('roles')));
   $form_state_accounts = drupal_array_get_nested_value($values, array_merge($parents, array('accounts')));
-  $job = $element['#job'];
   $task = jobbag_task_load($element['#task']);
   $task_type = jobbag_task_type_load($element['#task_type']);
+  $job = $task->job();
 
   if ($task && empty($element['#roles'])) {
     $element['#roles'] = $task->roles;
@@ -553,7 +554,7 @@ function task_field_widget_item_process($element, &$form_state, $form) {
     $element['#title'] = $task_type->label();
   }
 
-  $roles = $job->roles;
+  $roles = !!$job ? $job->roles : jobbag_role_load_multiple();
 
   $role_options = array(0 => t('Any Role'));
   $role_users = array();

@@ -86,9 +86,8 @@ function jobbag_tasks_field_instance_settings_form($field, $instance) {
 }
 
 function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
-  dpm($form_state, 'Form State');
   $settings = $instance['settings'];
-  $types = $settings['task_types'];
+  $types = isset($settings['task_types']) ? $settings['task_types'] : array();
   $elements = array(
     '#theme' => 'task_field_widget',
   );
@@ -142,7 +141,7 @@ function jobbag_tasks_widget_process_multiple($element, &$form_state, $form) {
       $element[$key]['_weight'] = array(
         '#type' => 'weight',
         '#delta' => $count,
-        '#value' => $delta
+        '#default_value' => $delta
       );
     }
     else {
