@@ -279,7 +279,7 @@ function jobbag_tasks_element_info() {
 function jobbag_tasks_theme() {
   $themes = array();
 
-  $themes['tasks_field_widget_settings'] = array(
+  $themes['tasks_field_instance_settings'] = array(
     'render element' => 'element',
     'file' => 'jobbag_tasks.theme'
   );

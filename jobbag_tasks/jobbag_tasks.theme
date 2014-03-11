@@ -15,7 +15,7 @@ function theme_task_field_item($variables) {
   return $output;
 }
 
-function theme_tasks_field_widget_settings($variables) {
+function theme_tasks_field_instance_settings($variables) {
   $elements = $variables['element'];
   $element_children = element_children($elements);
   $weight_class = $elements['#id'] . '-weight';
@@ -59,6 +59,7 @@ function theme_tasks_field_widget_settings($variables) {
     'class' => isset($add_element['#attributes']['class'])
         ? array_merge($add_element['#attributes']['class'], array('draggable')) : array('draggable'),
   );
+  dpm($rows, 'Instance Settings Rows');
 
   drupal_add_tabledrag($table_id, 'order', 'sibling', $weight_class);
 
