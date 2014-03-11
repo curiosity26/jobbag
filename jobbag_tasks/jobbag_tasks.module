@@ -336,21 +336,17 @@ function jobbag_tasks_ajax() {
   // Process user input. $form and $form_state are modified in the process.
   drupal_process_form($form['#form_id'], $form, $form_state);
 
-  // Retrieve the element to be rendered.
-  foreach ($form_parents as $parent) {
-    $form = $form[$parent];
-  }
 
   // Add the special AJAX class if a new file was added.
   if (isset($form['#select_delta']) && $current_item_count < $form['#select_delta']) {
-    $form[$current_item_count]['#attributes']['class'][] = 'ajax-new-content';
+    $current_element[$current_item_count]['#attributes']['class'][] = 'ajax-new-content';
   }
   // Otherwise just add the new content class on a placeholder.
   else {
-    $form['#suffix'] .= '<span class="ajax-new-content"></span>';
+    $current_element['#suffix'] .= '<span class="ajax-new-content"></span>';
   }
 
-  $output = theme('status_messages') . drupal_render($form);
+  $output = theme('status_messages') . drupal_render($current_element);
   $js = drupal_add_js();
   $settings = call_user_func_array('array_merge_recursive', $js['settings']['data']);
 
