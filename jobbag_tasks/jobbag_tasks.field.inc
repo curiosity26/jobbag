@@ -57,7 +57,8 @@ function jobbag_tasks_field_widget_settings_form($field, $instance) {
     '#title' => t('Task Types'),
     '#field_name' => $field['field_name'],
     '#field_type' => $field['type'],
-    '#process' => array('jobbag_tasks_instance_process_multiple')
+    '#process' => array('jobbag_tasks_instance_process_multiple'),
+    '#value_callback' => 'jobbag_task_types_multiple_value'
   );
 
   $element_info = element_info('task_field_item');
@@ -164,6 +165,18 @@ function jobbag_tasks_instance_process_multiple($element, &$form_state, $form) {
   $element['#suffix'] = '</div>';
 
   return $element;
+}
+
+function jobbag_task_types_multiple_value($element, $input = FALSE) {
+  $return = array();
+  dpm($element, 'Value Callback');
+  foreach (element_children($element) as $key) {
+    if (isset($element[$key]['#value']) && isset($element[$key]['#value']['entity'])) {
+      $return[] = $element[$key]['#value']['entity'];
+    }
+  }
+
+  return $return;
 }
 
 function _jobbag_task_widget_submit($form, $form_state) {
