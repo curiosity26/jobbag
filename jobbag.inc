@@ -189,7 +189,7 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
 
   $form['actions'] = array(
     '#type' => 'actions',
-    '#weight' => 50
+    '#weight' => 100
   );
 
   $form['actions']['add'] = array(
@@ -201,8 +201,7 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
     $form['actions']['delete'] = array(
       '#type' => 'submit',
       '#value' => t('Delete'),
-      '#submit' => 'jobbag_type_form_delete',
-      '#weight' => 100
+      '#submit' => 'jobbag_type_form_delete'
     );
   }
 
