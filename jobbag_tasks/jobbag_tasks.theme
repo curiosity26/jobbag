@@ -17,6 +17,7 @@ function theme_task_field_item($variables) {
 
 function theme_tasks_field_instance_settings($variables) {
   $elements = $variables['element'];
+  dpm($variables, 'Variables');
   dpm($elements, 'Elements');
   $element_children = element_children($elements);
   $weight_class = $elements['#name'] . '-weight';

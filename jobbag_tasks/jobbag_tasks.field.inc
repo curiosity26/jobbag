@@ -50,7 +50,6 @@ function jobbag_tasks_field_instance_settings_form($field, $instance) {
   $settings = $instance['settings'];
   $items = isset($settings['task_types']) ? (array) $settings['task_types'] : array();
   $types = jobbag_task_type_load_multiple(FALSE);
-  dpm($types, 'Type Options');
   $form = array();
   $form['task_types'] = array(
     '#theme' => 'tasks_field_instance_settings',
@@ -81,8 +80,6 @@ function jobbag_tasks_field_instance_settings_form($field, $instance) {
   foreach ($types as $id => $entity) {
     $options[$id] = $entity->label();
   }
-
-  dpm($options, 'Type Options');
 
   $form['task_types'][$delta] = $element;
   $form['task_types'][$delta]['#weight'] = $delta;
