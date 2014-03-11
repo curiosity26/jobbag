@@ -440,10 +440,12 @@ function task_field_item_process($element, &$form_state, $form) {
       '#type' => 'hidden',
       '#default_value' => $entity->identifier()
     );
+    $element['#entity'] = $entity;
   }
   elseif (!empty($element['#options'])) {
     $element['entity'] = array(
       '#type' => 'select',
+      '#title' => t('Add a Task Type'),
       '#options' => $element['#options'],
       '#theme_wrappers' => array()
     );

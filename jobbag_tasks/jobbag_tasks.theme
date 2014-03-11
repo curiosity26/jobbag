@@ -35,9 +35,8 @@ function theme_tasks_field_instance_settings($variables) {
     hide($element['remove']);
     hide($element['_weight']);
     $element['_weight']['#attributes']['class'] = array($weight_class);
-    $element['#children'] = drupal_render_children($element);
     $row = array(
-      drupal_render($element),
+      t($element['#title']).drupal_render_children($element),
       render($element['_weight']),
       render($element['remove'])
     );
@@ -55,9 +54,8 @@ function theme_tasks_field_instance_settings($variables) {
     $add_element['entity']['#weight'] = -1;
     $add_element['add']['#weight'] = 0;
     $add_element['_weight']['#attributes']['class'] = array($weight_class);
-    $add_element['#children'] = render($add_element['entity']).render($add_element['add']).drupal_render_children($add_element);
     $row = array(
-      drupal_render($add_element),
+      render($add_element['entity']).render($add_element['add']).drupal_render_children($add_element),
       array('data' => render($add_element['_weight']), 'class' => $weight_class),
       ''
     );
