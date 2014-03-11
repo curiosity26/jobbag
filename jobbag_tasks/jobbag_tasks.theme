@@ -24,13 +24,13 @@ function theme_tasks_field_instance_settings($variables) {
   $add_element = array();
 
   $rows = array();
-  foreach ($element_children as $key) {
+  foreach ($element_children as $delta => $key) {
     $element = &$element_children[$key];
     if ($element['entity']['#type'] === 'select') {
       $add_element = &$element;
       continue;
     }
-    dpm($element, 'Element');
+    dpm($element_children[$key], 'Element');
     //hide($element['remove']);
     //hide($element['_weight']);
     $element['_weight']['#attributes']['class'] = array($weight_class);
