@@ -452,7 +452,7 @@ function task_field_item_process($element, &$form_state, $form) {;
       '#default_value' => $entity->identifier()
     );
   }
-  elseif (!empty($element['options'])) {
+  elseif (!empty($element['#options'])) {
     $element['entity'] = array(
       '#type' => 'select',
       '#options' => $element['#options'],
