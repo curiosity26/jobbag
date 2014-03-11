@@ -53,7 +53,8 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
 
   $form['settings'] = array(
     '#type' => 'vertical_tabs',
-    '#default_tab' => 'reminder_settings'
+    '#default_tab' => 'reminder_settings',
+    '#weight' => 99
   );
 
   $form['reminder_settings'] = array(
@@ -187,13 +188,14 @@ function jobbag_type_form($form, &$form_state, $op = 'edit', $type = NULL, $job 
   );
 
   $form['actions'] = array(
-    '#type' => 'actions'
+    '#type' => 'actions',
+    '#weight' => 50
   );
 
   $form['actions']['add'] = array(
     '#type' => 'submit',
     '#value' => $op == 'add' ? t('Create job') : t('Save job'),
-    '#weight' => 49
+    '#weight' => 51
   );
 
   if ($op != 'add' && jobbag_access('delete', $job)) {
