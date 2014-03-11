@@ -35,8 +35,9 @@ function theme_tasks_field_instance_settings($variables) {
     hide($element['remove']);
     hide($element['_weight']);
     $element['_weight']['#attributes']['class'] = array($weight_class);
+    $element['#children'] = drupal_render_children($element);
     $row = array(
-      drupal_render_children($element),
+      drupal_render($element),
       render($element['_weight']),
       render($element['remove'])
     );
@@ -48,22 +49,25 @@ function theme_tasks_field_instance_settings($variables) {
     );
   }
 
-  hide($add_element['remove']);
-  hide($add_element['_weight']);
-  $add_element['entity']['#weight'] = -1;
-  $add_element['add']['#weight'] = 0;
-  $add_element['_weight']['#attributes']['class'] = array($weight_class);
-  $row = array(
-    drupal_render_children($add_element),
-    array('data' => render($add_element['_weight']), 'class' => $weight_class),
-    ''
-  );
+  if (isset($add_element['entity'])) {
+    hide($add_element['remove']);
+    hide($add_element['_weight']);
+    $add_element['entity']['#weight'] = -1;
+    $add_element['add']['#weight'] = 0;
+    $add_element['_weight']['#attributes']['class'] = array($weight_class);
+    $add_element['#children'] = drupal_render_children($add_element);
+    $row = array(
+      drupal_render($add_element),
+      array('data' => render($add_element['_weight']), 'class' => $weight_class),
+      ''
+    );
 
-  $rows[] = array(
-    'data' => $row,
-    'class' => isset($add_element['#attributes']['class'])
-        ? array_merge($add_element['#attributes']['class'], array('draggable')) : array('draggable'),
-  );
+    $rows[] = array(
+      'data' => $row,
+      'class' => isset($add_element['#attributes']['class'])
+          ? array_merge($add_element['#attributes']['class'], array('draggable')) : array('draggable'),
+    );
+  }
 
   drupal_add_tabledrag($table_id, 'order', 'sibling', $weight_class);
 
