@@ -507,7 +507,7 @@ function task_field_item_submit($form, &$form_state) {
 }
 
 function task_field_item_pre_render($element) {
-  if (!$element['#value']) {
+  if (!isset($element['#value']['entity'])) {
     $element['remove']['#access'] = FALSE;
   }
   else {
