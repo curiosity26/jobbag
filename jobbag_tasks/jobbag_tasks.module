@@ -402,8 +402,8 @@ function jobbag_tasks_widget_ajax() {
 }
 
 function task_field_item_process($element, &$form_state, $form) {
-  dpm($element, 'Process Element');
   $value = isset($element['#value']) && isset($element['#value']['entity']) ? $element['#value']['entity'] : FALSE;
+  dpm($value, 'Process Element');
   $entity = !!$value ? jobbag_task_load($value) : FALSE;
   dpm($entity, 'Entity');
   $element['#tree'] = TRUE;
