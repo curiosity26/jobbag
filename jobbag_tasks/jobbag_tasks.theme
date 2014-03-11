@@ -17,8 +17,7 @@ function theme_task_field_item($variables) {
 
 function theme_tasks_field_instance_settings($variables) {
   $elements = $variables['element'];
-  dpm((array)$variables, 'Variables');
-  //dpm((array)$elements, 'Elements');
+
   $element_children = element_children($elements);
   $weight_class = $elements['#field_name'] . '-weight';
   $table_id = $elements['#field_name'].'-table';
@@ -31,7 +30,7 @@ function theme_tasks_field_instance_settings($variables) {
       $add_element = &$element;
       continue;
     }
-
+    dpm($element, 'Element');
     //hide($element['remove']);
     //hide($element['_weight']);
     $element['_weight']['#attributes']['class'] = array($weight_class);
@@ -40,7 +39,7 @@ function theme_tasks_field_instance_settings($variables) {
       render($element['_weight']),
       render($element['remove'])
     );
-
+    dpm($row, 'Instance Setting Row');
     $rows[] = array(
       'data' => $row,
       'class' => isset($element['#attributes']['class'])
@@ -55,7 +54,7 @@ function theme_tasks_field_instance_settings($variables) {
     array('data' => render($add_element['_weight']), 'class' => $weight_class),
     ''
   );
-  dpm($row, 'Instance Setting Row');
+
   $rows[] = array(
     'data' => $row,
     'class' => isset($add_element['#attributes']['class'])
