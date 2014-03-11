@@ -421,8 +421,9 @@ function jobbag_tasks_widget_ajax() {
 }
 
 function task_field_item_process($element, &$form_state, $form) {
+  dpm($form_state, 'Process items');
   $value = drupal_array_get_nested_value($form_state['values'], array_merge($element['#parents'], array('entity')));
-  $entity = jobbag_task_load($value);
+  $entity = !!$value ? jobbag_task_load($value) : FALSE;
   $element['#tree'] = TRUE;
 
   $ajax_settings = array(
