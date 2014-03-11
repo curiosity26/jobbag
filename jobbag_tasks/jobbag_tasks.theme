@@ -19,14 +19,13 @@ function theme_tasks_field_instance_settings($variables) {
   $elements = $variables['element'];
 
   $element_children = element_children($elements);
-  dpm($element_children, 'Element');
   $weight_class = $elements['#field_name'] . '-weight';
   $table_id = $elements['#field_name'].'-table';
   $add_element = array();
 
   $rows = array();
   foreach ($element_children as $key) {
-    $element = &$element_children[$key];
+    $element = &$elements[$key];
     if ($element['entity']['#type'] === 'select') {
       $add_element = &$element;
       continue;
