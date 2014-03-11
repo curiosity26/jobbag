@@ -19,20 +19,21 @@ function theme_tasks_field_instance_settings($variables) {
   $elements = $variables['element'];
 
   $element_children = element_children($elements);
+  dpm($element_children, 'Element');
   $weight_class = $elements['#field_name'] . '-weight';
   $table_id = $elements['#field_name'].'-table';
   $add_element = array();
 
   $rows = array();
-  foreach ($element_children as $delta => $key) {
+  foreach ($element_children as $key) {
     $element = &$element_children[$key];
     if ($element['entity']['#type'] === 'select') {
       $add_element = &$element;
       continue;
     }
-    dpm($element_children[$key], 'Element');
-    //hide($element['remove']);
-    //hide($element['_weight']);
+
+    hide($element['remove']);
+    hide($element['_weight']);
     $element['_weight']['#attributes']['class'] = array($weight_class);
     $row = array(
       drupal_render($element),
@@ -47,7 +48,7 @@ function theme_tasks_field_instance_settings($variables) {
     );
   }
 
-  //hide($add_element['_weight']);
+  hide($add_element['_weight']);
   $add_element['_weight']['#attributes']['class'] = array($weight_class);
   $row = array(
     drupal_render($add_element),
