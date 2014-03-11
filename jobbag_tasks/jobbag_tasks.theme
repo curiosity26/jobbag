@@ -51,6 +51,7 @@ function theme_tasks_field_instance_settings($variables) {
   hide($add_element['remove']);
   hide($add_element['_weight']);
   $add_element['entity']['#weight'] = -1;
+  $add_element['add']['#weight'] = 0;
   $add_element['_weight']['#attributes']['class'] = array($weight_class);
   $row = array(
     drupal_render_children($add_element),
@@ -64,7 +65,6 @@ function theme_tasks_field_instance_settings($variables) {
         ? array_merge($add_element['#attributes']['class'], array('draggable')) : array('draggable'),
   );
 
-  dpm($rows, 'Instance Setting Rows');
   drupal_add_tabledrag($table_id, 'order', 'sibling', $weight_class);
 
   $output = empty($rows) ? '' : theme('table', array('header' => array(), 'rows' => $rows, 'attributes' => array('id' => $table_id)));
