@@ -329,12 +329,8 @@ function jobbag_tasks_ajax() {
     return array('#type' => 'ajax', '#commands' => $commands);
   }
 
-  // Get the current element and count the number of files.
-  $current_element = $form;
-  foreach ($form_parents as $parent) {
-    $current_element = $current_element[$parent];
-  }
-
+  $current_element = &drupal_array_get_nested_value($form, $form_parents);
+  dpm($current_element, 'Current Element');
   $current_item_count = isset($current_element['#select_delta']) ? $current_element['#select_delta'] : 0;
 
   // Process user input. $form and $form_state are modified in the process.
