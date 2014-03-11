@@ -26,7 +26,7 @@ function theme_tasks_field_widget_settings($variables) {
   foreach ($element_children as $key) {
     $element = &$element_children[$key];
     if ($element['entity']['#type'] === 'select') {
-      $add_element = $element;
+      $add_element = &$element;
       continue;
     }
 

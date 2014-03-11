@@ -80,7 +80,9 @@ function jobbag_tasks_field_instance_settings_form($field, $instance) {
     $options[$id] = $entity->label();
   }
 
-  $form['task_types']['#options'] = $options;
+  $form['task_types'][$delta] = $element;
+  $form['task_types'][$delta]['#weight'] = $delta;
+  $form['task_types'][$delta]['#options'] = $options;
 
   return $form;
 }
