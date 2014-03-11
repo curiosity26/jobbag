@@ -31,11 +31,12 @@ function theme_tasks_field_instance_settings($variables) {
       continue;
     }
 
+    hide($element['add']);
     hide($element['remove']);
     hide($element['_weight']);
     $element['_weight']['#attributes']['class'] = array($weight_class);
     $row = array(
-      drupal_render($element),
+      drupal_render_children($element),
       render($element['_weight']),
       render($element['remove'])
     );
@@ -47,7 +48,9 @@ function theme_tasks_field_instance_settings($variables) {
     );
   }
 
+  hide($add_element['remove']);
   hide($add_element['_weight']);
+  $add_element['entity']['#weight'] = -1;
   $add_element['_weight']['#attributes']['class'] = array($weight_class);
   $row = array(
     drupal_render_children($add_element),
