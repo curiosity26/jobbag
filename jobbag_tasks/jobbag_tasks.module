@@ -420,10 +420,8 @@ function jobbag_tasks_widget_ajax() {
   return array('#type' => 'ajax', '#commands' => $commands);
 }
 
-function task_field_item_process($element, &$form_state, $form) {
-  dpm($form_state, 'Process items');
-  dpm($element, 'Process items');
-  $value = drupal_array_get_nested_value($form_state['values'], array_merge($element['#parents']));
+function task_field_item_process($element, &$form_state, $form) {;
+  $value = isset($element['#value']) && isset($element['#value']['entity']) ? $element['#value']['entity'] : FALSE;
   $entity = !!$value ? jobbag_task_load($value) : FALSE;
   $element['#tree'] = TRUE;
 
@@ -462,12 +460,16 @@ function task_field_item_process($element, &$form_state, $form) {
       '#default_value' => $entity->identifier()
     );
   }
-  else {
+  elseif (!empty($element['options'])) {
     $element['entity'] = array(
       '#type' => 'select',
       '#options' => $element['#options'],
       '#theme_wrappers' => array()
     );
+  }
+  else {
+    hide($element['add']);
+    hide($element['remove']);
   }
 
   return $element;
