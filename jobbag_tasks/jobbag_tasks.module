@@ -442,7 +442,7 @@ function task_field_item_process($element, &$form_state, $form) {
     );
     $element['#entity'] = $entity;
   }
-  else {
+  elseif (!empty($element['#types'])) {
     $element['entity'] = array(
       '#type' => 'select',
       '#title' => t('Add a Task Type'),

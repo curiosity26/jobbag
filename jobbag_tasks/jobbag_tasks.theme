@@ -68,9 +68,11 @@ function theme_tasks_field_instance_settings($variables) {
   }
 
   drupal_add_tabledrag($table_id, 'order', 'sibling', $weight_class);
-
-  $output = empty($rows) ? '' : theme('table', array('header' => array(), 'rows' => $rows, 'attributes' => array('id' => $table_id)));
-  $output .= drupal_render_children($elements);
+  $output = '';
+  if (!empty($rows)) {
+    $output = empty($rows) ? '' : theme('table', array('header' => array(), 'rows' => $rows, 'attributes' => array('id' => $table_id)));
+    $output .= drupal_render_children($elements);
+  }
   return $output;
 }
 
