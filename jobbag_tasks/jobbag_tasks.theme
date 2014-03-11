@@ -26,7 +26,7 @@ function theme_tasks_field_instance_settings($variables) {
   $rows = array();
   foreach ($element_children as $key) {
     $element = &$elements[$key];
-    if ($element['entity']['#type'] === 'select') {
+    if (!isset($element['entity']) || $element['entity']['#type'] === 'select') {
       $add_element = &$element;
       continue;
     }

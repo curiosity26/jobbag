@@ -169,7 +169,6 @@ function jobbag_tasks_instance_process_multiple($element, &$form_state, $form) {
 
 function jobbag_task_types_multiple_value($element, $input = FALSE) {
   $return = array();
-  dpm($element, 'Value Callback');
   foreach (element_children($element) as $key) {
     if (isset($element[$key]['#value']) && isset($element[$key]['#value']['entity'])) {
       $return[] = $element[$key]['#value']['entity'];
