@@ -48,6 +48,7 @@ function jobbag_tasks_field_widget_info() {
 
 function jobbag_tasks_field_instance_settings_form($field, $instance) {
   $settings = $instance['settings'];
+  dpm($settings, 'instance settings');
   $items = isset($settings['task_types']) ? (array) $settings['task_types'] : array();
   $types = jobbag_task_type_load_multiple(FALSE);
   $form = array();

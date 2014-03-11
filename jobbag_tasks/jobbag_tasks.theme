@@ -55,7 +55,7 @@ function theme_tasks_field_instance_settings($variables) {
     $add_element['add']['#weight'] = 0;
     $add_element['_weight']['#attributes']['class'] = array($weight_class);
     $row = array(
-      render($add_element['entity']).render($add_element['add']).drupal_render_children($add_element),
+      render($add_element['entity']).' '.render($add_element['add']),
       array('data' => render($add_element['_weight']), 'class' => $weight_class),
       ''
     );

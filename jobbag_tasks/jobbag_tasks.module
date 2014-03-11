@@ -333,7 +333,6 @@ function jobbag_tasks_ajax() {
   drupal_process_form($form['#form_id'], $form, $form_state);
 
   $current_element = &drupal_array_get_nested_value($form, $form_parents);
-  dpm($current_element, 'Current Element');
 
   $output = theme('status_messages') . drupal_render($current_element);
   $js = drupal_add_js();
