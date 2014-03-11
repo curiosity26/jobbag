@@ -91,23 +91,27 @@ function jobbag_tasks_field_instance_settings_form($field, $instance) {
 function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
   $settings = $instance['settings'];
   $types = isset($settings['task_types']) ? $settings['task_types'] : array();
-  $elements = array(
-    '#theme' => 'task_field_widget',
-  );
+  $elements = array();
 
-  $element += array(
-    '#type' => 'task_field_widget_item'
-  );
-
-  foreach ($items as $delta => $item) {
-    $elements[$delta] = $element + array(
-      '#task' => isset($item['id']) ? $item['id'] : 0,
-      '#task_type' => isset($item['type']) ? $item['type'] : $types[$delta],
-      '#weight' => $delta,
-      '#roles' => isset($item['roles']) ? $item['roles'] : array(),
-      '#accounts' => isset($item['accounts']) ? $item['accounts'] : array(),
-      '#status' => isset($item['status']) ? $item['status'] : 'new',
+  if (!empty($types)) {
+    $elements = array(
+      '#theme' => 'task_field_widget',
     );
+
+    $element += array(
+      '#type' => 'task_field_widget_item'
+    );
+
+    foreach ($items as $delta => $item) {
+      $elements[$delta] = $element + array(
+        '#task' => isset($item['id']) ? $item['id'] : 0,
+        '#task_type' => isset($item['type']) ? $item['type'] : $types[$delta],
+        '#weight' => $delta,
+        '#roles' => isset($item['roles']) ? $item['roles'] : array(),
+        '#accounts' => isset($item['accounts']) ? $item['accounts'] : array(),
+        '#status' => isset($item['status']) ? $item['status'] : 'new',
+      );
+    }
   }
 
   return $elements;
