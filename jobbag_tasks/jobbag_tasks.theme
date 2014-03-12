@@ -87,7 +87,7 @@ function theme_task_field_widget($variables) {
   );
 
   $rows = array();
-
+  dpm($children, 'Children');
   foreach ($children as $name) {
     $widget = &$children[$name];
     dpm($widget, 'Widget');
