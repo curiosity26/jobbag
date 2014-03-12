@@ -548,11 +548,11 @@ function task_field_widget_item_process($element, &$form_state, $form) {
     $role_users = array_merge($role_users, job_roles_eligible_users($role, job_role_users($role)));
   }
 
-  array_unshift($role_users, array(0 => t('Any Account in Selected Roles')));
-
   foreach ($role_users as $uid => $user) {
     $account_options[$uid] = $user->name;
   }
+
+  array_unshift($account_options, t('Any Account in Selected Roles'));
 
   $wrapper = $element['#id'].'-ajax-accounts';
   $path = 'job/task/widget/ajax/'.implode('/', $parents).'/'.$form['form_build_id']['#value'];
