@@ -79,7 +79,7 @@ function theme_tasks_field_widget_settings($variables) {
 function theme_task_field_widget($variables) {
   $element = $variables['element'];
   $children = element_children($element);
-  dpm($element, 'Element');
+
   $header = array(
     t('Task'),
     t('Roles'),

@@ -270,7 +270,6 @@ function jobbag_tasks_element_info() {
     '#theme_wrappers' => array('form_element'),
     '#roles' => array(),
     '#account' => array(),
-    '#job' => NULL,
     '#weight' => 0
   );
 
