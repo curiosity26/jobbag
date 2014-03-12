@@ -521,9 +521,9 @@ function task_field_widget_item_process($element, &$form_state, $form) {
   $values = $form_state['values'];
   $form_state_roles = drupal_array_get_nested_value($values, array_merge($parents, array('roles')));
   $form_state_accounts = drupal_array_get_nested_value($values, array_merge($parents, array('accounts')));
-  $task = jobbag_task_load($element['#task']);
+  $task = !!$element['#task'] ? jobbag_task_load($element['#task']) : FALSE;
   $task_type = jobbag_task_type_load($element['#task_type']);
-  $job = $task->job();
+  $job = !!$task ? $task->job() : FALSE;
 
   if ($task && empty($element['#roles'])) {
     $element['#roles'] = $task->roles;
