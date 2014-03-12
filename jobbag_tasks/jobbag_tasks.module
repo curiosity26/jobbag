@@ -573,7 +573,6 @@ function task_field_widget_item_process($element, &$form_state, $form) {
     '#type' => 'select',
     '#title' => t('Roles'),
     '#title_display' => 'hidden',
-    '#theme' => 'theme_select',
     '#options' => $role_options,
     '#default_value' => empty($form_state_roles) ? $element['#roles'] : $form_state_roles,
     '#multiple' => TRUE,
@@ -587,7 +586,6 @@ function task_field_widget_item_process($element, &$form_state, $form) {
     '#type' => 'select',
     '#title' => t('Accounts'),
     '#title_display' => 'hidden',
-    '#theme' => 'theme_select',
     '#options' => $account_options,
     '#default_value' => empty($form_state_accounts) ?  $element['#accounts'] : $form_state_accounts,
     '#prefix' => '<div id="'.$wrapper.'">',
@@ -604,7 +602,6 @@ function task_field_widget_item_process($element, &$form_state, $form) {
     '#type' => 'select',
     '#title' => t('Status'),
     '#title_display' => 'hidden',
-    '#theme' => 'theme_select',
     '#options' => array(
       'new' => t('New'),
       'delegated' => t('Delegated'),
