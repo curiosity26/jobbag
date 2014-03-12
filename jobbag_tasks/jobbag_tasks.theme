@@ -90,7 +90,7 @@ function theme_task_field_widget($variables) {
 
   foreach ($children as $name) {
     $widget = &$element[$name];
-    dpm($widget($element));
+    dpm($widget);
     hide($widget['roles']);
     hide($widget['accounts']);
     hide($widget['status']);
