@@ -97,9 +97,14 @@ function theme_task_field_widget($variables) {
     show($widget['roles']);
     show($widget['accounts']);
     show($widget['status']);
-    $rows[$delta][] = drupal_render($widget['roles']);
-    $rows[$delta][] = drupal_render($widget['accounts']);
-    $rows[$delta][] = drupal_render($widget['status']);
+    try{
+      $rows[$delta][] = drupal_render($widget['roles']);
+      $rows[$delta][] = drupal_render($widget['accounts']);
+      $rows[$delta][] = drupal_render($widget['status']);
+    }
+    catch(Exception $e) {
+      dpm(debug_backtrace());
+    }
   }
 
   $empty = t('No tasks have been created. %link.', array('%link' => l('Create a new task', 'admin/jobs/tasks')));
