@@ -132,7 +132,7 @@ function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance,
       );
     }
   }
-  dpm($elements, 'Elements');
+
   return $elements;
 }
 
