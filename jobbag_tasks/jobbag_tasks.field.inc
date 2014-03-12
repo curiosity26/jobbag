@@ -100,9 +100,9 @@ function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance,
     foreach ($types as $type) {
       $ids = $type['entity'];
     }
-
+    dpm($ids, 'IDS');
     $task_types = jobbag_task_type_load_multiple($ids);
-
+    dpm($task_types);
     $elements = array(
       '#theme' => 'task_field_widget',
     );
