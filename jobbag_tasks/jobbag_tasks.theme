@@ -79,7 +79,7 @@ function theme_tasks_field_instance_settings($variables) {
 function theme_tasks_field_widget($variables) {
   $element = $variables['element'];
   $children = element_children($element);
-
+  dpm($element, 'Element in Theme');
   $header = array(
     t('Task'),
     t('Roles'),
