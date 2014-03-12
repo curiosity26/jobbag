@@ -125,6 +125,7 @@ function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance,
       }
 
       $elements[$delta] = $element + array(
+        '#title' => $type->label(),
         '#task' => isset($item['id']) ? $item['id'] : 0,
         '#task_type' => $item['type'],
         '#weight' => $delta,
