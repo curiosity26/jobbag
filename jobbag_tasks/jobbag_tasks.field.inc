@@ -132,7 +132,7 @@ function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance,
         '#weight' => $delta,
         '#roles' => isset($item['roles']) ? $item['roles'] : array(),
         '#accounts' => isset($item['accounts']) ? $item['accounts'] : array(),
-        '#status' => isset($item['status']) ? $item['status'] : 'new',
+        '#status' => isset($item['status']) ? $item['status'] : 'new'
       );
       $elements[$delta]['#title'] = $type->label();
     }
