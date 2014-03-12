@@ -90,13 +90,14 @@ function theme_task_field_widget($variables) {
 
   foreach ($children as $name) {
     $widget = &$element[$name];
+    hide($widget['roles']);
     hide($widget['accounts']);
     hide($widget['status']);
     $rows[] = array(
       drupal_render($widget),
-      render($widget['roles']),
-      render($widget['accounts']),
-      render($widget['status'])
+      drupal_render(show($widget['roles'])),
+      drupal_render(show($widget['accounts'])),
+      drupal_render(show($widget['status']))
     );
   }
 
