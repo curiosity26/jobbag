@@ -91,15 +91,13 @@ function theme_task_field_widget($variables) {
   foreach ($children as $name) {
     $widget = &$element[$name];
     dpm($widget);
-    $roles = render($widget['roles']);
     hide($widget['accounts']);
     hide($widget['status']);
-    dpm($roles);
     $rows[] = array(
       drupal_render($widget),
-      theme($widget['roles']['#theme'], array('element' => $widget['roles'])),
-      theme($widget['accounts']['#theme'], array('element' => $widget['accounts'])),
-      theme($widget['status']['#theme'], array('element' => $widget['status']))
+      show($widget['roles']),
+      show($widget['accounts']),
+      show($widget['status'])
     );
   }
 
