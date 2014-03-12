@@ -91,6 +91,7 @@ function theme_task_field_widget($variables) {
   foreach ($children as $name) {
     $widget = &$children[$name];
     dpm($widget, 'Widget');
+    dpm($name, 'Widget Name');
     hide($widget['roles']);
     hide($widget['accounts']);
     hide($widget['status']);
