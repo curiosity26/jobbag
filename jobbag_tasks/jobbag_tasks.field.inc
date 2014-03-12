@@ -116,13 +116,12 @@ function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance,
         'type' => $type->identifier()
       );
       foreach ($items as $i) {
-        dpm($i, 'i');
         if ($i['type'] == $type->identifier()) {
           $item += $i;
           break;
         }
       }
-      dpm($item, 'Item');
+
       $elements[$delta] = $element + array(
         '#task' => isset($item['id']) ? $item['id'] : 0,
         '#task_type' => $item['type'],
@@ -133,7 +132,7 @@ function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance,
       );
     }
   }
-
+  dpm($elements, 'Elements');
   return $elements;
 }
 
