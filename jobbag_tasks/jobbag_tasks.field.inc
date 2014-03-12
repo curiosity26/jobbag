@@ -235,6 +235,7 @@ function jobbag_tasks_field_formatter_view($entity_type, $entity, $field, $insta
 
 function jobbag_tasks_field_load($entity_type, $entities, $field, $instances, $langcode, &$items, $age) {
   if ($field['type'] == 'jobbag_tasks') {
+    dpm($items, 'Load Items');
     foreach ($items as &$item) {
       if ($item['id'] != 0) {
         $task_type = jobbag_task_type_load($item['task']->type);
