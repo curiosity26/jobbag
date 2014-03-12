@@ -139,5 +139,6 @@ function theme_task_formatter_items($variables) {
 function theme_widget_select($variables) {
   dpm($variables);
   $element = $variables['element'];
+  $element['#theme'] = 'select';
   return theme($element['#theme'], $element);
 }
