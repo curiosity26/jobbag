@@ -600,7 +600,7 @@ function task_field_widget_item_process($element, &$form_state, $form) {
     '#multiple' => TRUE,
     '#states' => array(
       'invisible' => array(
-        ':input[name="'.$element['#name'].'[roles]]"' => array('value' => 0)
+        ':input[name="'.$element['#name'].'[roles]"]' => array('value' => 0)
       )
     )
   );
