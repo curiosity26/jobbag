@@ -135,7 +135,7 @@ function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance,
     }
   }
 
-  return array($elements);
+  return $elements;
 }
 
 function jobbag_tasks_field_is_empty($item, $field) {
