@@ -93,6 +93,7 @@ function theme_task_field_widget($variables) {
     hide($widget['roles']);
     hide($widget['accounts']);
     hide($widget['status']);
+    unset($widget['roles']['#children'], $widget['roles']['#children'], $widget['status']['#children']);
     $row = array();
     $row[] = drupal_render($widget);
     $row[] = render($widget['roles']);
