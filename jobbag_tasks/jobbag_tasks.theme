@@ -101,6 +101,11 @@ function theme_task_field_widget($variables) {
     $row[] = $widget['accounts']['#prefix'].theme($widget['accounts']['#theme'], $widget['accounts']);
     $row[] = render($widget['status']);
     $rows[] = $row;
+
+    drupal_process_attached($widget['roles']);
+    drupal_process_attached($widget['accounts']);
+    drupal_process_states($widget['roles']);
+    drupal_process_states($widget['accounts']);
   }
 
   $empty = t('No tasks have been created. %link.', array('%link' => l('Create a new task', 'admin/jobs/tasks')));
