@@ -554,7 +554,7 @@ function task_field_widget_item_process($element, &$form_state, $form) {
   array_unshift($account_options, t('Any Account in Selected Roles'));
 
   $wrapper = $element['#id'].'-ajax-accounts';
-  $path = 'job/task/widget/ajax/'.implode('/', $parents).'/'.$form['form_build_id']['#value'];
+  $path = 'job/tasks/widget/ajax/'.implode('/', $parents).'/'.$form['form_build_id']['#value'];
 
   $element['#tree'] = TRUE;
 
