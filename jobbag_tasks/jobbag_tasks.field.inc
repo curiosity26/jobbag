@@ -102,7 +102,7 @@ function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance,
     }
 
     $task_types = jobbag_task_type_load_multiple($ids);
-    dpm($task_types);
+
     $elements = array(
       '#theme' => 'task_field_widget',
     );
@@ -113,11 +113,11 @@ function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance,
 
     foreach (array_values($task_types) as $delta => $type) {
       $item = array(
-        'type' => $type->name
+        'type' => $type->machine_name
       );
       foreach ($items as $i => $item) {
         if ($item['type'] == $type->identifier()) {
-          $item['type'] = $type->name;
+          $item['type'] = $type->machine_name;
           unset($items[$i]);
           break;
         }
@@ -237,11 +237,15 @@ function jobbag_tasks_field_load($entity_type, $entities, $field, $instances, $l
   if ($field['type'] == 'jobbag_tasks') {
     foreach ($items as &$item) {
       if ($item['id'] != 0) {
-        $item['task'] = jobbag_task_load($item['id']);
-        $item['roles'] = $item['task']->roles;
-        $item['accounts'] = $item['task']->accounts;
-        $item['status'] = $item['task']->status;
-        $item['job'] = $item['task']->job;
+        $task_type = jobbag_task_type_load($item['task']->type);
+        if (!!$task_type) {
+          $item['task'] = jobbag_task_load($item['id']);
+          $item['type'] = $task_type->identifier();
+          $item['roles'] = $item['task']->roles;
+          $item['accounts'] = $item['task']->accounts;
+          $item['status'] = $item['task']->status;
+          $item['job'] = $item['task']->job;
+        }
       }
     }
   }

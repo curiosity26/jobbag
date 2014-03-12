@@ -537,7 +537,7 @@ function task_field_widget_item_process($element, &$form_state, $form) {
     $element['#title'] = $task_type->label();
   }
 
-  $roles = !!$job ? $job->roles : jobbag_role_load_multiple();
+  $roles = !!$job ? $job->roles : array();
 
   $role_options = array(0 => t('Any Role'));
   $role_users = array();
@@ -617,7 +617,6 @@ function task_field_widget_item_process($element, &$form_state, $form) {
 function task_field_process($element, &$form_state, $form) {
   global $user;
   $entity = $element['#entity'];
-  $job = $entity->job();
   $status = $entity->status;
   switch($status) {
     case 'new':
