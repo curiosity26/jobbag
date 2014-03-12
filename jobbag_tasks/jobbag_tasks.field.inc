@@ -115,11 +115,13 @@ function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance,
       $item = array(
         'type' => $type->identifier()
       );
-      foreach ($items as $i => $item) {
-        if ($item['type'] == $type->identifier()) {
+      foreach ($items as $i) {
+        if ($i['type'] == $type->identifier()) {
+          $item += $i;
           break;
         }
       }
+      dpm($item, 'Item');
       $elements[$delta] = $element + array(
         '#task' => isset($item['id']) ? $item['id'] : 0,
         '#task_type' => $item['type'],
