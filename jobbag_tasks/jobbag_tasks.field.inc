@@ -113,12 +113,10 @@ function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance,
 
     foreach (array_values($task_types) as $delta => $type) {
       $item = array(
-        'type' => $type->machine_name
+        'type' => $type->identifier()
       );
       foreach ($items as $i => $item) {
         if ($item['type'] == $type->identifier()) {
-          $item['type'] = $type->machine_name;
-          unset($items[$i]);
           break;
         }
       }
