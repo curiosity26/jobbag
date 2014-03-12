@@ -365,10 +365,9 @@ function jobbag_tasks_widget_ajax() {
     return array('#type' => 'ajax', '#commands' => $commands);
   }
 
-  $parents = $form_state['triggering_element']['#array_parents'];
   $commands = array();
   $trigger = array_pop($parents);
-  $element = drupal_array_get_nested_value($form, $parents);
+  $element = drupal_array_get_nested_value($form, $form_parents);
 
   if ($trigger == 'roles') {
     $roles = drupal_array_get_nested_value($form_state['input'], array_merge($element['#parents'], array('roles')));
@@ -384,11 +383,16 @@ function jobbag_tasks_widget_ajax() {
     foreach ($accounts as $uid => $user) {
       $options[$uid] = $user->name;
     }
-    // Process user input. $form and $form_state are modified in the process.
-    drupal_process_form($form['#form_id'], $form, $form_state);
 
     // Retrieve the element to be rendered.
     $element['accounts']['#options'] = $options;
+    if (!array_key_exists($element['accounts']['#default_value'], $options)) {
+      $element['accounts']['#default_value'] = NULL;
+    }
+
+    // Process user input. $form and $form_state are modified in the process.
+    drupal_process_form($form['#form_id'], $form, $form_state);
+
     unset($element['accounts']['#prefix'], $element['accounts']['#suffix']);
 
     $output = drupal_render($element['accounts']);
