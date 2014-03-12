@@ -454,7 +454,7 @@ function task_field_item_process($element, &$form_state, $form) {
   return $element;
 }
 
-function task_field_item_value(&$element, $input = FALSE, $form_state = NULL) {
+function task_field_item_value(&$element, $input = FALSE, &$form_state) {
   $entity = 0;
 
   // Find the current value of this field from the form state.

@@ -95,6 +95,14 @@ function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance,
   $elements = array();
 
   if (!empty($types)) {
+    $ids = array();
+
+    foreach ($types as $type) {
+      $ids = $type['entity'];
+    }
+
+    $task_types = jobbag_task_type_load_multiple($ids);
+
     $elements = array(
       '#theme' => 'task_field_widget',
     );
@@ -103,10 +111,20 @@ function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance,
       '#type' => 'task_field_widget_item'
     );
 
-    foreach ($items as $delta => $item) {
+    foreach (array_values($task_types) as $delta => $type) {
+      $item = array(
+        'type' => $type->name
+      );
+      foreach ($items as $i => $item) {
+        if ($item['type'] == $type->identifier()) {
+          $item['type'] = $type->name;
+          unset($items[$i]);
+          break;
+        }
+      }
       $elements[$delta] = $element + array(
         '#task' => isset($item['id']) ? $item['id'] : 0,
-        '#task_type' => isset($item['type']) ? $item['type'] : $types[$delta],
+        '#task_type' => $item['type'],
         '#weight' => $delta,
         '#roles' => isset($item['roles']) ? $item['roles'] : array(),
         '#accounts' => isset($item['accounts']) ? $item['accounts'] : array(),
