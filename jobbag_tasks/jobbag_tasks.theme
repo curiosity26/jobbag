@@ -15,7 +15,7 @@ function theme_task_field_item($variables) {
   return $output;
 }
 
-function theme_tasks_field_instance_settings($variables) {
+function theme_tasks_field_widget_settings($variables) {
   $elements = $variables['element'];
 
   $element_children = element_children($elements);
@@ -76,7 +76,7 @@ function theme_tasks_field_instance_settings($variables) {
   return $output;
 }
 
-function theme_tasks_field_widget($variables) {
+function theme_task_field_widget($variables) {
   $element = $variables['element'];
   $children = element_children($element);
   dpm($element, 'Element in Theme');
@@ -107,7 +107,7 @@ function theme_tasks_field_widget($variables) {
   return theme('table', array('header' => $header, 'rows' => $rows, 'empty' => $empty));
 }
 
-function theme_tasks_field_widget_item($variables) {
+function theme_task_field_widget_item($variables) {
   $element = $variables['element'];
   $output = '<div class="task-widget-item">';
   $output .= drupal_render_children($element);
@@ -115,7 +115,7 @@ function theme_tasks_field_widget_item($variables) {
   return $output;
 }
 
-function theme_tasks_formatter_items($variables) {
+function theme_task_formatter_items($variables) {
   $elements = $variables['element'];
 
   $header = array(
