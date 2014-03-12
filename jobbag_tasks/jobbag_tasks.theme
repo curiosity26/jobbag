@@ -97,8 +97,8 @@ function theme_task_field_widget($variables) {
 
     $row = array();
     $row[] = drupal_render($widget);
-    $row[] = render($widget['roles']);
-    $row[] = render($widget['accounts']);
+    $row[] = $widget['roles']['#prefix'].theme($widget['roles']['#theme'], $widget['roles']);
+    $row[] = $widget['accounts']['#prefix'].theme($widget['accounts']['#theme'], $widget['accounts']);
     $row[] = render($widget['status']);
     $rows[] = $row;
   }
