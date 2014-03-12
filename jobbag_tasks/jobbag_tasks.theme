@@ -90,7 +90,6 @@ function theme_task_field_widget($variables) {
 
   foreach ($children as $name) {
     $widget = &$element[$name];
-    $widget['#display_title'] = 'hidden';
     hide($widget['roles']);
     hide($widget['accounts']);
     hide($widget['status']);
@@ -104,7 +103,7 @@ function theme_task_field_widget($variables) {
 
   $empty = t('No tasks have been created. %link.', array('%link' => l('Create a new task', 'admin/jobs/tasks')));
 
-  return theme('table', array('header' => $header, 'rows' => $rows, 'empty' => $empty));
+  return render($element).theme('table', array('header' => $header, 'rows' => $rows, 'empty' => $empty));
 }
 
 function theme_task_field_widget_item($variables) {
