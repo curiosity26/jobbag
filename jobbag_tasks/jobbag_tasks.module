@@ -526,6 +526,8 @@ function task_field_widget_item_process($element, &$form_state, $form) {
   $values = $form_state['values'];
   $form_state_roles = drupal_array_get_nested_value($values, array_merge($parents, array('roles')));
   $form_state_accounts = drupal_array_get_nested_value($values, array_merge($parents, array('accounts')));
+  dpm($form_state_roles, 'Roles');
+  dpm($form_state_accounts, 'Accounts');
   $task = !!$element['#task'] ? jobbag_task_load($element['#task']) : FALSE;
   $task_type = jobbag_task_type_load($element['#task_type']);
   $job = $element['#entity'];
@@ -575,7 +577,7 @@ function task_field_widget_item_process($element, &$form_state, $form) {
   );
 
   $element['roles'] = array(
-    '#type' => 'select',
+    '#type' => 'radios',
     '#title' => t('Roles'),
     '#title_display' => 'hidden',
     '#options' => $role_options,
