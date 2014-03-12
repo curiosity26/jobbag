@@ -93,14 +93,11 @@ function theme_task_field_widget($variables) {
     hide($widget['roles']);
     hide($widget['accounts']);
     hide($widget['status']);
-    $rows[$delta][] = drupal_render($widget);
-    show($widget['roles']);
-    show($widget['accounts']);
-    show($widget['status']);
     try{
-      $rows[$delta][] = drupal_render($widget['roles']);
-      $rows[$delta][] = drupal_render($widget['accounts']);
-      $rows[$delta][] = drupal_render($widget['status']);
+      $rows[$delta][] = drupal_render($widget);
+      $rows[$delta][] = render($widget['roles']);
+      $rows[$delta][] = render($widget['accounts']);
+      $rows[$delta][] = render($widget['status']);
     }
     catch(Exception $e) {
       dpm(debug_backtrace());
