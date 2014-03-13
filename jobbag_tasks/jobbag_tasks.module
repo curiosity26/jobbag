@@ -376,7 +376,7 @@ function jobbag_tasks_widget_ajax() {
     $options = array();
 
     foreach ($roles as $role) {
-      $accounts = array_merge($accounts, job_roles_eligible_users($role, job_role_users($role)));
+      $accounts = array_merge($accounts, $role->users);
     }
 
     array_unshift($accounts, array(0 => t('Any User in Select Roles')));
@@ -397,7 +397,6 @@ function jobbag_tasks_widget_ajax() {
     unset($element['accounts']['#prefix'], $element['accounts']['#suffix']);
 
     $output = render($element['accounts']);
-    dpm($output);
     $js = drupal_add_js();
     $settings = call_user_func_array('array_merge_recursive', $js['settings']['data']);
 
