@@ -367,10 +367,9 @@ function jobbag_tasks_widget_ajax() {
   $commands = array();
   $trigger = array_pop($form_parents);
   $element = &drupal_array_get_nested_value($form, $form_parents);
-  dpm($element, 'Element');
-  dpm($trigger, 'Trigger');
   if ($trigger == 'roles') {
-    $roles = drupal_array_get_nested_value($form_state['input'], array_merge($element['#parents'], array('roles')));
+    dpm($form_state['input'], 'Input');
+    $roles = drupal_array_get_nested_value($form_state['input'], array('roles'));
     $accounts = array();
     $options = array();
 
