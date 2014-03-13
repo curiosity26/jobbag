@@ -369,10 +369,9 @@ function jobbag_tasks_widget_ajax() {
   $element = &drupal_array_get_nested_value($form, $form_parents);
   if ($trigger == 'roles') {
     $job = $element['#entity'];
-    dpm($job->roles, 'Roles');
     $controller = entity_get_controller('job_role');
     $roles = drupal_array_get_nested_value($form_state['input'], array_merge($form_parents, array('roles')));
-    $roles = !empty($roles) ?  $controller->load($roles) : $job->roles;
+    $roles = !empty($roles) ? $controller->load($roles) : $job->roles;
 
     $accounts = array();
     $options = array();
@@ -380,7 +379,7 @@ function jobbag_tasks_widget_ajax() {
     foreach ($roles as $role) {
       $accounts = array_merge($accounts, $role->users);
     }
-
+    dpm($accounts, 'Accounts');
     foreach ($accounts as $uid => $user) {
       $options[$uid] = $user->name;
     }
