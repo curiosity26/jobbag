@@ -366,7 +366,7 @@ function jobbag_tasks_widget_ajax() {
   }
 
   $commands = array();
-  $trigger = array_pop($parents);
+  $trigger = array_pop($form_parents);
   $element = drupal_array_get_nested_value($form, $form_parents);
 
   if ($trigger == 'roles') {
@@ -395,7 +395,7 @@ function jobbag_tasks_widget_ajax() {
 
     unset($element['accounts']['#prefix'], $element['accounts']['#suffix']);
 
-    $output = drupal_render($element['accounts']);
+    $output = render($element['accounts']);
     $js = drupal_add_js();
     $settings = call_user_func_array('array_merge_recursive', $js['settings']['data']);
 
