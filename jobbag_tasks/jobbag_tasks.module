@@ -346,7 +346,6 @@ function jobbag_tasks_ajax() {
 function jobbag_tasks_widget_ajax() {
   $form_parents = func_get_args();
   $form_build_id = (string) array_pop($form_parents);
-
   if (empty($_POST['form_build_id']) || $form_build_id != $_POST['form_build_id']) {
     // Invalid request.
     drupal_set_message(t('An unrecoverable error occurred.'), 'error');
@@ -367,8 +366,9 @@ function jobbag_tasks_widget_ajax() {
 
   $commands = array();
   $trigger = array_pop($form_parents);
-  $element = drupal_array_get_nested_value($form, $form_parents);
-
+  $element = &drupal_array_get_nested_value($form, $form_parents);
+  dpm($element, 'Element');
+  dpm($trigger, 'Trigger');
   if ($trigger == 'roles') {
     $roles = drupal_array_get_nested_value($form_state['input'], array_merge($element['#parents'], array('roles')));
     $accounts = array();
