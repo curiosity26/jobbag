@@ -371,6 +371,7 @@ function jobbag_tasks_widget_ajax() {
     $job = $element['#entity'];
     $controller = entity_get_controller('job_role');
     $roles = drupal_array_get_nested_value($form_state['input'], array_merge($form_parents, array('roles')));
+    $roles = array_filter($roles);
     $roles = !empty($roles) ? $controller->load($roles) : $job->roles;
 
     $accounts = array();
