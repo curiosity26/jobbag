@@ -208,7 +208,7 @@ function _jobbag_task_widget_submit($form, $form_state) {
 
 // Formatters
 
-function jobbag_tasks_formatter_info() {
+function jobbag_tasks_field_formatter_info() {
   $info = array();
 
   $info['tasks_formatter'] = array(
