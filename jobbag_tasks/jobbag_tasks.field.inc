@@ -260,12 +260,13 @@ function jobbag_tasks_field_load($entity_type, $entities, $field, $instances, $l
 
 function jobbag_tasks_field_insert($entity_type, $entity, $field, $instance, $langcode, &$items) {
   if ($field['type'] == 'jobbag_tasks') {
+    dpm($items, 'Items');
     foreach ($items as &$item) {
       $task_type = jobbag_task_type_load($item['type']);
       dpm($task_type, 'Type');
       $settings = array(
         'type' => $task_type->type,
-        'label' => $task_type->label(),
+        'label' => $task_type->label,
         'roles' => $item['roles'],
         'accounts' => $item['accounts'],
         'job' => $entity->identifier(),
