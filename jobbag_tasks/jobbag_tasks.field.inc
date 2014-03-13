@@ -66,7 +66,7 @@ function jobbag_tasks_field_widget_settings_form($field, $instance) {
     '#type' => 'task_field_item',
     '#process' => array_merge($element_info['#process'], array('jobbag_tasks_widget_process'))
   );
-/*
+
   $delta = -1;
   foreach ($items as $delta => $value) {
     $form['task_types'][$delta] = $element;
@@ -76,7 +76,7 @@ function jobbag_tasks_field_widget_settings_form($field, $instance) {
   }
   $delta++;
   $form['task_types']['#select_delta'] = $delta;
-
+  /*
   $options = array();
   foreach ($types as $id => $entity) {
     $options[$id] = $entity->label();
