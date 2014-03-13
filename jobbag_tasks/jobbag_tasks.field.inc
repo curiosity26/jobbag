@@ -247,7 +247,6 @@ function jobbag_tasks_field_load($entity_type, $entities, $field, $instances, $l
         $item['task'] = jobbag_task_load($item['id']);
         $types = entity_load_multiple_by_name('jobbag_task_type', array($item['task']->type));
         $task_type = array_shift($types);
-        dpm($task_type, 'Type');
         if (!!$task_type) {
           $item['type'] = $task_type->identifier();
           $item['roles'] = $item['task']->roles;
