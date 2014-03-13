@@ -228,7 +228,6 @@ function jobbag_tasks_field_formatter_view($entity_type, $entity, $field, $insta
 
   if ($display['type'] == 'tasks_formatter') {
     foreach ($items as $delta => $item) {
-      dpm($item, 'Item');
       if (!$item['task']) {
         $item['task'] = jobbag_task_load($item['id']);
       }
@@ -237,8 +236,6 @@ function jobbag_tasks_field_formatter_view($entity_type, $entity, $field, $insta
       $elements[$delta]['#theme_wrappers'] = array();
     }
   }
-
-  dpm($elements, 'Elements');
 
   return $elements;
 }
@@ -249,9 +246,9 @@ function jobbag_tasks_field_load($entity_type, $entities, $field, $instances, $l
   if ($field['type'] == 'jobbag_tasks') {
     foreach ($items as &$item) {
       if (isset($item['id']) && $item['id'] != 0) {
+        $item['task'] = jobbag_task_load($item['id']);
         $task_type = jobbag_task_type_load($item['task']->type);
         if (!!$task_type) {
-          $item['task'] = jobbag_task_load($item['id']);
           $item['type'] = $task_type->identifier();
           $item['roles'] = $item['task']->roles;
           $item['accounts'] = $item['task']->accounts;
