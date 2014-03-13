@@ -394,7 +394,7 @@ function jobbag_tasks_widget_ajax() {
       $element['accounts']['#default_value'] = NULL;
     }
     dpm($element['accounts'], 'Element');
-    unset($element['accounts']['#prefix'], $element['accounts']['#suffix']);
+    //unset($element['accounts']['#prefix'], $element['accounts']['#suffix']);
 
     $output = render($element['accounts']);
     $js = drupal_add_js();
