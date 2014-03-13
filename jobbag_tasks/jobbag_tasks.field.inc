@@ -264,6 +264,7 @@ function jobbag_tasks_field_insert($entity_type, $entity, $field, $instance, $la
       $task_type = jobbag_task_type_load($item['type']);
       $settings = array(
         'type' => $task_type->type,
+        'machine_name' => $task_type->name,
         'roles' => $item['roles'],
         'accounts' => $item['accounts'],
         'job' => $entity->identifier(),
