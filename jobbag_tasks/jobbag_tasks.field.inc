@@ -246,7 +246,6 @@ function jobbag_tasks_field_load($entity_type, $entities, $field, $instances, $l
         $task_type = jobbag_task_type_load($item['task']->type);
         if (!!$task_type) {
           $item['task'] = jobbag_task_load($item['id']);
-          $item['label'] = $task_type->label();
           $item['type'] = $task_type->identifier();
           $item['roles'] = $item['task']->roles;
           $item['accounts'] = $item['task']->accounts;
@@ -266,6 +265,7 @@ function jobbag_tasks_field_insert($entity_type, $entity, $field, $instance, $la
       $task_type = jobbag_task_type_load($item['type']);
       $settings = array(
         'type' => $task_type->type,
+        'label' => $task_type->label(),
         'roles' => $item['roles'],
         'accounts' => $item['accounts'],
         'job' => $entity->identifier(),
