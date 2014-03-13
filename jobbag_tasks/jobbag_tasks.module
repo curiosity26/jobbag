@@ -379,12 +379,11 @@ function jobbag_tasks_widget_ajax() {
       $accounts = array_merge($accounts, $role->users);
     }
 
-    array_unshift($accounts, array(0 => t('Any User in Select Roles')));
-
     foreach ($accounts as $uid => $user) {
       $options[$uid] = $user->name;
     }
     $options = array_filter($options);
+    array_unshift($options, array(0 => t('Any User in Select Roles')));
 
     // Process user input. $form and $form_state are modified in the process.
     drupal_process_form($form['#form_id'], $form, $form_state);
