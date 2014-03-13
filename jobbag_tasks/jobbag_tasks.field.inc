@@ -241,7 +241,6 @@ function jobbag_tasks_field_formatter_view($entity_type, $entity, $field, $insta
 function jobbag_tasks_field_load($entity_type, $entities, $field, $instances, $langcode, &$items, $age) {
   if ($field['type'] == 'jobbag_tasks') {
     foreach ($items as &$item) {
-      dpm($item);
       if (isset($item['id']) && $item['id'] != 0) {
         $task_type = jobbag_task_type_load($item['task']->type);
         if (!!$task_type) {
@@ -273,6 +272,7 @@ function jobbag_tasks_field_insert($entity_type, $entity, $field, $instance, $la
       );
 
       $item['task'] = entity_create('jobbag_task', $settings);
+      dpm($item['task']);
       if (!!$item['task']) {
         entity_save('jobbag_task', $item['task']);
         $item['id'] = $item['task']->identifier();
