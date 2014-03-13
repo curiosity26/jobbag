@@ -228,6 +228,7 @@ function jobbag_tasks_field_formatter_view($entity_type, $entity, $field, $insta
 
   if ($display['type'] == 'tasks_formatter') {
     foreach ($items as $delta => $item) {
+      dpm($item, 'Item');
       $elements['#theme'] = 'tasks_formatter_items';
       $elements[$delta] = entity_build_content('jobbag_task', $item['task'], 'field', $langcode);
       $elements[$delta]['#theme_wrappers'] = array();
