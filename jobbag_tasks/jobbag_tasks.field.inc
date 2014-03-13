@@ -73,7 +73,6 @@ function jobbag_tasks_field_widget_settings_form($field, $instance) {
     $form['task_types'][$delta]['#default_value'] = $value['entity'];
     $form['task_types'][$delta]['#weight'] = $delta;
     unset($types[$value['entity']]);
-    dpm($form['task_types'][$delta], 'Items');
   }
   $delta++;
   $form['task_types']['#select_delta'] = $delta;

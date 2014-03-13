@@ -451,7 +451,7 @@ function task_field_item_process($element, &$form_state, $form) {
     $element['entity'] = array(
       '#type' => 'select',
       '#title' => t('Add a Task Type'),
-      '#options' => $element['#types'],
+      '#options' => (array)$element['#types'],
       '#theme_wrappers' => array()
     );
   }
