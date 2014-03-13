@@ -400,7 +400,7 @@ function jobbag_tasks_widget_ajax() {
     $js = drupal_add_js();
     $settings = call_user_func_array('array_merge_recursive', $js['settings']['data']);
 
-    $commands[] = ajax_command_replace($element['roles']['#ajax']['wrapper'], $output, $settings);
+    $commands[] = ajax_command_replace($element['#id'].'-ajax-accounts', $output, $settings);
   }
   return array('#type' => 'ajax', '#commands' => $commands);
 }
