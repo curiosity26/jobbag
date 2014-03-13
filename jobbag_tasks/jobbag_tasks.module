@@ -424,6 +424,7 @@ function task_field_item_process($element, &$form_state, $form) {
     '#limit_validation_errors' => array($element['#parents']),
     '#ajax' => $ajax_settings,
     '#weight' => -5,
+    '#theme_wrappers' => array()
   );
 
   $element['remove'] = array(
@@ -435,6 +436,7 @@ function task_field_item_process($element, &$form_state, $form) {
     '#limit_validation_errors' => array($element['#parents']),
     '#ajax' => $ajax_settings,
     '#weight' => -5,
+    '#theme_wrappers' => array()
   );
 
   if ($entity) {

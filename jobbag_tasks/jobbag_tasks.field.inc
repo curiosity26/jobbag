@@ -164,24 +164,16 @@ function jobbag_tasks_widget_process($element, &$form_state, $form) {
 }
 
 function jobbag_tasks_widget_process_multiple($element, &$form_state, $form) {
-  dpm($element, 'Element');
   $element_children = element_children($element);
   $count = count($element_children);
 
   foreach ($element_children as $delta => $key) {
-    if ($key != $element['#select_delta']) {
       $element[$key]['_weight'] = array(
         '#type' => 'weight',
         '#delta' => $count,
-        '#default_value' => $delta
+        '#default_value' => $delta,
+        '#theme_wrappers' => array()
       );
-    }
-    else {
-      $element[$key]['_weight'] = array(
-        '#type' => 'hidden',
-        '#default_value' => $delta
-      );
-    }
   }
 
   // Add a new wrapper around all the elements for AJAX replacement.
