@@ -49,6 +49,7 @@ function jobbag_tasks_field_widget_info() {
 function jobbag_tasks_field_widget_settings_form($field, $instance) {
   $settings = $instance['widget']['settings'];
   $items = isset($settings['task_types']) ? (array) $settings['task_types'] : array();
+  dpm($items, 'Items');
   $types = jobbag_task_type_load_multiple(FALSE);
   $form = array();
   $form['task_types'] = array(
@@ -166,7 +167,7 @@ function jobbag_tasks_widget_process($element, &$form_state, $form) {
 function jobbag_tasks_widget_process_multiple($element, &$form_state, $form) {
   $element_children = element_children($element);
   $count = count($element_children);
-
+  dpm($element_children, 'Children');
   foreach ($element_children as $delta => $key) {
       $element[$key]['_weight'] = array(
         '#type' => 'weight',
