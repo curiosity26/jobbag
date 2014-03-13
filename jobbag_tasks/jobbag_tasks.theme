@@ -71,7 +71,6 @@ function theme_tasks_field_widget_settings($variables) {
   $output = '';
   if (!empty($rows)) {
     $output = empty($rows) ? '' : theme('table', array('header' => array(), 'rows' => $rows, 'attributes' => array('id' => $table_id)));
-    //$output .= drupal_render_children($elements);
   }
   return $output;
 }
