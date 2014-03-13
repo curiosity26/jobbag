@@ -262,6 +262,7 @@ function jobbag_tasks_field_insert($entity_type, $entity, $field, $instance, $la
   if ($field['type'] == 'jobbag_tasks') {
     foreach ($items as &$item) {
       $task_type = jobbag_task_type_load($item['type']);
+      dpm($task_type, 'Type');
       $settings = array(
         'type' => $task_type->type,
         'label' => $task_type->label(),
@@ -272,7 +273,7 @@ function jobbag_tasks_field_insert($entity_type, $entity, $field, $instance, $la
       );
 
       $item['task'] = entity_create('jobbag_task', $settings);
-      dpm($item['task']);
+      dpm($item['task'], 'Task');
       if (!!$item['task']) {
         entity_save('jobbag_task', $item['task']);
         $item['id'] = $item['task']->identifier();
