@@ -405,7 +405,7 @@ function jobbag_tasks_widget_ajax() {
 }
 
 function task_field_item_process($element, &$form_state, $form) {
-  /*$value = isset($element['#value']) && isset($element['#value']['entity']) ? $element['#value']['entity'] : $element['#default_value'];
+  $value = isset($element['#value']) && isset($element['#value']['entity']) ? $element['#value']['entity'] : $element['#default_value'];
   $entity = !!$value ? jobbag_task_type_load($value) : FALSE;
   $element['#tree'] = TRUE;
 
@@ -455,7 +455,7 @@ function task_field_item_process($element, &$form_state, $form) {
       '#theme_wrappers' => array()
     );
   }
-*/
+
   return $element;
 }
 
