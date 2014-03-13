@@ -19,6 +19,7 @@ function theme_tasks_field_widget_settings($variables) {
   $elements = $variables['element'];
 
   $element_children = element_children($elements);
+  dpm($element_children, 'Children');
   $weight_class = $elements['#field_name'] . '-weight';
   $table_id = $elements['#field_name'].'-table';
   $add_element = array();
