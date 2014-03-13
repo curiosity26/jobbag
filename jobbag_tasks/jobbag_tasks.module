@@ -384,10 +384,10 @@ function jobbag_tasks_widget_ajax() {
     foreach ($accounts as $uid => $user) {
       $options[$uid] = $user->name;
     }
-    dpm($options, 'Options');
+
     // Retrieve the element to be rendered.
     $element['accounts']['#options'] = $options;
-    if (!array_key_exists($element['accounts']['#default_value'], $options)) {
+    if (array_search($element['accounts']['#default_value'], array_keys($options)) === FALSE) {
       $element['accounts']['#default_value'] = NULL;
     }
 
@@ -400,7 +400,7 @@ function jobbag_tasks_widget_ajax() {
     $js = drupal_add_js();
     $settings = call_user_func_array('array_merge_recursive', $js['settings']['data']);
 
-    $commands[] = ajax_command_replace(NULL, $output, $settings);
+    $commands[] = ajax_command_replace($element['roles']['#ajax']['wrapper'], $output, $settings);
   }
   return array('#type' => 'ajax', '#commands' => $commands);
 }
