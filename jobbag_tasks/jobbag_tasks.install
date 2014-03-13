@@ -19,11 +19,6 @@ function jobbag_tasks_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE
       ),
-      'machine_name' => array(
-        'type' => 'varchar',
-        'length' => 64,
-        'not null' => TRUE
-      ),
       'type' => array(
         'type' => 'varchar',
         'length' => 64,
