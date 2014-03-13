@@ -120,6 +120,7 @@ function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance,
         'type' => $type->identifier()
       );
       foreach ($items as $i) {
+        dpm($i, 'Item');
         if ($i['id'] == $type->tid) {
           $item += $i;
           break;
@@ -245,7 +246,8 @@ function jobbag_tasks_field_load($entity_type, $entities, $field, $instances, $l
     foreach ($items as &$item) {
       if (isset($item['id']) && $item['id'] != 0) {
         $item['task'] = jobbag_task_load($item['id']);
-        $task_type = jobbag_task_type_load($item['task']->type);
+        $task_type = entity_load_multiple_by_name('jobbag_task_type', array($item['task']->type));
+        dpm($task_type, 'Type');
         if (!!$task_type) {
           $item['type'] = $task_type->identifier();
           $item['roles'] = $item['task']->roles;
