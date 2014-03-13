@@ -384,6 +384,7 @@ function jobbag_tasks_widget_ajax() {
     foreach ($accounts as $uid => $user) {
       $options[$uid] = $user->name;
     }
+    dpm($options, 'Options');
 
     // Retrieve the element to be rendered.
     $element['accounts']['#options'] = $options;
@@ -393,7 +394,7 @@ function jobbag_tasks_widget_ajax() {
 
     // Process user input. $form and $form_state are modified in the process.
     drupal_process_form($form['#form_id'], $form, $form_state);
-
+    dpm($element, 'Element');
     unset($element['accounts']['#prefix'], $element['accounts']['#suffix']);
 
     $output = render($element['accounts']);
