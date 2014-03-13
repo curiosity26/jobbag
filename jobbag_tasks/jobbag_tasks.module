@@ -371,7 +371,7 @@ function jobbag_tasks_widget_ajax() {
     $controller = entity_get_controller('job_role');
     $roles = drupal_array_get_nested_value($form_state['input'], array_merge($form_parents, array('roles')));
     $roles = $controller->load($roles);
-    dpm($roles, 'Role Entities');
+
     $accounts = array();
     $options = array();
 
@@ -598,12 +598,7 @@ function task_field_widget_item_process($element, &$form_state, $form) {
     '#default_value' => empty($form_state_accounts) ?  $element['#accounts'] : $form_state_accounts,
     '#prefix' => '<div id="'.$wrapper.'">',
     '#suffix' => '</div>',
-    '#multiple' => TRUE,
-    '#states' => array(
-      'invisible' => array(
-        ':input[name="'.$element['#name'].'[roles]"]' => array('value' => 0)
-      )
-    )
+    '#multiple' => TRUE
   );
 
   $element['status'] = array(
