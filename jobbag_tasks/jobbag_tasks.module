@@ -370,7 +370,6 @@ function jobbag_tasks_widget_ajax() {
   if ($trigger == 'roles') {
     $controller = entity_get_controller('job_role');
     $roles = drupal_array_get_nested_value($form_state['input'], array_merge($form_parents, array('roles')));
-    dpm($roles, 'Roles');
     $roles = $controller->load($roles);
     dpm($roles, 'Role Entities');
     $accounts = array();
@@ -379,7 +378,7 @@ function jobbag_tasks_widget_ajax() {
     foreach ($roles as $role) {
       $accounts = array_merge($accounts, job_roles_eligible_users($role, job_role_users($role)));
     }
-
+    dpm($accounts, 'Accounts');
     array_unshift($accounts, array(0 => t('Any User in Select Roles')));
 
     foreach ($accounts as $uid => $user) {
