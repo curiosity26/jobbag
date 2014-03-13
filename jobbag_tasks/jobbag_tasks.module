@@ -368,9 +368,10 @@ function jobbag_tasks_widget_ajax() {
   $trigger = array_pop($form_parents);
   $element = &drupal_array_get_nested_value($form, $form_parents);
   if ($trigger == 'roles') {
+    $job = $element['#entity'];
     $controller = entity_get_controller('job_role');
     $roles = drupal_array_get_nested_value($form_state['input'], array_merge($form_parents, array('roles')));
-    $roles = $controller->load($roles);
+    $roles = !empty($roles) ?  $controller->load($roles) : $job->roles;
 
     $accounts = array();
     $options = array();
@@ -383,7 +384,7 @@ function jobbag_tasks_widget_ajax() {
       $options[$uid] = $user->name;
     }
     $options = array_filter($options);
-    array_unshift($options, array(0 => t('Any User in Select Roles')));
+    array_unshift($options, t('Any User in Select Roles'));
 
     // Process user input. $form and $form_state are modified in the process.
     drupal_process_form($form['#form_id'], $form, $form_state);
@@ -392,8 +393,6 @@ function jobbag_tasks_widget_ajax() {
     if (array_search($element['accounts']['#default_value'], array_keys($options)) === FALSE) {
       $element['accounts']['#default_value'] = NULL;
     }
-    dpm($element['accounts'], 'Element');
-    //unset($element['accounts']['#prefix'], $element['accounts']['#suffix']);
 
     $output = render($element['accounts']);
     $js = drupal_add_js();
