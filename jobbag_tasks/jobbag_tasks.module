@@ -377,9 +377,10 @@ function jobbag_tasks_widget_ajax() {
     $options = array();
 
     foreach ($roles as $role) {
+      dpm($role, 'Role');
       $accounts = array_merge($accounts, $role->users);
     }
-    dpm($accounts, 'Accounts');
+
     foreach ($accounts as $uid => $user) {
       $options[$uid] = $user->name;
     }
