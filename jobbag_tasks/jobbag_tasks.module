@@ -368,13 +368,16 @@ function jobbag_tasks_widget_ajax() {
   $trigger = array_pop($form_parents);
   $element = &drupal_array_get_nested_value($form, $form_parents);
   if ($trigger == 'roles') {
-    dpm($form_state['input'], 'Input');
-    $roles = drupal_array_get_nested_value($form_state['input'], array('roles'));
+    $roles = drupal_array_get_nested_value($form_state['input'], $form_parents);
+    dpm($roles, 'Roles');
     $accounts = array();
     $options = array();
 
     foreach ($roles as $role) {
-      $accounts = array_merge($accounts, job_roles_eligible_users($role, job_role_users($role)));
+      $role = jobbag_role_load($role);
+      if (!!$role) {
+        $accounts = array_merge($accounts, job_roles_eligible_users($role, job_role_users($role)));
+      }
     }
 
     array_unshift($accounts, array(0 => t('Any User in Select Roles')));
