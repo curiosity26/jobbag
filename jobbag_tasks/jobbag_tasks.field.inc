@@ -164,7 +164,8 @@ function jobbag_tasks_widget_process($element, &$form_state, $form) {
 }
 
 function jobbag_tasks_widget_process_multiple($element, &$form_state, $form) {
-  $element_children = element_children($element, TRUE);
+  dpm($element, 'Element');
+  $element_children = element_children($element);
   $count = count($element_children);
 
   foreach ($element_children as $delta => $key) {
