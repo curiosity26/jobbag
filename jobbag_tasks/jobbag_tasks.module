@@ -384,17 +384,16 @@ function jobbag_tasks_widget_ajax() {
     foreach ($accounts as $uid => $user) {
       $options[$uid] = $user->name;
     }
-    dpm($options, 'Options');
+    $options = array_filter($options);
 
+    // Process user input. $form and $form_state are modified in the process.
+    drupal_process_form($form['#form_id'], $form, $form_state);
     // Retrieve the element to be rendered.
     $element['accounts']['#options'] = $options;
     if (array_search($element['accounts']['#default_value'], array_keys($options)) === FALSE) {
       $element['accounts']['#default_value'] = NULL;
     }
-
-    // Process user input. $form and $form_state are modified in the process.
-    drupal_process_form($form['#form_id'], $form, $form_state);
-    dpm($element, 'Element');
+    dpm($element['accounts'], 'Element');
     unset($element['accounts']['#prefix'], $element['accounts']['#suffix']);
 
     $output = render($element['accounts']);
