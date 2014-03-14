@@ -110,7 +110,7 @@ class JobRoleController extends EntityAPIController {
 
   public function setUsers(JobRole $role, $uids = array()) {
     if (!empty($uids)) {
-      $role->users = is_numeric($uids[0]) ?  user_load_multiple($uids) : $uids;
+      $role->users = reset($uids) && is_numeric(current($uids)) ?  user_load_multiple($uids) : $uids;
     }
   }
 

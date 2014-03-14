@@ -34,10 +34,8 @@ function job_permissions_job_form($form, &$form_state, $job) {
     // Add columns for each role
     foreach ($roles as $role) {
       $tmp = $controller->loadByJob($job, array('rid' => $role->rid));
-      dpm($tmp, 'Temp');
       if (($tmp) !== FALSE) {
         $role = array_shift($tmp);
-        dpm($role, 'Role Element');
       }
 
       $form['checkboxes'][$name][$role->rid] = array(
