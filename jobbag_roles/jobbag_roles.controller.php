@@ -63,6 +63,7 @@ class JobRoleController extends EntityAPIController {
   public function load($ids = array(), $conditions = array()) {
     $entities = parent::load($ids, $conditions);
     foreach ($entities as $entity) {
+      dpm($entity, 'Role');
       $entity->role = jobbag_role_load($entity->rid);
       $entity->setUsers($entity->users);
     }
@@ -77,14 +78,13 @@ class JobRoleController extends EntityAPIController {
 
     $query = db_select($this->entityInfo['base table'], 'bt')
       ->fields('bt', array('jrid'))
-      ->condition('jid', $job->jid);
+      ->condition('jid', $job->identifier());
 
     foreach ($conditions as $field => $value) {
       $query->condition($field, $value);
     }
 
     $jrids = $query->execute()->fetchAllAssoc('jrid');
-    dpm($jrids, 'Role Ids');
     return $this->load(array_keys($jrids));
   }
 
