@@ -84,6 +84,7 @@ class JobRoleController extends EntityAPIController {
     }
 
     $jrids = $query->execute()->fetchAllAssoc('jrid');
+    dpm($jrids, 'Role Ids');
     return $this->load(array_keys($jrids));
   }
 
