@@ -66,7 +66,7 @@ class JobRoleController extends EntityAPIController {
       $entity->role = jobbag_role_load($entity->rid);
       $entity->setUsers($entity->users);
     }
-
+    dpm($entities);
     return $entities;
   }
 
