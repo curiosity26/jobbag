@@ -71,6 +71,7 @@ class JobRoleController extends EntityAPIController {
 
   public function loadByJob(JobBag $job, $conditions = array()) {
     $job_info = $job->entityInfo();
+    dpm($job, 'Job');
     if (array_key_exists($job_info['entity keys']['id'], $conditions)) {
       unset($conditions[$job_info['entity keys']['id']]);
     }
