@@ -41,7 +41,7 @@ function job_permissions_job_form($form, &$form_state, $job) {
         '#tree' => TRUE,
         '#type' => 'checkbox',
         '#return_value' => $name,
-        '#default_value' => job_role_has_permission($name, $role) ? $name : FALSE
+        //'#default_value' => job_role_has_permission($name, $role) ? $name : FALSE
       );
       dpm($form['checkboxes'][$name][$role->rid], 'Role Element');
 
