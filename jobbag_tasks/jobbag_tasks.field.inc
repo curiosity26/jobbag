@@ -52,7 +52,7 @@ function jobbag_tasks_field_widget_settings_form($field, $instance) {
   $types = jobbag_task_type_load_multiple(FALSE);
   $form = array();
   $form['task_types'] = array(
-    '#theme' => 'task_field_widget_settings',
+    '#theme' => 'tasks_field_widget_settings',
     '#theme_wrappers' => array('fieldset'),
     '#title' => t('Task Types'),
     '#field_name' => $field['field_name'],
