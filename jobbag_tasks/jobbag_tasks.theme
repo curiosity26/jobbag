@@ -9,6 +9,7 @@
 function theme_task_field_item($variables) {
   $output = '';
   $element = $variables['element'];
+  dpm($element, 'Field Item');
   $output .= '<div class="task-field-item">';
   $output .= drupal_render_children($element);
   $output .= '</div>';
@@ -17,7 +18,7 @@ function theme_task_field_item($variables) {
 
 function theme_tasks_field_widget_settings($variables) {
   $elements = $variables['element'];
-
+  dpm($elements, 'Elements');
   $element_children = element_children($elements);
   $weight_class = $elements['#field_name'] . '-weight';
   $table_id = $elements['#field_name'].'-table';
