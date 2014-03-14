@@ -66,7 +66,7 @@ class JobRoleController extends EntityAPIController {
       $entity->role = jobbag_role_load($entity->rid);
       $entity->setUsers($entity->users);
     }
-    dpm($entities, 'Role Entities');
+
     return $entities;
   }
 
@@ -85,7 +85,9 @@ class JobRoleController extends EntityAPIController {
     }
 
     $jrids = $query->execute()->fetchAllAssoc('jrid');
-    return $this->load(array_keys($jrids));
+    $ids = array_keys($jrids);
+    dpm($ids, 'Ids');
+    return !empty($ids) ? $this->load($ids) : FALSE;
   }
 
   public function access(JobRole $role, $op, $account = NULL) {
