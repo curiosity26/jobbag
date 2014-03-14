@@ -3,9 +3,9 @@
 function job_permissions_job_form($form, &$form_state, $job) {
   $form_state['storage']['entity'] = $job;
   $perms = job_role_perms();
-  $roles = jobbag_role_load_multiple(FALSE);
+  $roles = jobbag_role_load_multiple();
   $controller = entity_get_controller('job_role');
-
+  dpm($roles, 'Roles');
   drupal_set_title(t("@job_number's Permissions", array('@job_number' => $job->getJobNumber())));
 
   $form['roles'] = array(
