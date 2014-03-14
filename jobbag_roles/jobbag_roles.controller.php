@@ -62,11 +62,11 @@ class JobRoleController extends EntityAPIController {
 
   public function load($ids = array(), $conditions = array()) {
     $entities = parent::load($ids, $conditions);
-    foreach ($entities as $entity) {
-      dpm($entity, 'Role');
+    foreach ($entities as $entity) {;
       $entity->role = jobbag_role_load($entity->rid);
       $entity->setUsers($entity->users);
     }
+    dpm($entities, 'Role Entities');
     return $entities;
   }
 

@@ -36,13 +36,14 @@ function job_permissions_job_form($form, &$form_state, $job) {
       if (($tmp = $controller->loadByJob($job, array('rid' => $role->rid))) !== FALSE) {
         $role = array_shift($tmp);
       }
-      dpm($role, 'Role');
+
       $form['checkboxes'][$name][$role->rid] = array(
         '#tree' => TRUE,
         '#type' => 'checkbox',
         '#return_value' => $name,
         '#default_value' => job_role_has_permission($name, $role) ? $name : FALSE
       );
+      dpm($form['checkboxes'][$name][$role->rid], 'Role Element');
 
       if ($role->rid == 1) {
         $form['checkboxes'][$name][$role->rid]['#disabled'] = TRUE;
