@@ -33,8 +33,7 @@ function job_permissions_job_form($form, &$form_state, $job) {
 
     // Add columns for each role
     foreach ($roles as $role) {
-      $tmp = $controller->loadByJob($job, array('rid' => $role->rid));
-      if (($tmp) !== FALSE) {
+      if (($tmp = $controller->loadByJob($job, array('rid' => $role->rid))) !== FALSE) {
         $role = array_shift($tmp);
       }
 
@@ -47,8 +46,7 @@ function job_permissions_job_form($form, &$form_state, $job) {
 
       if ($role->rid == 1) {
         $form['checkboxes'][$name][$role->rid]['#disabled'] = TRUE;
-        $form['checkboxes']['full access'][$role->rid]['#value'] =
-          $form['checkboxes']['full access'][$role->rid]['#default_value'] = 'full access';
+        $form['checkboxes']['full access'][$role->rid]['#default_value'] = 'full access';
       }
     }
   }
