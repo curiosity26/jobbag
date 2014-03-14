@@ -66,7 +66,6 @@ class JobRoleController extends EntityAPIController {
       $entity->role = jobbag_role_load($entity->rid);
       $entity->setUsers($entity->users);
     }
-    dpm($entities);
     return $entities;
   }
 
@@ -111,7 +110,7 @@ class JobRoleController extends EntityAPIController {
 
   public function setUsers(JobRole $role, $uids = array()) {
     if (!empty($uids)) {
-      $role->users = user_load_multiple($uids);
+      $role->users = is_numeric($uids[0]) ?  user_load_multiple($uids) : $uids;
     }
   }
 
