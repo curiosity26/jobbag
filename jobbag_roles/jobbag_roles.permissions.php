@@ -5,7 +5,6 @@ function job_permissions_job_form($form, &$form_state, $job) {
   $perms = job_role_perms();
   $roles = jobbag_role_load_multiple();
   $controller = entity_get_controller('job_role');
-  dpm($roles, 'Roles');
   drupal_set_title(t("@job_number's Permissions", array('@job_number' => $job->getJobNumber())));
 
   $form['roles'] = array(
@@ -20,6 +19,7 @@ function job_permissions_job_form($form, &$form_state, $job) {
 
   $form['checkboxes']['#tree'] = TRUE;
   $form['permission']['#tree'] = TRUE;
+  dpm($perms, 'Perms');
   foreach ($perms as $name => $perm) {
     // Define the row for the permission
     $form['permission'][$name] =  array(
