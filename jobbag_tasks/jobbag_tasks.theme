@@ -54,9 +54,9 @@ function theme_tasks_field_widget_settings($variables) {
     $add_element['add']['#weight'] = 0;
     $add_element['_weight']['#attributes']['class'] = array($weight_class);
     $row = array(
-      render($add_element['entity']).' '.render($add_element['add']),
+      render($add_element['entity']),
       array('data' => render($add_element['_weight']), 'class' => $weight_class),
-      ''
+      render($add_element['add'])
     );
 
     $rows[] = array(
