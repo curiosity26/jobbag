@@ -556,6 +556,7 @@ function task_field_widget_item_process($element, &$form_state, $form) {
         ->condition('jid', $job->identifier())
         ->condition('rid', $rid)
         ->execute()->fetchField();
+      dpm($id, 'Role Id');
       $job_role = entity_load('job_role', array($id));
       $eligible = array_merge($eligible, job_role_users($job_role));
     }
