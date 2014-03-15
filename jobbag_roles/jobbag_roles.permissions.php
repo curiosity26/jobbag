@@ -20,8 +20,8 @@ function job_permissions_job_form($form, &$form_state, $job) {
   $form['checkboxes']['#tree'] = TRUE;
   $form['permission']['#tree'] = TRUE;
 
+  // Define the row for the permission
   foreach ($perms as $name => $perm) {
-    // Define the row for the permission
     $form['permission'][$name] =  array(
       '#type' => 'item',
       '#markup' => $perm['title'],
@@ -43,6 +43,14 @@ function job_permissions_job_form($form, &$form_state, $job) {
         '#return_value' => $name,
         '#default_value' => job_role_has_permission($name, $role) ? $name : FALSE
       );
+
+      if ($name != 'full access') {
+        $form['checkboxes'][$name][$role->rid]['#states'] = array(
+          'disabled' => array(
+            ':input[name="checkboxes[full access]['.$role->rid.']"]' => array('checked' => TRUE)
+          )
+        );
+      }
 
       if ($role->rid == 1) {
         $form['checkboxes'][$name][$role->rid]['#disabled'] = TRUE;
