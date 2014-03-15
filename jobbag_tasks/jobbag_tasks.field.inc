@@ -92,7 +92,7 @@ function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance,
   $settings = $instance['widget']['settings'];
   $types = isset($settings['task_types']) ? $settings['task_types'] : array();
   $elements = array();
-
+  dpm($types, 'Types');
   if (!empty($types)) {
     $ids = array();
 
