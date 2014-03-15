@@ -564,7 +564,7 @@ function task_field_widget_item_process($element, &$form_state, $form) {
   if (empty($role_options)) {
     foreach ($roles as $rid => $role) {
       $role_options[$rid] = $role->label();
-      $role_users = array_merge($role_users, job_roles_eligible_users($role, $role->default_users));
+      $role_users = array_merge($role_users, job_roles_eligible_users($role));
     }
   }
   foreach ($role_users as $uid => $user) {
