@@ -527,8 +527,6 @@ function task_field_widget_item_process($element, &$form_state, $form) {
   $task = !!$element['#task'] ? jobbag_task_load($element['#task']) : FALSE;
   $task_type = jobbag_task_type_load($element['#task_type']);
   $job = $element['#entity'];
-  $role_controller = entity_get_controller('job_role');
-  $role_info = $role_controller->entityInfo;
 
   if ($task && empty($element['#roles'])) {
     $element['#roles'] = $task->roles;
@@ -553,7 +551,7 @@ function task_field_widget_item_process($element, &$form_state, $form) {
     $eligible = array();
 
     if (!!$job) {
-      $id = db_select($role_info['base table'], 't')
+      $id = db_select('jobbag_job_roles', 't')
         ->fields('t', array('jrid'))
         ->condition('jid', $job->identifier())
         ->condition('rid', $rid)
