@@ -541,8 +541,7 @@ function task_field_widget_item_process($element, &$form_state, $form) {
   }
 
   $roles = jobbag_role_load_multiple();
-
-  $role_options = array(0 => t('Any Role'));
+  $role_options = array();
   $role_users = array();
   $account_options = array();
 
@@ -561,6 +560,7 @@ function task_field_widget_item_process($element, &$form_state, $form) {
       }
     }
   }
+
   if (empty($role_options)) {
     foreach ($roles as $rid => $role) {
       $role_options[$rid] = $role->label();
@@ -571,6 +571,7 @@ function task_field_widget_item_process($element, &$form_state, $form) {
     $account_options[$uid] = $user->name;
   }
 
+  array_unshift($role_options, t('Any Role'));
   array_unshift($account_options, t('Any Account in Selected Roles'));
 
   $wrapper = $element['#id'].'-ajax-accounts';
