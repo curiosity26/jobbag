@@ -528,7 +528,7 @@ function task_field_widget_item_process($element, &$form_state, $form) {
   $task_type = jobbag_task_type_load($element['#task_type']);
   $job = $element['#entity'];
   $role_controller = entity_get_controller('job_role');
-  $role_info = $role_controller->entityInfo();
+  $role_info = $role_controller->entityInfo;
 
   if ($task && empty($element['#roles'])) {
     $element['#roles'] = $task->roles;
