@@ -565,13 +565,13 @@ function task_field_widget_item_process($element, &$form_state, $form) {
   $element['#tree'] = TRUE;
 
   $element['id'] = array(
-    '#type' => 'hidden',
+    '#type' => 'value',
     '#default_value' => isset($element['#task']) ? $element['#task'] : 0,
     '#theme_wrappers' => array()
   );
 
   $element['type'] = array(
-    '#type' => 'hidden',
+    '#type' => 'value',
     '#default_value' => $element['#task_type'],
     '#theme_wrappers' => array()
   );
