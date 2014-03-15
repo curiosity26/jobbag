@@ -78,8 +78,8 @@ function jobbag_tasks_field_widget_settings_form($field, $instance) {
   $form['task_types']['#select_delta'] = $delta;
 
   $options = array();
-  foreach ($types as $id => $entity) {
-    $options[$id] = $entity->label();
+  foreach ($types as $entity) {
+    $options[$entity->identifier()] = $entity->label();
   }
 
   $form['task_types'][$delta] = $element;
@@ -92,7 +92,7 @@ function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance,
   $settings = $instance['widget']['settings'];
   $types = isset($settings['task_types']) ? $settings['task_types'] : array();
   $elements = array();
-  dpm($types, 'Types');
+
   if (!empty($types)) {
     $ids = array();
 
