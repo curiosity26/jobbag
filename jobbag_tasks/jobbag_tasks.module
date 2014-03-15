@@ -540,7 +540,7 @@ function task_field_widget_item_process($element, &$form_state, $form) {
     $element['#title'] = $task_type->label();
   }
 
-  $roles = !!$job ? $job->roles : jobbag_role_load_multiple();
+  $roles = !!$job && !empty($job->roles) ? $job->roles : jobbag_role_load_multiple();
 
   $role_options = array(0 => t('Any Role'));
   $role_users = array();
