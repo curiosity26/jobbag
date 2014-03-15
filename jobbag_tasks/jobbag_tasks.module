@@ -546,26 +546,27 @@ function task_field_widget_item_process($element, &$form_state, $form) {
   $role_users = array();
   $account_options = array();
 
-  foreach ($roles as $rid => $role) {
-    $role_options[$rid] = $role->label();
-    $eligible = array();
+  if (!!$job) {
+    $ids = db_select('jobbag_job_roles', 't')
+      ->fields('t', array('jrid'))
+      ->condition('jid', $job->identifier())
+      ->condition('rid', array_keys($roles), 'IN')
+      ->execute()->fetchAllAssoc('jrid');
 
-    if (!!$job) {
-      $id = db_select('jobbag_job_roles', 't')
-        ->fields('t', array('jrid'))
-        ->condition('jid', $job->identifier())
-        ->condition('rid', $rid)
-        ->execute()->fetchField();
-      dpm($id, 'Role Id');
-      $job_role = entity_load('job_role', array($id));
-      $eligible = array_merge($eligible, job_role_users($job_role));
+    if (!empty($ids)) {
+      $job_roles = entity_load('job_role', array_keys($ids));
+      foreach ($job_roles as $job_role) {
+        $role_options[$job_role->rid] = job_role_label($job_role);
+        $role_users = array_merge($role_users, job_roles_eligible_users($job_role->role, job_role_users($job_role)));
+      }
     }
-    else {
-      $eligible = array_merge($eligible, $role->default_users);
-    }
-    $role_users = array_merge($role_users, job_roles_eligible_users($role, $eligible));
   }
-
+  if (empty($role_options)) {
+    foreach ($roles as $rid => $role) {
+      $role_options[$rid] = $role->label();
+      $role_users = array_merge($role_users, job_roles_eligible_users($role, $role->default_users));
+    }
+  }
   foreach ($role_users as $uid => $user) {
     $account_options[$uid] = $user->name;
   }
