@@ -49,7 +49,6 @@ function theme_tasks_field_instance_settings($variables) {
 
   $options = array_filter($add_element['entity']['#options']);
   array_shift($options);
-  dpm($options, 'Options');
   if (isset($add_element['entity']) && !empty($options)) {
     hide($add_element['remove']);
     hide($add_element['_weight']);
