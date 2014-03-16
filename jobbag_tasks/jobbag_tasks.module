@@ -329,14 +329,9 @@ function jobbag_tasks_ajax() {
     return array('#type' => 'ajax', '#commands' => $commands);
   }
 
-  $op = array_pop($form_parents);
-  $index = array_pop($form_parents);
-  $current_element = &drupal_array_get_nested_value($form, $form_parents);
-  $current_element['#op'] = $op;
-  $current_element['#op_index'] = $index;
-
   // Process user input. $form and $form_state are modified in the process.
   drupal_process_form($form['#form_id'], $form, $form_state);
+  $current_element = &drupal_array_get_nested_value($form, $form_parents);
 
   $output = theme('status_messages') . drupal_render($current_element);
   $js = drupal_add_js();
@@ -416,6 +411,8 @@ function task_field_item_process($element, &$form_state, $form) {
   array_unshift($element['#types'], t('-- Select a Task --'));
 
   $ajax_settings = array(
+    'path' =>
+      'job/task/ajax/' . implode('/', $element['#array_parents']) . '/' . $form['form_build_id']['#value'],
     'wrapper' => $element['#id'] . '-ajax-wrapper'
   );
 
@@ -427,8 +424,7 @@ function task_field_item_process($element, &$form_state, $form) {
     '#validate' => array(),
     '#submit' => array('task_field_item_submit'),
     '#limit_validation_errors' => array($element['#parents']),
-    '#ajax' => $ajax_settings + array('path' =>
-        'job/task/ajax/' . implode('/', $element['#array_parents']) . '/add/' . $form['form_build_id']['#value']),
+    '#ajax' => $ajax_settings,
     '#weight' => -5
   );
 
@@ -439,8 +435,7 @@ function task_field_item_process($element, &$form_state, $form) {
     '#validate' => array(),
     '#submit' => array('task_field_item_submit'),
     '#limit_validation_errors' => array($element['#parents']),
-    '#ajax' => $ajax_settings + array('path' =>
-        'job/task/ajax/' . implode('/', $element['#array_parents']) . '/remove/' . $form['form_build_id']['#value']),
+    '#ajax' => $ajax_settings,
     '#weight' => -5
   );
 
