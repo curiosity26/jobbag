@@ -59,8 +59,8 @@ function jobbag_tasks_field_instance_settings_form($field, $instance) {
     '#field_type' => $field['type'],
     '#process' => array('jobbag_tasks_instance_process_multiple'),
     '#value_callback' => 'jobbag_task_types_multiple_value',
-    '#items' => $items,
-    '#types' => $types
+    '#items' => (array)$items,
+    '#types' => (array)$types
   );
 
   return $form;
@@ -153,12 +153,14 @@ function jobbag_tasks_instance_process_multiple($elements, &$form_state, $form) 
 
   $delta = -1;
   foreach ($items as $delta => $value) {
-    $elements[$delta] = $element;
-    $elements[$delta]['#default_value'] = $value['entity'];
-    $elements[$delta]['#weight'] = $delta;
-    dpm($value['entity'], 'Value');
-    dpm($types[$value['entity']], 'Type Entity');
-    unset($types[$value['entity']]);
+    if (isset($value['entity'])) {
+      $elements[$delta] = $element;
+      $elements[$delta]['#default_value'] = $value['entity'];
+      $elements[$delta]['#weight'] = $delta;
+      dpm($value['entity'], 'Value');
+      dpm($types[$value['entity']], 'Type Entity');
+      unset($types[$value['entity']]);
+    }
   }
 
   dpm($types, 'Types');
