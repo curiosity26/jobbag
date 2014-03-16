@@ -443,7 +443,8 @@ function task_field_item_process($element, &$form_state, $form) {
     $element['#title'] = t($entity->label());
     $element['entity'] = array(
       '#type' => 'hidden',
-      '#default_value' => $entity->identifier()
+      '#default_value' => $entity->identifier(),
+      '#theme_wrappers' => array()
     );
     $element['#entity'] = $entity;
   }

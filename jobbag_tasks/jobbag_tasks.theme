@@ -47,7 +47,8 @@ function theme_tasks_field_instance_settings($variables) {
     );
   }
 
-  if (isset($add_element['entity']) && !!$add_element['entity']) {
+  $options = array_filter($add_element['entity']['#options']);
+  if (isset($add_element['entity']) && !empty($options)) {
     hide($add_element['remove']);
     hide($add_element['_weight']);
     $add_element['entity']['#weight'] = -1;
