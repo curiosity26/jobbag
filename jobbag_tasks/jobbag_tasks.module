@@ -506,6 +506,8 @@ function task_field_item_submit($form, &$form_state) {
     form_set_value($element, NULL, $form_state);
     drupal_array_set_nested_value($form_state['input'], $element['#parents'], NULL);
   }
+  dpm($element, 'Remove Element');
+  dpm($form_state['input'], 'Remove Input');
 
   $form_state['rebuild'] = TRUE;
 }
