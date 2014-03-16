@@ -143,7 +143,6 @@ function jobbag_tasks_instance_process($element, &$form_state, $form) {
 function jobbag_tasks_instance_process_multiple($elements, &$form_state, $form) {
   $input = isset($elements['#parents']) ? drupal_array_get_nested_value($form_state['input'], $elements['#parents']) : NULL;
   $items = isset($input) ? array_filter($input) : $elements['#items'];
-  dpm($elements['#value'], 'Value');
   $types = $elements['#types'];
 
   $element_info = element_info('task_field_item');
@@ -154,7 +153,7 @@ function jobbag_tasks_instance_process_multiple($elements, &$form_state, $form) 
 
   $delta = -1;
   foreach ($items as $delta => $value) {
-    if (isset($value['entity'])) {
+    if (isset($value['entity']) && !!$value['entity']) {
       $elements[$delta] = $element;
       $elements[$delta]['#default_value'] = $value['entity'];
       $elements[$delta]['#weight'] = $delta;
