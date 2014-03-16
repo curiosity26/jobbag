@@ -503,7 +503,7 @@ function task_field_item_submit($form, &$form_state) {
   $button_key = array_pop($parents);
   $element = drupal_array_get_nested_value($form, $parents);
   if ($button_key == 'remove') {
-    form_set_value($element['entity'], NULL, $form_state);
+    form_set_value($element, NULL, $form_state);
     drupal_array_set_nested_value($form_state['input'], $element['#parents'], NULL);
   }
 
