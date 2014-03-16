@@ -58,34 +58,11 @@ function jobbag_tasks_field_instance_settings_form($field, $instance) {
     '#field_name' => $field['field_name'],
     '#field_type' => $field['type'],
     '#process' => array('jobbag_tasks_instance_process_multiple'),
-    '#value_callback' => 'jobbag_task_types_multiple_value'
+    '#value_callback' => 'jobbag_task_types_multiple_value',
+    '#items' => $items,
+    '#types' => $types
   );
 
-  $element_info = element_info('task_field_item');
-  $element = array(
-    '#type' => 'task_field_item',
-    '#process' => array_merge($element_info['#process'], array('jobbag_tasks_instance_process'))
-  );
-
-  $delta = -1;
-  foreach ($items as $delta => $value) {
-    $form['task_types'][$delta] = $element;
-    $form['task_types'][$delta]['#default_value'] = $value['entity'];
-    $form['task_types'][$delta]['#weight'] = $delta;
-    dpm($types[$value['entity']], 'Type Entity');
-    unset($types[$value['entity']]);
-  }
-  $delta++;
-  $form['task_types']['#select_delta'] = $delta;
-  dpm($types, 'Types');
-  $options = array();
-  foreach ($types as $entity) {
-    $options[$entity->identifier()] = $entity->label();
-  }
-
-  $form['task_types'][$delta] = $element;
-  $form['task_types'][$delta]['#weight'] = $delta;
-  $form['task_types'][$delta]['#types'] = $options;
   return $form;
 }
 
@@ -163,11 +140,43 @@ function jobbag_tasks_instance_process($element, &$form_state, $form) {
   return $element;
 }
 
-function jobbag_tasks_instance_process_multiple($element, &$form_state, $form) {
-  $element_children = element_children($element);
+function jobbag_tasks_instance_process_multiple($elements, &$form_state, $form) {
+  $input = isset($elements['#parents']) ? drupal_array_get_nested_value($form_state['input'], $elements['#parents']) : NULL;
+  $items = isset($input) ? $input : $elements['#items'];
+  $types = $elements['#types'];
+
+  $element_info = element_info('task_field_item');
+  $element = array(
+    '#type' => 'task_field_item',
+    '#process' => array_merge($element_info['#process'], array('jobbag_tasks_instance_process'))
+  );
+
+  $delta = -1;
+  foreach ($items as $delta => $value) {
+    $elements[$delta] = $element;
+    $elements[$delta]['#default_value'] = $value['entity'];
+    $elements[$delta]['#weight'] = $delta;
+    dpm($value['entity'], 'Value');
+    dpm($types[$value['entity']], 'Type Entity');
+    unset($types[$value['entity']]);
+  }
+
+  dpm($types, 'Types');
+  $options = array();
+  foreach ($types as $entity) {
+    $options[$entity->identifier()] = $entity->label();
+  }
+
+  $delta++;
+  $elements['#select_delta'] = $delta;
+  $elements[$delta] = $element;
+  $elements[$delta]['#weight'] = $delta;
+  $elements[$delta]['#types'] = $options;
+
+  $element_children = element_children($elements);
   $count = count($element_children);
   foreach ($element_children as $delta => $key) {
-      $element[$key]['_weight'] = array(
+      $elements[$key]['_weight'] = array(
         '#type' => 'weight',
         '#delta' => $count,
         '#default_value' => $delta,
@@ -176,13 +185,13 @@ function jobbag_tasks_instance_process_multiple($element, &$form_state, $form) {
   }
 
   // Add a new wrapper around all the elements for AJAX replacement.
-  $element['#prefix'] = '<div id="' . $element['#id'] . '-ajax-wrapper">';
-  $element['#suffix'] = '</div>';
+  $elements['#prefix'] = '<div id="' . $elements['#id'] . '-ajax-wrapper">';
+  $elements['#suffix'] = '</div>';
 
-  return $element;
+  return $elements;
 }
 
-function jobbag_task_types_multiple_value($element, $input = FALSE) {
+function jobbag_task_types_multiple_value($element, $input = FALSE, &$form_state) {
   $return = array();
   foreach (element_children($element) as $key) {
     if (isset($element[$key]['#value']) && isset($element[$key]['#value']['entity'])) {
