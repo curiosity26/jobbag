@@ -412,8 +412,8 @@ function task_field_item_process($element, &$form_state, $form) {
   $value = isset($element['#value']) && isset($element['#value']['entity']) ? $element['#value']['entity'] : $element['#default_value'];
   $entity = !!$value ? jobbag_task_type_load($value) : FALSE;
   $element['#tree'] = TRUE;
-  $element['#tasks'] = isset($element['#tasks']) ? (array) $element['#tasks'] : array();
-  array_unshift($element['#tasks'], t('-- Select a Task --'));
+  $element['#types'] = isset($element['#types']) ? (array) $element['#types'] : array();
+  array_unshift($element['#types'], t('-- Select a Task --'));
 
   $ajax_settings = array(
     'wrapper' => $element['#id'] . '-ajax-wrapper'
