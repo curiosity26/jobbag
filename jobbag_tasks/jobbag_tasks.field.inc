@@ -76,7 +76,7 @@ function jobbag_tasks_field_instance_settings_form($field, $instance) {
   }
   $delta++;
   $form['task_types']['#select_delta'] = $delta;
-
+  dpm($types, 'Types');
   $options = array();
   foreach ($types as $entity) {
     $options[$entity->identifier()] = $entity->label();
