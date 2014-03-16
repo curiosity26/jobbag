@@ -46,25 +46,25 @@ function jobbag_tasks_field_widget_info() {
   return $info;
 }
 
-function jobbag_tasks_field_widget_settings_form($field, $instance) {
-  $settings = $instance['widget']['settings'];
+function jobbag_tasks_field_instance_settings_form($field, $instance) {
+  $settings = $instance['settings'];
   $items = isset($settings['task_types']) ? (array) $settings['task_types'] : array();
   $types = jobbag_task_type_load_multiple(FALSE);
   $form = array();
   $form['task_types'] = array(
-    '#theme' => 'tasks_field_widget_settings',
+    '#theme' => 'tasks_field_instance_settings',
     '#theme_wrappers' => array('fieldset'),
     '#title' => t('Task Types'),
     '#field_name' => $field['field_name'],
     '#field_type' => $field['type'],
-    '#process' => array('jobbag_tasks_widget_process_multiple'),
+    '#process' => array('jobbag_tasks_instance_process_multiple'),
     '#value_callback' => 'jobbag_task_types_multiple_value'
   );
 
   $element_info = element_info('task_field_item');
   $element = array(
     '#type' => 'task_field_item',
-    '#process' => array_merge($element_info['#process'], array('jobbag_tasks_widget_process'))
+    '#process' => array_merge($element_info['#process'], array('jobbag_tasks_instance_process'))
   );
 
   $delta = -1;
@@ -89,7 +89,7 @@ function jobbag_tasks_field_widget_settings_form($field, $instance) {
 }
 
 function jobbag_tasks_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
-  $settings = $instance['widget']['settings'];
+  $settings = $instance['settings'];
   $types = isset($settings['task_types']) ? $settings['task_types'] : array();
   $elements = array();
 
@@ -147,7 +147,7 @@ function jobbag_tasks_field_is_empty($item, $field) {
   return !$item;
 }
 
-function jobbag_tasks_widget_process($element, &$form_state, $form) {
+function jobbag_tasks_instance_process($element, &$form_state, $form) {
   $parents = array_slice($element['#array_parents'], 0, -1);
   $new_path = 'job/tasks/ajax/' . implode('/', $parents) . '/' . $form['form_build_id']['#value'];
   $field_element = drupal_array_get_nested_value($form, $parents);
@@ -162,7 +162,7 @@ function jobbag_tasks_widget_process($element, &$form_state, $form) {
   return $element;
 }
 
-function jobbag_tasks_widget_process_multiple($element, &$form_state, $form) {
+function jobbag_tasks_instance_process_multiple($element, &$form_state, $form) {
   $element_children = element_children($element);
   $count = count($element_children);
   foreach ($element_children as $delta => $key) {

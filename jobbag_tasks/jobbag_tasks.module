@@ -279,7 +279,7 @@ function jobbag_tasks_element_info() {
 function jobbag_tasks_theme() {
   $themes = array();
 
-  $themes['tasks_field_widget_settings'] = array(
+  $themes['tasks_field_instance_settings'] = array(
     'render element' => 'element',
     'file' => 'jobbag_tasks.theme'
   );
@@ -567,7 +567,8 @@ function task_field_widget_item_process($element, &$form_state, $form) {
       $role_users = array_merge($role_users, job_roles_eligible_users($role));
     }
   }
-  foreach ($role_users as $uid => $user) {
+
+  foreach (array_filter($role_users) as $uid => $user) {
     $account_options[$uid] = $user->name;
   }
 
