@@ -51,6 +51,18 @@ function jobbag_tasks_schema() {
         'serialize' => TRUE,
         'not null' => FALSE
       ),
+      'start' => array(
+        'type' => 'text',
+        'size' => 'medium',
+        'serialize' => TRUE,
+        'not null' => FALSE
+      ),
+      'duration' => array(
+        'type' => 'text',
+        'size' => 'medium',
+        'serialize' => TRUE,
+        'not null' => FALSE
+      ),
       'created' => array(
         'type' => 'int',
         'unsigned' => TRUE,
@@ -162,7 +174,7 @@ function jobbag_tasks_field_schema($field) {
 
   return NULL;
 }
-/*
+
 function jobbag_tasks_install() {
 
   $field = array(
@@ -187,4 +199,4 @@ function jobbag_tasks_install() {
     $instance['bundle'] = $name;
     field_create_instance($instance);
   }
-}*/
+}

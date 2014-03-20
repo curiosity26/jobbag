@@ -90,6 +90,71 @@ function jobbag_tasks_entity_info() {
   return $info;
 }
 
+function jobbag_tasks_entity_property_info() {
+  $info = array();
+
+  $properties = &$info['jobbag_task']['properties'];
+
+  $properties['job'] = array(
+    'label' => t('Job'),
+    'type' => 'entity',
+    'getter callback' => 'jobbag_tasks_job_property_info_getter_callback',
+    'setter callback' => 'jobbag_tasks_job_property_info_setter_callback',
+    'schema field' => 'job'
+  );
+
+  $properties['roles'] = array(
+    'label' => t('Roles'),
+    'type' => 'entities',
+    'getter callback' => 'jobbag_tasks_roles_property_info_getter_callback',
+    'setter callback' => 'jobbag_tasks_roles_property_info_setter_callback',
+    'schema field' => 'roles'
+  );
+
+  $properties['accounts'] = array(
+    'label' => t('Accounts'),
+    'type' => 'list<struct>',
+    'getter callback' => 'jobbag_tasks_accounts_property_info_getter_callback',
+    'setter callback' => 'jobbag_tasks_accounts_property_info_setter_callback',
+    'schema field' => 'accounts',
+    'property info' => get_object_vars($GLOBALS['user']) // Same as use props
+  );
+
+  $properties['start'] = array(
+    'label' => t('Start Offset'),
+    'description' => t('The offset, in seconds, from the creation date of a job'),
+    'type' => 'duration',
+    'getter callback' => 'jobbag_tasks_start_info_getter_callback',
+    'setter callback' => 'jobbag_tasks_start_info_setter_callback'
+  );
+
+  $properties['start_object'] = array(
+    'label' => t('Start Offset (Object)'),
+    'description' => t('An object representing the offset time from the creation date of a job'),
+    'type' => 'struct',
+    'schema field' => 'start',
+    'property info' => array('units', 'metric')
+  );
+
+  $properties['duration'] = array(
+    'label' => t('Duration'),
+    'description' => t('The duration, in seconds, the task is set to take'),
+    'type' => 'duration',
+    'getter callback' => 'jobbag_tasks_duration_info_getter_callback',
+    'setter callback' => 'jobbag_tasks_duration_info_setter_callback'
+  );
+
+  $properties['duration_object'] = array(
+    'label' => t('Duration (Object)'),
+    'description' => t('An object representing the duration the task is set to take'),
+    'type' => 'struct',
+    'schema field' => 'duration',
+    'property info' => array('units', 'metric')
+  );
+
+  return $info;
+}
+
 /* Load Tasks */
 function jobbag_task_load($id) {
   return entity_load_single('jobbag_task', $id);

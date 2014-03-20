@@ -47,7 +47,7 @@ class JobEntityController extends EntityAPIController {
   public function reminder(JobBag $job) {
     $date = new DateObject($job->job_due_date['und'][0]['value'], $job->job_due_date['und'][0]['timezone']);
     $reminder = $job->getReminder();
-    return $date->getTimestamp() - self::reminderTime($reminder['metric'], $reminder['unit']);
+    return $date->difference(self::reminderTime($reminder['metric'], $reminder['unit']));
   }
 
   public function getReminder(JobBag $job) {
