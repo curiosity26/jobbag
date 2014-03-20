@@ -79,6 +79,8 @@ class JobBagTaskController extends EntityAPIController {
       $entity->module = 'jobbag_tasks';
     }
 
+    $entity->accounts = array_filter($entity->accounts);
+
     return parent::save($entity);
   }
 }

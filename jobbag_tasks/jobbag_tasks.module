@@ -118,7 +118,7 @@ function jobbag_task_status_check($status, JobBagTask $task, $account = NULL) {
     $account = $GLOBALS['user'];
   }
 
-  if (in_array(0, $task->accounts)) {
+  if (empty($task->accounts) || in_array(0, $task->accounts)) {
     foreach ($task->roles() as $role) {
       if ($role->hasUser($account)) {
         return TRUE;
@@ -170,6 +170,21 @@ function jobbag_tasks_job_role_perms() {
     'description' => t('Modify task settings for tasks on this job. This include delegating tasks to different users')
   );
 
+  $perms['delegate tasks'] = array(
+    'title' => t('Delegate Tasks'),
+    'description' => t('Delegate tasks of the job.')
+  );
+
+  $perms['accept tasks'] = array(
+    'title' => t('Accept Tasks'),
+    'description' => t('Accept tasks of the job, regardless of their delegation.')
+  );
+
+  $perms['reject tasks'] = array(
+    'title' => t('Reject Tasks'),
+    'description' => t('Reject tasks of the job.')
+  );
+
   $perms['delete tasks'] = array(
     'title' => t('Delete Tasks'),
     'description' => t('Remove tasks from the job. This cannot be undone.')
@@ -182,31 +197,26 @@ function jobbag_tasks_access($op, JobBag $job, JobBagTask $task = NULL, $account
   if (!$account) {
     $account = $GLOBALS['user'];
   }
-
   if ($account->uid == 1) {
     return TRUE;
   }
-
   if ($op == 'view' || $op == 'create') {
     if (!$task) {
       return jobbag_access($op.' tasks', $job, $account);
     }
-
     if (jobbag_access($op.' tasks', $job, $account)) {
       return TRUE;
     }
-
     return jobbag_task_is_delegated($task, $account) || jobbag_task_is_accepted($task, $account);
-
   }
   elseif(!!$task) {
-    return jobbag_access($op.' tasks', $job, $account);
+    return jobbag_access($op.' tasks', $job, $account) || jobbag_task_is_delegated($task, $account);
   }
 
   return FALSE;
 }
 
-function jobbag_task_access($op, JobBagTask $task = NULL, $account = NULL, $entity_type) {
+function jobbag_task_access($op, JobBagTask $task = NULL, $account = NULL, $entity_type = NULL) {
   return jobbag_tasks_access($op, $task->job(), $task, $account);
 }
 
@@ -214,15 +224,12 @@ function jobbag_task_type_access($op, $entity = NULL, $account = NULL, $entity_t
   if (!$account) {
     $account = $GLOBALS['user'];
   }
-
   if ($account->uid == 1) {
     return TRUE;
   }
-
   if (user_access('administer job tasks', $account)) {
     return TRUE;
   }
-
   return FALSE;
 }
 
@@ -242,6 +249,14 @@ function jobbag_tasks_menu() {
     'delivery callback' => 'ajax_deliver',
     'access arguments' => array('access content'),
     'theme callback' => 'ajax_base_page_theme',
+    'type' => MENU_CALLBACK
+  );
+
+  $items['job/%job/task/%job_task/%'] = array(
+    'page callback' => 'jobbag_tasks_op',
+    'page arguments' => array(1, 3, 4),
+    'access callback' => 'jobbag_tasks_access',
+    'access arguments' => array(4, 1, 3),
     'type' => MENU_CALLBACK
   );
 
@@ -402,6 +417,29 @@ function jobbag_tasks_widget_ajax() {
   }
   return array('#type' => 'ajax', '#commands' => $commands);
 }
+
+function jobbag_tasks_op(JobBag $job, JobBagTask $task, $op, $account = NULL) {
+  if (!$account) {
+    $account = $GLOBALS['user'];
+  }
+
+  $controller = entity_get_controller('jobbag_task');
+
+  switch($op) {
+    case 'accept':
+      $task->accounts = array($account->uid);
+      entity_save('jobbag_type', $task);
+      break;
+    case 'reject':
+      $task->accounts = array_diff($task->accounts, array($account->uid));
+      entity_save('jobbag_type', $task);
+      break;
+  }
+
+  $controller->invoke($op, $task);
+}
+
+/* Element Processes */
 
 function task_field_item_process($element, &$form_state, $form) {
   $value = isset($element['#value']) && isset($element['#value']['entity']) ? $element['#value']['entity'] : $element['#default_value'];
