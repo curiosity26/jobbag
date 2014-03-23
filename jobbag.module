@@ -289,6 +289,10 @@ function jobbag_theme($existing, $type, $theme, $path) {
     'template' => 'job'
   );
 
+  $themes['time_metric'] = array(
+    'render element' => 'element'
+  );
+
   return $themes;
 }
 
@@ -853,8 +857,7 @@ function jobbag_search_status() {
     ->condition(db_or()->condition('d.reindex', 0, '<>'));
 
   $remaining = $query->execute()->rowCount();
-  /*$remaining = db_query("SELECT COUNT(*) FROM {jobbag} j LEFT JOIN {search_dataset} d ON d.type = 'job'
-    AND d.sid = j.jid WHERE j.status = 1 AND d.sid IS NULL OR d.reindex <> 0")->fetchField();*/
+
   return array('remaining' => $remaining, 'total' => $total);
 }
 
@@ -875,4 +878,58 @@ function jobbag_mail($key, &$message, $params) {
     $message['subject'] = $subject;
     $message['body'][] = $body;
   }
+}
+
+/* Element Functions */
+
+function jobbag_element_info() {
+  $info = array();
+
+  $info['time_metric'] = array(
+    '#input' => TRUE,
+    '#process' => 'time_metric_process',
+    '#default_value' => array(),
+    '#theme_wrappers' => array('form_element')
+  );
+
+  return $info;
+}
+
+function time_metric_process($element, &$form_state, $form) {
+  $units = TimeUnitMetric::unitValues();
+
+  $metric = isset($element['#value']['metric']) ?
+    $element['#value']['metric'] : (isset($element['#default_value']['metric']) ?
+      $element['#default_value']['metric'] : 0);
+
+  $unit = isset($element['#value']['unit']) ?
+    $element['#value']['unit'] : (isset($element['#default_value']['unit']) ?
+      $element['#default_value']['unit'] : 0);
+
+  $options = array();
+  foreach ($units as $key => $unit) {
+    $options[$key] = $unit->label();
+  }
+
+  $element['metric'] = array(
+    '#type' => 'textfield',
+    '#default_value' => $metric,
+    '#required' => $element['#required'],
+    '#size' => 3,
+    '#theme_wrappers' => array()
+  );
+
+  $element['unit'] = array(
+    '#type' => 'select',
+    '#options' => $options,
+    '#default_value' => $unit,
+    '#theme_wrappers' => array()
+  );
+
+  return $element;
+}
+
+function theme_time_metric($variables) {
+  $element = $variables['element'];
+  return drupal_render($element['metric']).' '.drupal_render($element['unit']);
 }

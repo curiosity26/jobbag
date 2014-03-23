@@ -350,6 +350,10 @@ function jobbag_tasks_element_info() {
     '#theme_wrappers' => array('form_element'),
     '#roles' => array(),
     '#account' => array(),
+    '#start_metric' => 0,
+    '#start_unit' => 'j',
+    '#duration_metric' => 1,
+    '#duration_unit' => 'j',
     '#weight' => 0
   );
 
@@ -630,8 +634,14 @@ function task_field_widget_item_process($element, &$form_state, $form) {
   $values = $form_state['values'];
   $form_state_roles = drupal_array_get_nested_value($values, array_merge($parents, array('roles')));
   $form_state_accounts = drupal_array_get_nested_value($values, array_merge($parents, array('accounts')));
+  $form_state_start = drupal_array_get_nested_value($values, array_merge($parents, array('start')));
+  $form_state_duration = drupal_array_get_nested_value($values, array_merge($parents, array('duration')));
   $task = !!$element['#task'] ? jobbag_task_load($element['#task']) : FALSE;
   $task_type = jobbag_task_type_load($element['#task_type']);
+  $start_metric = isset($form_state_start['metric']) ? $form_state_start['metric'] : $element['#start_metric'];
+  $start_unit = isset($form_state_start['unit']) ? $form_state_start['unit'] : $element['#start_unit'];
+  $duration_metric = isset($form_state_duration['metric']) ? $form_state_duration['metric'] : $element['#duration_metric'];
+  $duration_unit = isset($form_state_duration['unit']) ? $form_state_duration['unit'] : $element['#duration_unit'];
   $job = $element['#entity'];
 
   if ($task && empty($element['#roles'])) {
@@ -722,6 +732,28 @@ function task_field_widget_item_process($element, &$form_state, $form) {
     '#prefix' => '<div id="'.$wrapper.'">',
     '#suffix' => '</div>',
     '#multiple' => TRUE
+  );
+
+  $element['start'] = array(
+    '#type' => 'time_metric',
+    '#title' => t('Start Time'),
+    '#description' => t('The time span from the start of the job'),
+    '#default_value' => array(
+      'metric' => $start_metric,
+      'unit' => $start_unit
+    ),
+    '#theme_wrappers' => array()
+  );
+
+  $element['duration'] = array(
+    '#type' => 'time_metric',
+    '#title' => t('Duration'),
+    '#description' => t('The time span from the start of the task to the end'),
+    '#default_value' => array(
+      'metric' => $duration_metric,
+      'unit' => $duration_unit
+    ),
+    '#theme_wrappers' => array()
   );
 
   $element['status'] = array(

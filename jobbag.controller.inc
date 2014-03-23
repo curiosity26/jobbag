@@ -6,14 +6,6 @@ class JobEntityController extends EntityAPIController {
     return parent::buildContent($entity, $view_mode, $langcode, $content);
   }
 
-  static public function reminderUnitValues() {
-    return array(
-      'j' => 86400,
-      'g' => 3600,
-      'i' => 60
-    );
-  }
-
   static public function reminderTime($metric = NULL, $unit = NULL) {
     if (!$metric) {
       $metric = variable_get('job_reminder_date_metric', 0);
@@ -21,33 +13,27 @@ class JobEntityController extends EntityAPIController {
     if (!$unit) {
       $unit = variable_get('job_reminder_date_unit', 'j');
     }
-    $units = self::reminderUnitValues();
-
-    return $metric * $units[$unit];
+    $time = new TimeUnitMetric($metric, $unit);
+    return $time->toTime();
   }
 
   static public function reminderFromTime($time = 0) {
-    $units = self::reminderUnitValues();
+    $metric = new TimeUnitMetric(
+      variable_get('job_reminder_date_metric', 0),
+      variable_get('job_reminder_date_unit', 'j')
+    );
 
-    foreach ($units as $u => $t) {
-      if ($time > $t) {
-        return array(
-          'unit' => $u,
-          'metric' => $time / $t
-        );
-      }
+    if ($time > 0) {
+      $metric->fromTime($time);
     }
 
-    return array(
-      'unit' => variable_get('job_reminder_date_unit', 'j'),
-      'metric' => variable_get('job_reminder_date_metric', 0)
-    );
+    return $metric;
   }
 
   public function reminder(JobBag $job) {
     $date = new DateObject($job->job_due_date['und'][0]['value'], $job->job_due_date['und'][0]['timezone']);
     $reminder = $job->getReminder();
-    return $date->difference(self::reminderTime($reminder['metric'], $reminder['unit']));
+    return $date->difference($reminder->toTime());
   }
 
   public function getReminder(JobBag $job) {
@@ -57,12 +43,12 @@ class JobEntityController extends EntityAPIController {
 
   public function getReminderUnit(JobBag $job) {
     $reminder = $this->getReminder($job);
-    return $reminder['unit'];
+    return $reminder->unit->value();
   }
 
   public function getReminderMetric(JobBag $job) {
     $reminder = $this->getReminder($job);
-    return $reminder['metric'];
+    return $reminder->metric;
   }
 
   public function setReminder(JobBag $job, $metric = NULL, $unit = NULL) {
@@ -72,8 +58,8 @@ class JobEntityController extends EntityAPIController {
     if (!$unit) {
       $unit = variable_get('job_reminder_date_unit', 'j');
     }
-    $units = self::reminderUnitValues();
-    $this->setReminderTime($job, $metric * $units[$unit]);
+    $time = new TimeUnitMetric($metric, $unit);
+    $this->setReminderTime($job, $time->toTime());
   }
 
   public function setReminderTime(JobBag $job, $time) {

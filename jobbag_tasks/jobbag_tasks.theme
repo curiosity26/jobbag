@@ -84,6 +84,8 @@ function theme_task_field_widget($variables) {
     t('Task'),
     t('Roles'),
     t('Accounts'),
+    t('Start'),
+    t('Duration'),
     t('Status')
   );
 
@@ -94,11 +96,15 @@ function theme_task_field_widget($variables) {
     hide($widget['roles']);
     hide($widget['accounts']);
     hide($widget['status']);
+    hide($widget['start']);
+    hide($widget['duration']);
 
     $row = array();
     $row[] = drupal_render($widget);
     $row[] = render($widget['roles']);
     $row[] = render($widget['accounts']);
+    $row[] = render($widget['start']);
+    $row[] = render($widget['duration']);
     $row[] = render($widget['status']);
     $rows[] = $row;
   }
