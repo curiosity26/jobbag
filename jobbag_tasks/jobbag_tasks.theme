@@ -71,7 +71,8 @@ function theme_tasks_field_instance_settings($variables) {
   drupal_add_tabledrag($table_id, 'order', 'sibling', $weight_class);
   $output = '';
   if (!empty($rows)) {
-    $output = empty($rows) ? '' : theme('table', array('header' => array(), 'rows' => $rows, 'attributes' => array('id' => $table_id)));
+    $output = empty($rows) ? '' :
+      theme('table', array('header' => array(), 'rows' => $rows, 'attributes' => array('id' => $table_id)));
   }
   return $output;
 }
@@ -135,10 +136,10 @@ function theme_task_formatter_items($variables) {
   foreach (element_children($elements) as $name) {
     $element = &$elements[$name];
     $entity = $element['#entity'];
-    $type = entity_load_multiple_by_name('jobbag_task_type', array($entity->type));
+    $element['#theme_wrappers'] = array();
     $element['#title_display'] = 'hidden';
     $rows[] = array(
-      $type->label(),
+      $entity->label(),
       drupal_render($element)
     );
   }

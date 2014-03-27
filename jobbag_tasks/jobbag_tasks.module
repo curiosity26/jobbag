@@ -99,7 +99,7 @@ function jobbag_tasks_entity_property_info() {
     'label' => t('Job'),
     'type' => 'entity',
     'getter callback' => 'jobbag_tasks_job_property_info_getter_callback',
-    'setter callback' => 'jobbag_tasks_job_property_info_setter_callback',
+    'setter callback' => 'jobbag_tasks_entity_property_info_setter_callback',
     'schema field' => 'job'
   );
 
@@ -107,7 +107,7 @@ function jobbag_tasks_entity_property_info() {
     'label' => t('Roles'),
     'type' => 'entities',
     'getter callback' => 'jobbag_tasks_roles_property_info_getter_callback',
-    'setter callback' => 'jobbag_tasks_roles_property_info_setter_callback',
+    'setter callback' => 'jobbag_tasks_entities_property_info_setter_callback',
     'schema field' => 'roles'
   );
 
@@ -124,8 +124,8 @@ function jobbag_tasks_entity_property_info() {
     'label' => t('Start Offset'),
     'description' => t('The offset, in seconds, from the creation date of a job'),
     'type' => 'duration',
-    'getter callback' => 'jobbag_tasks_start_info_getter_callback',
-    'setter callback' => 'jobbag_tasks_start_info_setter_callback'
+    'getter callback' => 'jobbag_tasks_timemetric_info_getter_callback',
+    'setter callback' => 'jobbag_tasks_timemetric_info_setter_callback'
   );
 
   $properties['start_object'] = array(
@@ -140,8 +140,8 @@ function jobbag_tasks_entity_property_info() {
     'label' => t('Duration'),
     'description' => t('The duration, in seconds, the task is set to take'),
     'type' => 'duration',
-    'getter callback' => 'jobbag_tasks_duration_info_getter_callback',
-    'setter callback' => 'jobbag_tasks_duration_info_setter_callback'
+    'getter callback' => 'jobbag_tasks_timemetric_info_getter_callback',
+    'setter callback' => 'jobbag_tasks_timemetric_info_setter_callback'
   );
 
   $properties['duration_object'] = array(
@@ -153,6 +153,136 @@ function jobbag_tasks_entity_property_info() {
   );
 
   return $info;
+}
+
+/* Getters / Setters */
+
+function jobbag_tasks_job_property_info_getter_callback($data, array $options, $name, $type, $info) {
+  $name = isset($info['schema field']) ? $info['schema field'] : $name;
+  if ((is_array($data) || (is_object($data) && $data instanceof ArrayAccess)) && isset($data[$name])) {
+    if (is_integer($data[$name])) {
+      return job_load($data[$name]);
+    }
+    return $data[$name];
+  }
+  elseif (is_object($data) && isset($data->$name)) {
+    if (is_integer($data->$name)) {
+      return job_load($data->$name);
+    }
+    return $data->$name;
+  }
+  return NULL;
+}
+
+function jobbag_tasks_entity_property_info_setter_callback(&$data, $name, $value, $langcode, $type, $info) {
+  $name = isset($info['schema field']) ? $info['schema field'] : $name;
+  $value = is_object($value) ? $value->identifier() : $value;
+  if (is_array($data) || (is_object($data) && $data instanceof ArrayAccess)) {
+    $data[$name] = $value;
+  }
+  elseif (is_object($data)) {
+    $data->$name = $value;
+  }
+}
+
+function jobbag_tasks_roles_property_info_getter_callback($data, array $options, $name, $type, $info) {
+  $name = isset($info['schema field']) ? $info['schema field'] : $name;
+  $ids = array();
+  if ((is_array($data) || (is_object($data) && $data instanceof ArrayAccess)) && isset($data[$name])) {
+    $ids = array_filter($data[$name]);
+  }
+  elseif (is_object($data) && isset($data->$name)) {
+    $ids = array_filter($data->$name);
+  }
+
+  if (!empty($ids)) {
+    return entity_load('jobbag_role', $ids);
+  }
+  return NULL;
+}
+
+function jobbag_tasks_entities_property_info_setter_callback(&$data, $name, $value, $langcode, $type, $info) {
+  $name = isset($info['schema field']) ? $info['schema field'] : $name;
+  $ids = array();
+  foreach((array)$value as $entity) {
+    if (is_object($entity) && method_exists($entity, 'identifier')) {
+      $ids[] = $entity->identifier();
+    }
+    elseif (is_numeric($entity)) {
+      $ids[] = $entity;
+    }
+  }
+
+  if (is_array($data) || (is_object($data) && $data instanceof ArrayAccess)) {
+    $data[$name] = $ids;
+  }
+  elseif (is_object($data)) {
+    $data->$name = $ids;
+  }
+}
+
+function jobbag_tasks_accounts_property_info_getter_callback($data, array $options, $name, $type, $info) {
+  $name = isset($info['schema field']) ? $info['schema field'] : $name;
+  $ids = array();
+  if ((is_array($data) || (is_object($data) && $data instanceof ArrayAccess)) && isset($data[$name])) {
+    $ids = array_filter($data[$name]);
+  }
+  elseif (is_object($data) && isset($data->$name)) {
+    $ids = array_filter($data->$name);
+  }
+
+  if (!empty($ids)) {
+    return user_load_multiple($ids);
+  }
+  return NULL;
+}
+
+function jobbag_tasks_accounts_property_info_setter_callback(&$data, $name, $value, $langcode, $type, $info) {
+  $name = isset($info['schema field']) ? $info['schema field'] : $name;
+  $ids = array();
+  foreach((array)$value as $entity) {
+    if (is_object($entity) && isset($entity->uid)) {
+      $ids[] = $entity->uid;
+    }
+    elseif (is_numeric($entity)) {
+      $ids[] = $entity;
+    }
+  }
+
+  if (is_array($data) || (is_object($data) && $data instanceof ArrayAccess)) {
+    $data[$name] = $ids;
+  }
+  elseif (is_object($data)) {
+    $data->$name = $ids;
+  }
+}
+
+function jobbag_tasks_timemetric_info_getter_callback($data, array $options, $name, $type, $info) {
+  $name = isset($info['schema field']) ? $info['schema field'] : $name;
+  if (is_array($data) || (is_object($data) && $data instanceof ArrayAccess)) {
+    if ($data[$name] instanceof TimeUnitMetric) {
+      return $data[$name]->toTime();
+    }
+  }
+  elseif (is_object($data)) {
+    if ($data->$name instanceof TimeUnitMetric) {
+      return $data->$name->toTime();
+    }
+  }
+
+  return NULL;
+}
+
+function jobbag_tasks_timemetric_info_setter_callback(&$data, $name, $value, $langcode, $type, $info) {
+  $name = isset($info['schema field']) ? $info['schema field'] : $name;
+  $timemetric = new TimeUnitMetric();
+  $timemetric->fromTime($value);
+  if (is_array($data) || (is_object($data) && $data instanceof ArrayAccess)) {
+    $data[$name] = $timemetric;
+  }
+  elseif (is_object($data)) {
+    $data->$name = $timemetric;
+  }
 }
 
 /* Load Tasks */

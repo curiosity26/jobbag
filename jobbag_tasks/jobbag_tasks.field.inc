@@ -230,7 +230,7 @@ function jobbag_tasks_field_formatter_view($entity_type, $entity, $field, $insta
   if ($display['type'] == 'tasks_formatter') {
     foreach ($items as $delta => $item) {
       $item['task'] = jobbag_task_load($item['id']);
-      $elements['#theme'] = 'tasks_formatter_items';
+      $elements['#theme'] = 'task_formatter_items';
       $elements[$delta] = entity_build_content('jobbag_task', $item['task'], 'field', $langcode);
       $elements[$delta]['#theme_wrappers'] = array();
     }
@@ -252,6 +252,8 @@ function jobbag_tasks_field_load($entity_type, $entities, $field, $instances, $l
           $item['type'] = $task_type->identifier();
           $item['roles'] = $item['task']->roles;
           $item['accounts'] = $item['task']->accounts;
+          $item['start'] = $item['task']->start;
+          $item['duration'] = $item['task']->duration;
           $item['status'] = $item['task']->status;
           $item['job'] = $item['task']->job;
         }
@@ -272,7 +274,9 @@ function jobbag_tasks_field_insert($entity_type, $entity, $field, $instance, $la
         'roles' => $item['roles'],
         'accounts' => $item['accounts'],
         'job' => $entity->identifier(),
-        'status' => $item['status']
+        'status' => $item['status'],
+        'start' => $item['start'],
+        'duration' => $item['duration']
       );
 
       $item['task'] = entity_create('jobbag_task', $settings);
@@ -297,7 +301,9 @@ function jobbag_tasks_field_update($entity_type, $entity, $field, $instance, $la
           'roles' => $item['roles'],
           'accounts' => $item['accounts'],
           'job' => $entity->identifier(),
-          'status' => $item['status']
+          'status' => $item['status'],
+          'start' => $item['start'],
+          'duration' => $item['duration']
         );
 
         $item['task'] = entity_create('jobbag_task', $settings);
@@ -311,6 +317,8 @@ function jobbag_tasks_field_update($entity_type, $entity, $field, $instance, $la
         $task->roles = $item['roles'];
         $task->accounts = $item['accounts'];
         $task->status = $item['status'];
+        $task->start = $item['start'];
+        $task->duration = $item['duration'];
         entity_save('jobbag_task', $task);
       }
     }
