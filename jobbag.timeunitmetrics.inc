@@ -27,7 +27,11 @@ class TimeUnitMetric implements TimeUnitMetricInterface {
   }
 
   static public function unitValues() {
+    // Unit value keys are based off the php date() : http://php.net/manual/en/function.date.php
     return array(
+      //'Y' => new TimeUnit('Y', 31536000, 'Year(s)'), // I don't think we need to go as far as years here.
+      'F' => new TimeUnit('M', 1814400, 'Months(s)'),
+      'W' => new TimeUnit('W', 604800, 'Week(s)'),
       'j' => new TimeUnit('j', 86400, 'Day(s)'),
       'g' => new TimeUnit('g', 3600, 'Hour(s)'),
       'i' => new TimeUnit('i', 60, 'Minutes(s)')
